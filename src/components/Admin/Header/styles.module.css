@@ -1,0 +1,29 @@
+
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    position: fixed;
+    left: 220px;
+    right: 0;
+    /* background: white; */
+}
+
+.data{
+    font-size: .9rem;
+    opacity: 70%;
+}
+
+
+.acoesHeader{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.darkMode{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}

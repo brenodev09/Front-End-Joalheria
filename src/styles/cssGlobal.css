@@ -41,3 +41,43 @@ p,a, button, span{
 }
 
 
+.btnPadrao {
+    background: transparent;  
+    cursor: pointer;           
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--ouro);
+    border: 1px solid rgba(201, 169, 110, 0.28);
+    padding: 14px 22px;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.38s var(--ease-premium),
+        border-color 0.38s var(--ease-premium),
+        box-shadow 0.38s var(--ease-premium);
+}
+
+.btnPadrao::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(201, 169, 110, 0.06) 50%,
+            transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.5s var(--ease-premium);
+}
+
+.btnPadrao:hover::before {
+    transform: translateX(100%);
+}
+
+.btnPadrao:hover {
+    border-color: rgba(201, 169, 110, 0.6);
+    color: var(--ouro-claro);
+    box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+
