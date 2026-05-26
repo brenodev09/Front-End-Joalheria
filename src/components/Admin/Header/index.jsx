@@ -49,7 +49,7 @@ export default function HeaderAdmin() {
           />{" "}
         </div>
 
-        <button className="btnPadrao">VOLTAR A LOJA</button>
+        <a href="/" className="btnPadrao">VOLTAR A LOJA</a>
       </div>
     </header>
   );

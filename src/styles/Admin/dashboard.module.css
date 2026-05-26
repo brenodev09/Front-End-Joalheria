@@ -1,0 +1,215 @@
+/* ── Cole estas classes no seu arquivo .module.css ── */
+
+.painelPrincipal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  width: 100%;
+}
+
+/* ── Saudação ── */
+
+.saudacao {
+  background-color: #1a1a1a;
+  border: 1.7px solid rgba(201, 168, 76, 0.21);
+  border-radius: 12px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.saudacaoRotulo {
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: #C9A84C;
+  opacity: 88%;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.saudacaoTitulo {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin: 4px 0 0;
+  line-height: 1.1;
+}
+
+.saudacaoSubtitulo {
+  font-size: 0.875rem;
+  color: #b8b8b8;
+  margin: 4px 0 0;
+}
+
+.saudacaoResumo {
+  display: flex;
+  gap: 16px;
+  position: absolute;
+  top: 28px;
+  right: 32px;
+}
+
+.resumoItem {
+  background-color: #222222;
+  border: 1px solid rgba(201, 168, 76, 0.21);
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 90px;
+}
+
+.resumoRotulo {
+  font-size: 0.68rem;
+  color: #666666;
+  letter-spacing: 0.04em;
+}
+
+.resumoValor {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #C9A84C;
+}
+
+/* ── Cards métricos ── */
+
+.cardsMetricos {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.cardsMetricos::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  background-color: #1a1a1a;
+  border: 1.7px solid rgba(201, 168, 76, 0.21);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+  flex: 1;  
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: rgba(201, 168, 76, 0.5);
+}
+
+.cardTopo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconeCard {
+  /* width: 32px; */
+  /* height: 32px; */
+  background-color: rgba(37, 37, 37, 0.666);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: .55rem;
+  border: 2px solid rgba(201, 168, 76, 0.21);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #C9A84C;
+}
+
+.cardRotulo {
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.1rem;
+  color: #C9A84C;
+  opacity: 90%;
+  text-transform: uppercase;
+}
+
+.cardValor {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #FFF2D9;
+  margin: 4px 0 0;
+  line-height: 1;
+}
+
+.cardDescricao {
+  font-size: 0.8rem;
+  color: #cdcdcd;
+  margin: 0;
+}
+
+/* ── Responsivo ── */
+
+@media (max-width: 768px) {
+  .painelPrincipal {
+    padding: 16px;
+  }
+
+  .saudacao {
+    padding: 20px;
+  }
+
+  .saudacaoTitulo {
+    font-size: 1.8rem;
+  }
+
+  .saudacaoResumo {
+    position: static;
+    flex-direction: row;
+    margin-top: 12px;
+  }
+
+  .resumoItem {
+    flex: 1;
+  }
+
+  .card {
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 400px) {
+  .painelPrincipal {
+    padding: 12px;
+  }
+
+  .saudacaoTitulo {
+    font-size: 1.5rem;
+  }
+
+  .saudacaoSubtitulo {
+    font-size: 0.8rem;
+  }
+
+  .saudacaoResumo {
+    flex-direction: column;
+  }
+
+  .resumoItem {
+    min-width: unset;
+  }
+
+  .card {
+    min-width: 140px;
+    padding: 16px;
+  }
+
+  .cardValor {
+    font-size: 1.6rem;
+  }
+}
