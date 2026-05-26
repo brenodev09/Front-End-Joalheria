@@ -1,0 +1,750 @@
+/* ═══════════════════════════════════════════════════════════════════
+   CRYSTAL — Hero Section Premium
+   styles.module.css
+   React + CSS Modules + GSAP
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Custom Properties ─── */
+.container {
+  --ouro:            #c9a96e;
+  --ouro-claro:      #e8d090;
+  --ouro-brilho:     #f0dfa0;
+  --ouro-escuro:     #7a5c28;
+  --ouro-sutil:      rgba(201, 169, 110, 0.08);
+  --ouro-glow:       rgba(201, 169, 110, 0.14);
+  --preto:           #060606;
+  --preto-suave:     #0d0d0d;
+  --cinza-carvao:    #111111;
+  --texto-primario:  #ece7db;
+  --texto-sec:       rgba(236, 231, 219, 0.46);
+  --texto-ter:       rgba(236, 231, 219, 0.22);
+  --navbar-h:        76px;
+  --serif:           'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --sans:            'Montserrat', 'Helvetica Neue', sans-serif;
+  --ease-premium:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  position:    relative;
+  min-height:  100vh;
+  background:  radial-gradient(
+                 ellipse 130% 85% at 32% 0%,
+                 #2b1b0f 0%,
+                 #1e1108 16%,
+                 #0d0d0d 50%,
+                 #060606 100%
+               );
+  overflow:    hidden;
+  font-family: var(--sans);
+  color:       var(--texto-primario);
+  /* Grain sutil para textura premium */
+  isolation:   isolate;
+}
+
+/* Textura grain ultra-sutil via pseudoelemento no container */
+.container::before {
+  content:          '';
+  position:         fixed;
+  inset:            0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:  200px 200px;
+  opacity:          0.022;
+  pointer-events:   none;
+  z-index:          999;
+  mix-blend-mode:   overlay;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ATMOSFERA DE FUNDO
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Partículas douradas ─── */
+.particulas {
+  position:       absolute;
+  inset:          0;
+  pointer-events: none;
+  z-index:        1;
+}
+
+.particula {
+  position:      absolute;
+  border-radius: 50%;
+  background:    radial-gradient(
+                   circle,
+                   var(--ouro-claro) 0%,
+                   rgba(232, 208, 144, 0.5) 40%,
+                   transparent 75%
+                 );
+  animation:     subirParticula 6s ease-in-out infinite;
+}
+
+@keyframes subirParticula {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity:   0;
+  }
+  15% {
+    opacity:   1;
+  }
+  75% {
+    opacity:   0.4;
+  }
+  100% {
+    transform: translateY(-90px) scale(0.5);
+    opacity:   0;
+  }
+}
+
+/* ─── Blur atmosférico 1 — quente/âmbar (centro-superior) ─── */
+.fundoBlur1 {
+  position:       absolute;
+  top:            -12%;
+  left:           22%;
+  width:          58vw;
+  height:         58vw;
+  max-width:      720px;
+  max-height:     720px;
+  border-radius:  50%;
+  background:     radial-gradient(
+                    circle,
+                    rgba(43, 27, 15, 0.62) 0%,
+                    rgba(28, 16, 6, 0.35) 45%,
+                    transparent 70%
+                  );
+  filter:         blur(90px);
+  pointer-events: none;
+  z-index:        0;
+}
+
+/* ─── Blur atmosférico 2 — dourado muito sutil (canto direito) ─── */
+.fundoBlur2 {
+  position:       absolute;
+  bottom:         -8%;
+  right:          -6%;
+  width:          46vw;
+  height:         46vw;
+  max-width:      560px;
+  max-height:     560px;
+  border-radius:  50%;
+  background:     radial-gradient(
+                    circle,
+                    rgba(201, 169, 110, 0.07) 0%,
+                    rgba(122, 92, 40, 0.04) 50%,
+                    transparent 72%
+                  );
+  filter:         blur(110px);
+  pointer-events: none;
+  z-index:        0;
+}
+
+/* ─── Vinheta cinematográfica ─── */
+.fundoVinheta {
+  position:       absolute;
+  inset:          0;
+  background:     radial-gradient(
+                    ellipse 110% 95% at 50% 50%,
+                    transparent 30%,
+                    rgba(0, 0, 0, 0.38) 65%,
+                    rgba(0, 0, 0, 0.72) 100%
+                  );
+  pointer-events: none;
+  z-index:        2;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVBAR MINIMALISTA
+   ═══════════════════════════════════════════════════════════════════ */
+.navbar {
+  position:        fixed;
+  top:             0;
+  left:            0;
+  right:           0;
+  height:          var(--navbar-h);
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 5vw;
+  z-index:         100;
+  background:      linear-gradient(
+                     180deg,
+                     rgba(6, 6, 6, 0.82) 0%,
+                     rgba(6, 6, 6, 0.0) 100%
+                   );
+  /* Estado inicial para GSAP */
+  opacity:         0;
+}
+
+/* ─── Logo ─── */
+.logo {
+  display:         flex;
+  align-items:     center;
+  gap:             10px;
+  text-decoration: none;
+  color:           inherit;
+  cursor:          default;
+}
+
+.logoTexto {
+  font-family:     var(--sans);
+  font-size:       10.5px;
+  font-weight:     300;
+  letter-spacing:  0.46em;
+  text-transform:  uppercase;
+  color:           var(--texto-primario);
+  opacity:         0.88;
+}
+
+/* ─── Links de navegação ─── */
+.navLinks {
+  display:         flex;
+  align-items:     center;
+  gap:             3rem;
+  list-style:      none;
+  margin:          0;
+  padding:         0;
+  /* Centralização absoluta precisa */
+  position:        absolute;
+  left:            50%;
+  transform:       translateX(-50%);
+}
+
+.navLink {
+  font-family:     var(--sans);
+  font-size:       9px;
+  font-weight:     300;
+  letter-spacing:  0.42em;
+  text-transform:  uppercase;
+  color:           var(--texto-sec);
+  text-decoration: none;
+  position:        relative;
+  transition:      color 0.38s var(--ease-premium);
+}
+
+.navLink::after {
+  content:    '';
+  position:   absolute;
+  bottom:     -4px;
+  left:       0;
+  width:      0;
+  height:     1px;
+  background: linear-gradient(90deg, var(--ouro), var(--ouro-claro), var(--ouro));
+  transition: width 0.4s var(--ease-premium);
+}
+
+.navLink:hover {
+  color: var(--texto-primario);
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+/* ─── CTA da navbar ─── */
+.navCta {
+  font-family:     var(--sans);
+  font-size:       9px;
+  font-weight:     300;
+  letter-spacing:  0.42em;
+  text-transform:  uppercase;
+  color:           var(--ouro);
+  text-decoration: none;
+  border:          1px solid rgba(201, 169, 110, 0.28);
+  padding:         9px 22px;
+  position:        relative;
+  overflow:        hidden;
+  transition:      color 0.38s var(--ease-premium),
+                   border-color 0.38s var(--ease-premium),
+                   box-shadow 0.38s var(--ease-premium);
+}
+
+.navCta::before {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(201, 169, 110, 0.06) 50%,
+                transparent 100%
+              );
+  transform:  translateX(-100%);
+  transition: transform 0.5s var(--ease-premium);
+}
+
+.navCta:hover::before {
+  transform: translateX(100%);
+}
+
+.navCta:hover {
+  border-color: rgba(201, 169, 110, 0.6);
+  color:        var(--ouro-claro);
+  box-shadow:   0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO PRINCIPAL
+   ═══════════════════════════════════════════════════════════════════ */
+.hero {
+  position:              relative;
+  min-height:            100vh;
+  display:               grid;
+  grid-template-columns: 44% 1fr;
+  grid-template-rows:    1fr auto;
+  padding-top:           var(--navbar-h);
+  z-index:               3;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONTEÚDO TEXTUAL (coluna esquerda)
+   ═══════════════════════════════════════════════════════════════════ */
+.conteudoTexto {
+  grid-column: 1;
+  grid-row:    1;
+  display:     flex;
+  flex-direction: column;
+  justify-content: center;
+  padding:     0 3.5rem 0 5vw;
+  /* Deslocamento vertical para refinamento da composição */
+  margin-top:  -3vh;
+}
+
+/* ─── Subtítulo / badge editorial ─── */
+.subtitulo {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           0.7rem;
+  font-family:   var(--sans);
+  font-size:     9px;
+  font-weight:   300;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color:         var(--ouro);
+  margin-bottom: 1.8rem;
+  /* Estado inicial para GSAP */
+  opacity:       0;
+}
+
+/* Decoração lateral do subtítulo */
+.subtitulo::before {
+  content:    '';
+  display:    inline-block;
+  width:      22px;
+  height:     1px;
+  background: linear-gradient(90deg, transparent, var(--ouro));
+  flex-shrink: 0;
+}
+
+/* ─── Título principal ─── */
+.titulo {
+  font-family:    var(--serif);
+  font-size:      clamp(54px, 6.8vw, 108px);
+  font-weight:    300;
+  line-height:    0.91;
+  letter-spacing: -0.01em;
+  color:          var(--texto-primario);
+  margin:         0 0 2.2rem 0;
+  /* Estado inicial para GSAP */
+  opacity:        0;
+}
+
+.tituloItalico {
+  display:        block;
+  font-style:     italic;
+  font-weight:    300;
+  /* Leve toque de calor no itálico */
+  color:          rgba(236, 231, 219, 0.92);
+}
+
+/* ─── Descrição ─── */
+.descricao {
+  font-family:    var(--sans);
+  font-size:      13px;
+  font-weight:    300;
+  line-height:    2;
+  letter-spacing: 0.04em;
+  color:          var(--texto-sec);
+  margin:         0 0 3rem 0;
+  max-width:      270px;
+  /* Estado inicial para GSAP */
+  opacity:        0;
+}
+
+/* ─── CTA principal ─── */
+.ctaWrapper {
+  /* Estado inicial para GSAP */
+  opacity: 0;
+}
+
+.cta {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             14px;
+  font-family:     var(--sans);
+  font-size:       10px;
+  font-weight:     300;
+  letter-spacing:  0.40em;
+  text-transform:  uppercase;
+  color:           var(--texto-primario);
+  text-decoration: none;
+  border:          1px solid rgba(201, 169, 110, 0.22);
+  padding:         15px 30px 15px 32px;
+  position:        relative;
+  overflow:        hidden;
+  transition:
+    color         0.45s var(--ease-premium),
+    border-color  0.45s var(--ease-premium),
+    letter-spacing 0.45s var(--ease-premium),
+    box-shadow    0.45s var(--ease-premium);
+}
+
+/* Brilho deslizante ao hover */
+.cta::before {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  left:       -100%;
+  width:      100%;
+  height:     100%;
+  background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(201, 169, 110, 0.08) 50%,
+                transparent 100%
+              );
+  transition: left 0.55s var(--ease-premium);
+}
+
+.cta:hover::before {
+  left: 100%;
+}
+
+/* Fundo sutil ao hover */
+.cta::after {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: rgba(201, 169, 110, 0.03);
+  opacity:    0;
+  transition: opacity 0.45s var(--ease-premium);
+}
+
+.cta:hover::after {
+  opacity: 1;
+}
+
+.cta:hover {
+  border-color:   rgba(201, 169, 110, 0.55);
+  color:          var(--ouro-claro);
+  letter-spacing: 0.48em;
+  box-shadow:
+    0 0 30px rgba(201, 169, 110, 0.09),
+    inset 0 0 20px rgba(201, 169, 110, 0.03);
+}
+
+.ctaTexto {
+  position:     relative;
+  z-index:      1;
+  /* Manter texto estático enquanto letter-spacing expande */
+  white-space:  nowrap;
+}
+
+.cta svg {
+  position:   relative;
+  z-index:    1;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--ease-premium);
+}
+
+.cta:hover svg {
+  transform: translateX(5px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ÁREA DA JOIA (coluna direita)
+   ═══════════════════════════════════════════════════════════════════ */
+.joiaArea {
+  grid-column:     2;
+  grid-row:        1;
+  position:        relative;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  /* Composição assimétrica — deslocar levemente à esquerda */
+  padding-right:   2vw;
+  padding-left:    2vw;
+}
+
+/* ─── Glow dourado atrás da joia ─── */
+.joiaGlow {
+  position:       absolute;
+  width:          460px;
+  height:         460px;
+  border-radius:  50%;
+  background:     radial-gradient(
+                    circle,
+                    rgba(201, 169, 110, 0.26) 0%,
+                    rgba(180, 140, 70, 0.12) 35%,
+                    rgba(120, 80, 30, 0.05) 60%,
+                    transparent 72%
+                  );
+  filter:         blur(44px);
+  pointer-events: none;
+  z-index:        1;
+  /* Estado inicial para GSAP */
+  opacity:        0;
+}
+
+/* ─── Feixe de luz vertical principal ─── */
+.joiaFeixe1 {
+  position:       absolute;
+  top:            4%;
+  left:           50%;
+  transform:      translateX(-50%);
+  width:          2px;
+  height:         90%;
+  background:     linear-gradient(
+                    180deg,
+                    transparent        0%,
+                    rgba(201, 169, 110, 0.16) 20%,
+                    rgba(232, 208, 144, 0.30) 50%,
+                    rgba(201, 169, 110, 0.14) 80%,
+                    transparent        100%
+                  );
+  filter:         blur(4px);
+  pointer-events: none;
+  z-index:        1;
+  /* Estado inicial para GSAP */
+  opacity:        0;
+}
+
+/* ─── Feixe de luz cônico decorativo ─── */
+.joiaFeixe2 {
+  position:       absolute;
+  top:            8%;
+  left:           50%;
+  transform:      translateX(-38%);
+  width:          220px;
+  height:         78%;
+  background:     conic-gradient(
+                    from 0deg at 50% 0%,
+                    transparent                     0deg,
+                    rgba(201, 169, 110, 0.055)      18deg,
+                    transparent                     36deg
+                  );
+  filter:         blur(10px);
+  pointer-events: none;
+  z-index:        1;
+  /* Estado inicial para GSAP */
+  opacity:        0;
+}
+
+/* ─── Wrapper animado pela GSAP ─── */
+.joiaWrapper {
+  position: relative;
+  z-index:  2;
+  width:    clamp(270px, 30vw, 430px);
+  /* Estado inicial para GSAP */
+  opacity:  0;
+}
+
+/* ─── SVG da joia ─── */
+.joiaSvg {
+  width:   100%;
+  height:  auto;
+  display: block;
+  filter:
+    drop-shadow(0 50px 70px rgba(0, 0, 0, 0.75))
+    drop-shadow(0 20px 35px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0  50px rgba(201, 169, 110, 0.07));
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LINHA DECORATIVA VERTICAL
+   ═══════════════════════════════════════════════════════════════════ */
+.linhaDec {
+  position:  absolute;
+  left:      calc(44% - 0.5px);   /* Alinhada à borda da grid */
+  top:       18%;
+  width:     1px;
+  height:    36%;
+  background: linear-gradient(
+                180deg,
+                transparent                  0%,
+                rgba(201, 169, 110, 0.28)    20%,
+                rgba(201, 169, 110, 0.55)    50%,
+                rgba(201, 169, 110, 0.28)    80%,
+                transparent                  100%
+              );
+  /* Estado inicial para GSAP */
+  opacity:   0;
+  z-index:   4;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RODAPÉ DA HERO
+   ═══════════════════════════════════════════════════════════════════ */
+.infoRodape {
+  grid-column:     1 / -1;
+  grid-row:        2;
+  display:         flex;
+  align-items:     center;
+  gap:             1.6rem;
+  padding:         1.8rem 5vw 2.4rem;
+  /* Estado inicial para GSAP */
+  opacity:         0;
+  z-index:         4;
+}
+
+.infoData {
+  font-family:    var(--sans);
+  font-size:      8.5px;
+  font-weight:    300;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color:          var(--texto-ter);
+}
+
+.infoSeparador {
+  width:      44px;
+  height:     1px;
+  background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(201, 169, 110, 0.30),
+                transparent
+              );
+  flex-shrink: 0;
+}
+
+.infoBadge {
+  font-family:    var(--sans);
+  font-size:      8.5px;
+  font-weight:    300;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color:          var(--texto-ter);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVO — TABLET  (≤ 1024px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-rows:    auto auto auto;
+    align-items:           start;
+  }
+
+  .conteudoTexto {
+    grid-column: 1;
+    grid-row:    1;
+    align-items: center;
+    text-align:  center;
+    padding:     5rem 8vw 2.5rem;
+    margin-top:  0;
+  }
+
+  .subtitulo::before {
+    display: none;
+  }
+
+  .titulo {
+    font-size: clamp(50px, 9vw, 78px);
+  }
+
+  .descricao {
+    max-width:  360px;
+    text-align: center;
+  }
+
+  .joiaArea {
+    grid-column: 1;
+    grid-row:    2;
+    min-height:  52vw;
+    padding:     0;
+  }
+
+  .joiaWrapper {
+    width: clamp(230px, 42vw, 330px);
+  }
+
+  .joiaGlow {
+    width:  320px;
+    height: 320px;
+  }
+
+  .linhaDec {
+    display: none;
+  }
+
+  .infoRodape {
+    grid-column:     1;
+    grid-row:        3;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVO — MOBILE  (≤ 640px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 6vw;
+  }
+
+  .navLinks {
+    display: none;
+  }
+
+  .navCta {
+    padding:        8px 16px;
+    font-size:      8.5px;
+    letter-spacing: 0.35em;
+  }
+
+  .conteudoTexto {
+    padding:    3.5rem 6vw 2rem;
+    align-items: flex-start;
+    text-align:  left;
+  }
+
+  .titulo {
+    font-size:   clamp(46px, 13vw, 66px);
+    line-height: 0.9;
+  }
+
+  .descricao {
+    font-size: 12.5px;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .joiaWrapper {
+    width: clamp(210px, 72vw, 290px);
+  }
+
+  .joiaGlow {
+    width:  260px;
+    height: 260px;
+    filter: blur(34px);
+  }
+
+  .joiaFeixe1,
+  .joiaFeixe2 {
+    display: none;
+  }
+
+  .infoRodape {
+    flex-wrap:       wrap;
+    justify-content: flex-start;
+    gap:             1rem;
+    padding:         1.5rem 6vw 2rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ACESSIBILIDADE — Reduzir movimento
+   ═══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .particula {
+    animation: none;
+  }
+}

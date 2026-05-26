@@ -1,0 +1,119 @@
+body{
+    background: #0d0d0d;
+}
+
+.hero{
+    background:
+radial-gradient(circle at top, #2b1b0f 0%, #0d0d0d 50%);
+height: 100vh;
+}
+
+.textHero{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding-top: 8rem;
+
+    h1{
+        font-size: 6rem;
+        text-align: center;
+        max-width: 60rem;
+    }
+
+    p{
+        opacity: 70%;
+        max-width: 50rem;
+        text-align: center;
+    }
+}
+
+
+
+
+
+.cta {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             14px;
+  top: 3rem;
+  font-family:     var(--sans);
+  font-size:       10px;
+  font-weight:     300;
+  letter-spacing:  0.40em;
+  text-transform:  uppercase;
+  color:           var(--texto-primario);
+  text-decoration: none;
+  border:          1px solid rgba(201, 169, 110, 0.22);
+  padding:         15px 30px 15px 32px;
+  position:        relative;
+  overflow:        hidden;
+  transition:
+    color         0.45s var(--ease-premium),
+    border-color  0.45s var(--ease-premium),
+    letter-spacing 0.45s var(--ease-premium),
+    box-shadow    0.45s var(--ease-premium);
+}
+
+/* Brilho deslizante ao hover */
+.cta::before {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  left:       -100%;
+  width:      100%;
+  height:     100%;
+  background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(201, 169, 110, 0.08) 50%,
+                transparent 100%
+              );
+  transition: left 0.55s var(--ease-premium);
+}
+
+.cta:hover::before {
+  left: 100%;
+}
+
+/* Fundo sutil ao hover */
+.cta::after {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: rgba(201, 169, 110, 0.03);
+  opacity:    0;
+  transition: opacity 0.45s var(--ease-premium);
+}
+
+.cta:hover::after {
+  opacity: 1;
+}
+
+.cta:hover {
+  border-color:   rgba(201, 169, 110, 0.55);
+  color:          var(--ouro-claro);
+  letter-spacing: 0.48em;
+  box-shadow:
+    0 0 30px rgba(201, 169, 110, 0.09),
+    inset 0 0 20px rgba(201, 169, 110, 0.03);
+}
+
+.ctaTexto {
+  position:     relative;
+  z-index:      1;
+  /* Manter texto estático enquanto letter-spacing expande */
+  white-space:  nowrap;
+}
+
+.cta img {
+  position:   relative;
+  z-index:    1;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--ease-premium);
+}
+
+.cta:hover img {
+  transform: translateX(5px);
+}

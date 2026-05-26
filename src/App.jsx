@@ -1,9 +1,27 @@
-import "./styles/App.css";
+  import Inicio from "./components/Inicial"
+import Categorias from "./components/Categorias/Categorias.jsx"
+import Destaques from "./components/Destaques/ProdutosDestaque.jsx"
+import Dashboard from "./components/Dashboard/index.jsx"
+import Produtos from "./components/Produtos/ProductsAdmin.jsx"
+import Conta from "./components/Conta/AzoryAccount.jsx"
+import CategoriasAdmin from "./components/CategoriasAdmin/index.jsx"
+import Cadastrar from "./components/Cadastrar/index.jsx"
+import Rotas from "./routes/index.jsx"
+import "./styles/cssGlobal.css"
 
 function App() {
   return (
     <>
-      <h1>Hello World! </h1>
+     
+      <Rotas/>
+     {/* <Produtos/> */}
+      {/* <Conta/> */}
+      {/* <CategoriasAdmin/> */}
+      {/* <Cadastrar/> */}
+      {/* <Dashboard/> */}
+       {/* <Inicio/> */}
+      {/* <Categorias/>
+      <Destaques/>  */}
     </>
   );
 }

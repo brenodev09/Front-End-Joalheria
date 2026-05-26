@@ -1,0 +1,721 @@
+/* ═══════════════════════════════════════════════════════════
+   CRYSTAL — Categorias.module.css
+   Fan Carousel · Dark Luxury · Awwwards-level
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Design Tokens ─── */
+.secao {
+  --ouro:          #c9a96e;
+  --ouro-claro:    #e8d090;
+  --ouro-escuro:   #7a5c28;
+  --ouro-brilho:   rgba(201, 169, 110, 0.18);
+  --preto:         #060505;
+  --preto-card:    #0d0b09;
+  --cinza-borda:   rgba(201, 169, 110, 0.10);
+  --texto-prim:    #f2ede5;
+  --texto-sec:     rgba(242, 237, 229, 0.42);
+  --texto-ter:     rgba(242, 237, 229, 0.20);
+  --serifada:      'Cormorant Garamond', 'Didot', 'Playfair Display', Georgia, serif;
+  --sans:          'Montserrat', 'Helvetica Neue', sans-serif;
+  --display:       'Bebas Neue', 'Impact', sans-serif;
+  --ease-lux:      cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Dimensões do card */
+  --card-w:  260px;
+  --card-h:  390px;
+  --card-r:  4px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SEÇÃO RAIZ
+   ═══════════════════════════════════════════════════════════ */
+.secao {
+  position:   relative;
+  width:      100%;
+  min-height: 100vh;
+  overflow:   hidden;
+  background: rgb(10, 10, 10);
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  padding:         100px 0 80px;
+  gap:             0;
+}
+
+/* ─── Blurs atmosféricos ─── */
+.atm1 {
+  position:       absolute;
+  top:            -10%;
+  left:           -15%;
+  width:          55%;
+  height:         65%;
+  background:     radial-gradient(
+    ellipse at center,
+    rgba(201, 169, 110, 0.065) 0%,
+    transparent                75%
+  );
+  filter:         blur(70px);
+  pointer-events: none;
+}
+
+.atm2 {
+  position:       absolute;
+  bottom:         -15%;
+  right:          -10%;
+  width:          60%;
+  height:         65%;
+  background:     radial-gradient(
+    ellipse at center,
+    rgba(201, 169, 110, 0.045) 0%,
+    transparent                80%
+  );
+  filter:         blur(80px);
+  pointer-events: none;
+}
+
+/* Textura de grão sutil */
+.grain {
+  position:       absolute;
+  inset:          0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity:        0.35;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT — DOIS PAINÉIS
+   ═══════════════════════════════════════════════════════════ */
+.layout {
+  position:    relative;
+  z-index:     10;
+  display:     grid;
+  grid-template-columns: 340px 1fr;
+  align-items: center;
+  width:       100%;
+  max-width:   1280px;
+  padding:     0 64px;
+  gap:         0;
+  min-height:  560px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   COLUNA ESQUERDA — CABEÇALHO
+   ═══════════════════════════════════════════════════════════ */
+.cabecalho {
+  display:        flex;
+  flex-direction: column;
+  gap:            28px;
+  padding-right:  32px;
+  opacity:        0; /* GSAP controla */
+}
+
+/* Supra-headline */
+.cabSupra {
+  display:        flex;
+  align-items:    center;
+  gap:            12px;
+  font-family:    var(--sans);
+  font-weight:    200;
+  font-size:      0.56rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color:          var(--ouro);
+  margin:         0;
+  opacity:        0.75;
+}
+
+.cabSupraLinha {
+  display:    inline-block;
+  width:      28px;
+  height:     1px;
+  background: linear-gradient(to right, var(--ouro), transparent);
+  flex-shrink: 0;
+}
+
+/* Título display */
+.cabTitulo {
+  font-family:    var(--display);
+  font-weight:    400;
+  font-size:      clamp(3.6rem, 5.5vw, 6.4rem);
+  line-height:    0.88;
+  letter-spacing: 0.04em;
+  color:          var(--texto-prim);
+  margin:         0;
+}
+
+.cabItalico {
+  font-family: var(--serifada);
+  font-style:  italic;
+  font-weight: 300;
+  font-size:   clamp(2.8rem, 4.2vw, 5rem);
+  color:       rgba(242, 237, 229, 0.62);
+  display:     block;
+  letter-spacing: 0.01em;
+}
+
+/* Descrição */
+.cabDescricao {
+  font-family:    var(--sans);
+  font-weight:    200;
+  font-size:      0.68rem;
+  line-height:    1.95;
+  letter-spacing: 0.1em;
+  color:          var(--texto-sec);
+  margin:         0;
+}
+
+/* ─── Label da categoria ativa ─── */
+.labelAtiva {
+  display:     flex;
+  align-items: flex-start;
+  gap:         16px;
+  padding:     20px 0 0;
+  border-top:  1px solid rgba(201, 169, 110, 0.12);
+}
+
+.labelAtivaNum {
+  font-family:    var(--sans);
+  font-weight:    200;
+  font-size:      0.5rem;
+  letter-spacing: 0.28em;
+  color:          var(--ouro);
+  opacity:        0.6;
+  padding-top:    3px;
+  white-space:    nowrap;
+}
+
+.labelAtivaBar {
+  width:      1px;
+  height:     40px;
+  background: linear-gradient(
+    to bottom,
+    var(--ouro),
+    transparent
+  );
+  flex-shrink: 0;
+  margin-top:  2px;
+}
+
+.labelAtivaTextos {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+
+.labelAtivaSub {
+  font-family:    var(--sans);
+  font-weight:    200;
+  font-size:      0.52rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color:          var(--ouro);
+  opacity:        0.72;
+  margin:         0;
+  transition:     opacity 0.4s var(--ease-lux);
+}
+
+.labelAtivaNome {
+  font-family:    var(--serifada);
+  font-weight:    300;
+  font-size:      1.55rem;
+  letter-spacing: 0.02em;
+  color:          var(--texto-prim);
+  margin:         0;
+  transition:     opacity 0.4s var(--ease-lux);
+}
+
+/* ─── CTA ─── */
+.cabCta {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             12px;
+  font-family:     var(--sans);
+  font-weight:     300;
+  font-size:       0.58rem;
+  letter-spacing:  0.36em;
+  text-transform:  uppercase;
+  color:           var(--texto-prim);
+  text-decoration: none;
+  border:          1px solid rgba(201, 169, 110, 0.22);
+  padding:         14px 28px;
+  width:           fit-content;
+  position:        relative;
+  overflow:        hidden;
+  transition:      all 0.5s var(--ease-lux);
+}
+
+.cabCta::before {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  left:       -100%;
+  width:      100%;
+  height:     100%;
+  background: linear-gradient(
+    105deg,
+    transparent                   0%,
+    rgba(201, 169, 110, 0.07)    45%,
+    rgba(201, 169, 110, 0.12)    55%,
+    transparent                  100%
+  );
+  transition: left 0.6s var(--ease-lux);
+}
+
+.cabCta::after {
+  content:    '';
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  width:      0;
+  height:     1px;
+  background: linear-gradient(to right, var(--ouro), transparent);
+  transition: width 0.5s var(--ease-lux);
+}
+
+.cabCta:hover {
+  border-color: rgba(201, 169, 110, 0.55);
+  color:        var(--ouro-claro);
+  letter-spacing: 0.40em;
+  box-shadow:
+    0 0 20px rgba(201, 169, 110, 0.08),
+    inset 0 0 20px rgba(201, 169, 110, 0.03);
+}
+
+.cabCta:hover::before { left: 100%; }
+.cabCta:hover::after  { width: 100%; }
+
+.cabCta svg { transition: transform 0.35s var(--ease-lux); }
+.cabCta:hover svg { transform: translateX(5px); }
+
+/* ═══════════════════════════════════════════════════════════
+   COLUNA DIREITA — FAN ÁREA
+   ═══════════════════════════════════════════════════════════ */
+.fanArea {
+  position: relative;
+  height:   var(--card-h);
+  /* espaço lateral para os cards laterais saírem do centro */
+  margin:   0 auto;
+  width:    100%;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CARD
+   ═══════════════════════════════════════════════════════════ */
+.card {
+  position:        absolute;
+  /* Âncora no centro do fan */
+  top:             50%;
+  left:            50%;
+  margin-top:      calc(var(--card-h) / -2);
+  margin-left:     calc(var(--card-w) / -2);
+
+  width:           var(--card-w);
+  height:          var(--card-h);
+  border-radius:   var(--card-r);
+  overflow:        hidden;
+  cursor:          pointer;
+  background:      var(--preto-card);
+
+  /* Borda sutil */
+  outline:         1px solid rgba(201, 169, 110, 0.08);
+  outline-offset:  0;
+
+  /* GSAP controla transform, opacity, z-index */
+  will-change:     transform, opacity;
+  transform-origin: bottom center;
+
+  /* Transição de outline no hover */
+  transition:      outline-color 0.4s var(--ease-lux);
+}
+
+.card:hover {
+  outline-color: rgba(201, 169, 110, 0.18);
+}
+
+/* Card ativo — cursor padrão */
+.cardAtivo {
+  cursor: default;
+}
+
+/* ─── Ilustração ─── */
+.cardIlu {
+  position:    absolute;
+  inset:       0;
+  overflow:    hidden;
+  will-change: transform;
+  transition:  transform 0.95s var(--ease-out-expo);
+}
+
+.ilu {
+  width:      100%;
+  height:     100%;
+  display:    block;
+  object-fit: cover;
+  transition: transform 0.95s var(--ease-out-expo);
+}
+
+/* Zoom suave no hover apenas do card ativo */
+.cardAtivo:hover .ilu {
+  transform: scale(1.05);
+}
+
+/* ─── Efeito shine ─── */
+.cardShine {
+  position:   absolute;
+  top:        0;
+  left:       -100%;
+  width:      60%;
+  height:     100%;
+  background: linear-gradient(
+    108deg,
+    transparent                   0%,
+    rgba(201, 169, 110, 0.00)    30%,
+    rgba(201, 169, 110, 0.08)    50%,
+    rgba(232, 208, 144, 0.04)    60%,
+    transparent                  100%
+  );
+  transform:       skewX(-14deg);
+  pointer-events:  none;
+  z-index:         3;
+
+  /* Inicia quando o card está ativo e recebe hover */
+  transition:      left 0s;
+}
+
+.cardAtivo:hover .cardShine {
+  left:       150%;
+  transition: left 0.9s var(--ease-lux);
+}
+
+/* ─── Overlay escuro ─── */
+.cardOverlay {
+  position:   absolute;
+  inset:      0;
+  background: linear-gradient(
+    to top,
+    rgba(5,  4,  3, 0.95)  0%,
+    rgba(5,  4,  3, 0.52)  40%,
+    rgba(5,  4,  3, 0.14)  68%,
+    rgba(5,  4,  3, 0.04) 100%
+  );
+  z-index:    2;
+  transition: background 0.5s var(--ease-lux);
+}
+
+.cardAtivo:hover .cardOverlay {
+  background: linear-gradient(
+    to top,
+    rgba(5,  4,  3, 0.97)  0%,
+    rgba(5,  4,  3, 0.60)  44%,
+    rgba(5,  4,  3, 0.18)  70%,
+    rgba(5,  4,  3, 0.04) 100%
+  );
+}
+
+/* ─── Glow borda — apenas card ativo ─── */
+.cardGlowBorda {
+  position:    absolute;
+  inset:       0;
+  border:      1px solid rgba(201, 169, 110, 0.32);
+  box-shadow:
+    inset 0 0 28px rgba(201, 169, 110, 0.055),
+    0     0 22px rgba(201, 169, 110, 0.10);
+  border-radius: var(--card-r);
+  z-index:     5;
+  pointer-events: none;
+  animation:   glowPulse 3.2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 1;    box-shadow: inset 0 0 28px rgba(201,169,110,.055), 0 0 22px rgba(201,169,110,.10); }
+  50%       { opacity: 0.65; box-shadow: inset 0 0 40px rgba(201,169,110,.08),  0 0 38px rgba(201,169,110,.16); }
+}
+
+/* ─── Badge ─── */
+.cardBadge {
+  position:        absolute;
+  top:             16px;
+  right:           16px;
+  z-index:         8;
+  font-family:     var(--sans);
+  font-weight:     300;
+  font-size:       0.46rem;
+  letter-spacing:  0.30em;
+  text-transform:  uppercase;
+  color:           var(--ouro);
+  border:          1px solid rgba(201, 169, 110, 0.35);
+  padding:         5px 10px;
+  background:      rgba(5, 4, 3, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+/* ─── Texto inferior do card ─── */
+.cardTexto {
+  position:       absolute;
+  bottom:         0;
+  left:           0;
+  right:          0;
+  z-index:        6;
+  padding:        22px 20px;
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+
+.cardSub {
+  font-family:    var(--sans);
+  font-weight:    200;
+  font-size:      0.50rem;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color:          var(--ouro);
+  opacity:        0.72;
+  margin:         0;
+  transform:      translateY(3px);
+  transition:     transform 0.4s var(--ease-lux),
+                  opacity   0.4s var(--ease-lux);
+}
+
+.cardAtivo:hover .cardSub {
+  transform: translateY(0);
+  opacity:   0.95;
+}
+
+.cardTitulo {
+  font-family:    var(--serifada);
+  font-weight:    300;
+  font-size:      1.45rem;
+  letter-spacing: 0.02em;
+  color:          var(--texto-prim);
+  margin:         0;
+  line-height:    1.1;
+  transform:      translateY(2px);
+  transition:     transform 0.45s var(--ease-lux);
+}
+
+.cardAtivo:hover .cardTitulo {
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVEGAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+.nav {
+  position:    relative;
+  z-index:     20;
+  display:     flex;
+  align-items: center;
+  gap:         24px;
+  margin-top:  52px;
+  opacity:     0; /* GSAP controla */
+}
+
+/* Linha separadora acima */
+.nav::before {
+  content:  '';
+  position: absolute;
+  top:      -26px;
+  left:     50%;
+  transform: translateX(-50%);
+  width:    100px;
+  height:   1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(201, 169, 110, 0.25),
+    transparent
+  );
+}
+
+/* ─── Botões seta ─── */
+.navBtn {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           38px;
+  height:          38px;
+  border:          1px solid rgba(201, 169, 110, 0.20);
+  background:      transparent;
+  color:           rgba(201, 169, 110, 0.65);
+  border-radius:   50%;
+  cursor:          pointer;
+  transition:      all 0.38s var(--ease-lux);
+  outline:         none;
+  padding:         0;
+}
+
+.navBtn:hover:not(:disabled) {
+  border-color: rgba(201, 169, 110, 0.60);
+  color:        var(--ouro-claro);
+  background:   rgba(201, 169, 110, 0.06);
+  box-shadow:   0 0 14px rgba(201, 169, 110, 0.10);
+}
+
+.navBtn:disabled {
+  opacity: 0.3;
+  cursor:  not-allowed;
+}
+
+/* ─── Dots ─── */
+.navDots {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+}
+
+.navDot {
+  width:           6px;
+  height:          2px;
+  border-radius:   2px;
+  background:      var(--ouro);
+  border:          none;
+  padding:         0;
+  cursor:          pointer;
+  outline:         none;
+  opacity:         0.32;   /* GSAP controla */
+  transform-origin: left center;
+  /* GSAP controla scaleX e opacity */
+  transition:      background 0.3s;
+}
+
+.navDot:hover {
+  background: var(--ouro-claro);
+}
+
+/* ─── Acessibilidade: focus visível ─── */
+.navBtn:focus-visible,
+.navDot:focus-visible,
+.cabCta:focus-visible,
+.card:focus-visible {
+  outline:        2px solid var(--ouro);
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVO — TABLET (≤ 1060px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1060px) {
+  .secao {
+    padding: 80px 0 64px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows:    auto auto;
+    padding:  0 40px;
+    gap:      48px;
+    min-height: unset;
+  }
+
+  .cabecalho {
+    padding-right: 0;
+    align-items:   center;
+    text-align:    center;
+    gap:           20px;
+  }
+
+  .cabSupra {
+    justify-content: center;
+  }
+
+  .cabSupraLinha {
+    display: none;
+  }
+
+  .cabDescricao {
+    text-align: center;
+  }
+
+  .labelAtiva {
+    justify-content: center;
+  }
+
+  .cabCta {
+    align-self: center;
+  }
+
+  .fanArea {
+    height: 420px;
+  }
+
+  /* Encolhe o fan no tablet */
+  .secao {
+    --card-w: 220px;
+    --card-h: 340px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVO — MOBILE (≤ 600px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .secao {
+    padding: 60px 0 52px;
+    --card-w: 190px;
+    --card-h: 300px;
+  }
+
+  .layout {
+    padding: 0 20px;
+    gap:     36px;
+  }
+
+  .cabTitulo {
+    font-size: clamp(3rem, 12vw, 4.5rem);
+  }
+
+  .cabItalico {
+    font-size: clamp(2.4rem, 9vw, 3.6rem);
+  }
+
+  .cabDescricao {
+    font-size: 0.62rem;
+  }
+
+  .cabCta {
+    font-size:      0.54rem;
+    letter-spacing: 0.28em;
+    padding:        12px 22px;
+  }
+
+  .fanArea {
+    height: 340px;
+  }
+
+  .cardBadge {
+    display: none;
+  }
+
+  .labelAtivaTextos .labelAtivaNome {
+    font-size: 1.25rem;
+  }
+
+  .nav {
+    gap:        18px;
+    margin-top: 36px;
+  }
+
+  .navBtn {
+    width:  32px;
+    height: 32px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .ilu,
+  .cardShine,
+  .cardSub,
+  .cardTitulo,
+  .cardGlowBorda,
+  .cabCta,
+  .navBtn,
+  .navDot {
+    transition:  none;
+    animation:   none;
+  }
+}
