@@ -10,10 +10,10 @@ export default function Header() {
                 <nav>
                     <a className={style.link} href="">INÍCIO</a>
                     <a className={style.link} href="">PRODUTOS</a>
-                    <a className={style.link} href="">DASHBOARD</a>
+                    <a className={style.link} href="/admin">DASHBOARD</a>
                 </nav>
 
-                <button href="#contato" className={style.navCta}>ACESSAR SISTEMA</button>
+                <a href="/admin" className={style.navCta}>ACESSAR SISTEMA</a>
             </header>
         </>
     )

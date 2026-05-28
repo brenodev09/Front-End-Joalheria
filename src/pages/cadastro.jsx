@@ -1,7 +1,34 @@
 import style from "../styles/cadastro.module.css";
 import background from "../img/bg-cadastro.png";
+import { useState } from "react";
 
 export default function Cadastro() {
+
+
+  const [nome,setNome] = useState(null)
+  const [sobrenome,setSobrenome] = useState(null)
+  const [email,setEmail] = useState(null)
+  const [telefone,setTelefone] = useState(null)
+  const [erro, setErro] = useState(null)
+
+  function ValidarForm(event) {
+
+      event.preventDefault()
+
+    if(!nome || !sobrenome || !email || !telefone) {
+      setErro("Preencha todos os campos")
+      
+      setTimeout(() =>{
+        setErro("")
+      }, 4500)
+      return
+    }
+
+    setErro("")
+  }
+  
+
+
   return (
     <>
       <img className={style.bg} src={background} alt="bg pagina" />
@@ -12,7 +39,8 @@ export default function Cadastro() {
           <p>Informe seus dados pessoais para criar uma conta exclusiva</p>
         </div>
 
-       <form className={style.form}>
+       <form onSubmit={ValidarForm} className={style.form}>
+        
         <div className={style.row}>
           {/* Nome */}
           <div className={style.formGroup}>
@@ -21,7 +49,7 @@ export default function Cadastro() {
               id="nome" 
               className={style.input} 
               placeholder=" " /* Placeholder vazio para a lógica CSS */
-              required 
+               
             />
             <label htmlFor="nome" className={style.label}>NOME</label>
             <div className={style.line} />
@@ -34,7 +62,7 @@ export default function Cadastro() {
               id="sobrenome" 
               className={style.input} 
               placeholder=" "
-              required 
+               
             />
             <label htmlFor="sobrenome" className={style.label}>SOBRENOME</label>
             <div className={style.line} />
@@ -48,7 +76,7 @@ export default function Cadastro() {
             id="email" 
             className={style.input} 
             placeholder=" "
-            required 
+             
           />
           <label htmlFor="email" className={style.label}>E-MAIL</label>
           <div className={style.line} />
@@ -61,15 +89,17 @@ export default function Cadastro() {
             id="telefone" 
             className={style.input} 
             placeholder=" "
-            required 
+             
           />
           <label htmlFor="telefone" className={style.label}>TELEFONE</label>
           <div className={style.line} />
         </div>
 
+        {erro && <p className={style.erro}> {erro} </p> }
+
 
         <div className={style.rodapeForm}>
-            <button className={`btnPadrao ${style.btnCriar}`}>CRIAR CONTA</button>
+            <button type="submit" className={`btnPadrao ${style.btnCriar}`}>CRIAR CONTA</button>
             <div className={style.possuiConta}>
                 <p>Já possui uma conta? </p>
                 <a href="/">Entrar</a>
