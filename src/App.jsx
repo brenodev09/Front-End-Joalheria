@@ -6,6 +6,7 @@ import Produtos from "./components/Produtos/ProductsAdmin.jsx"
 import Conta from "./components/Conta/AzoryAccount.jsx"
 import CategoriasAdmin from "./components/CategoriasAdmin/index.jsx"
 import Cadastrar from "./components/Cadastrar/index.jsx"
+import Cadastro from "./components/Cadastro/Register.jsx"
 import Rotas from "./routes/index.jsx"
 import "./styles/cssGlobal.css"
 
@@ -14,6 +15,7 @@ function App() {
     <>
      
       <Rotas/>
+      {/* <Cadastro/> */}
      {/* <Produtos/> */}
       {/* <Conta/> */}
       {/* <CategoriasAdmin/> */}

@@ -1,0 +1,176 @@
+:root {
+    --bg-color: #050505;
+    --text-grey: #666;
+    /* Cor do subtítulo e rótulo inativo */
+    --gold: #C9A05C;
+    /* Dourado brilhante para estado ativo */
+    --line-grey: #222;
+    /* Linha inferior padrão */
+}
+
+.bg {
+    width: 100%;
+    object-fit: cover;
+    height: 99vh;
+    position: absolute;
+    z-index: 0;
+}
+
+.formulario {
+    position: relative;
+    z-index: 10;
+    width: 37rem;
+    height: 84vh;
+    top: 3rem;
+    justify-self: end;
+    right: 2rem;
+    background: #1A1A1A;
+    border-radius: 1rem;
+    border: .4px solid #c99f5c12;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+}
+
+.topoForm {
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+
+    h1 {
+        font-size: 2.3rem;
+        text-transform: uppercase;
+    }
+
+    p {
+        font-size: .86rem;
+        opacity: 70%;
+    }
+}
+
+
+
+
+
+.formWrapper {
+    background-color: var(--bg-color);
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.subtitulo {
+    color: var(--text-grey);
+    font-size: 14px;
+    margin-bottom: 50px;
+    line-height: 1.4;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    gap: 30px;
+    /* Espaçamento entre os campos Nome/Sobrenome */
+    margin-bottom: 20px;
+}
+
+.formGroup {
+    position: relative;
+    /* Base para o rótulo absoluto */
+    margin-bottom: 35px;
+    /* Espaçamento vertical padrão */
+    width: 100%;
+}
+
+.input {
+    display: block;
+    width: 100%;
+    padding: 10px 0 10px 0;
+    /* Preenchimento para a linha */
+    font-size: 16px;
+    color: white;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line-grey);
+    outline: none;
+    transition: border-color 0.3s ease;
+    z-index: 1;
+    /* Coloca o input acima da linha e do rótulo inicial */
+}
+
+.label {
+    position: absolute;
+    top: 10px;
+    /* Começa alinhado com o texto do input (dentro) */
+    left: 0;
+    color: var(--text-grey);
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    pointer-events: none;
+    /* Garante que o clique passe para o input */
+    transition: all 0.3s ease;
+    z-index: 2;
+    /* Garante que esteja visível */
+}
+
+/* Lógica de Transição para o Rótulo (Floating Label) */
+
+/* 1. Quando o input NÃO está com o placeholder visível (tem texto) OU está com FOCO */
+.input:focus+.label,
+.input:not(:placeholder-shown)+.label {
+    top: -20px;
+    /* Move para cima */
+    font-size: 16px;
+    /* Reduz o tamanho */
+    color: var(--gold);
+    /* Muda para dourado brilhante */
+    text-transform: uppercase;
+    /* Mantém maiúsculo */
+    font-weight: bold;
+}
+
+/* 2. Quando o input está com FOCO, muda a cor da linha inferior para dourado brilhante e a torna mais grossa */
+.input:focus {
+    border-bottom: 2px solid var(--gold);
+}
+
+
+.rodapeForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3rem;
+
+}
+
+.btnCriar{
+    width: 25rem;
+}
+
+.possuiConta {  
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+
+
+    p {
+        font-size: .9rem;
+        opacity: 60%;
+    }
+
+    a{
+        color: #C9A05C;
+        cursor: pointer;
+        font-size: .95rem;
+        font-weight: 600;
+    }
+}
