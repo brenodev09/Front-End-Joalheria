@@ -1,14 +1,13 @@
-/* ── Cole estas classes no seu arquivo .module.css ── */
 
 .painelPrincipal {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 24px;
+  /* padding: 24px; */
+  padding-top: 4rem;
   width: 100%;
 }
 
-/* ── Saudação ── */
 
 .saudacao {
   background-color: #1a1a1a;

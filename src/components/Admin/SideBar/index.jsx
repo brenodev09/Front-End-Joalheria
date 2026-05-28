@@ -1,5 +1,6 @@
 import styles from "./styles.module.css";
 import Logo from "../../../img/logo.svg";
+import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
   return (
@@ -9,7 +10,7 @@ export default function Sidebar() {
       </div>
 
       <nav className={styles.navegacao}>
-        <button className={styles.itemNav}>
+        <NavLink to="/admin" className={styles.itemNav}>
           <img
             width="27"
             height="27"
@@ -17,7 +18,7 @@ export default function Sidebar() {
             alt="dashboard-layout"
           />
           <span className={styles.textoNav}>Dashboard</span>
-        </button>
+        </NavLink>
 
         <button className={styles.itemNav}>
           <img
@@ -28,6 +29,12 @@ export default function Sidebar() {
           />
           <span className={styles.textoNav}>Produtos</span>
         </button>
+        
+        <NavLink to="/admin/categorias" className={styles.itemNav}>
+         <img width="30" height="30" src="https://img.icons8.com/ios/50/ffffff/categorize.png" alt="categorize"/>
+          <span className={styles.textoNav}>Categorias</span>
+        </NavLink>
+
 
         <button className={styles.itemNav}>
           <img

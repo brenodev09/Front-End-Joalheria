@@ -5,13 +5,9 @@ import HeaderAdmin from "../../components/Admin/Header";
 export default function Dashboard() {
   return (
     <>
-      <HeaderAdmin />
-      <SideBar />
 
-      {/* ── Cole este trecho dentro do seu JSX principal ── */}
+      <main className={style.painelPrincipal}>
 
-      <div className={style.painelPrincipal}>
-        {/* Bloco de saudação */}
         <div className={style.saudacao}>
           <p className={style.saudacaoRotulo}>
             PAINEL DE CONTROLE - AZORY JOALHERIA
@@ -100,7 +96,7 @@ export default function Dashboard() {
             <p className={style.cardDescricao}>produtos ativos em estoque</p>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }
