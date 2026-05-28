@@ -1,12 +1,14 @@
 .sidebar {
   width: 220px;
-  min-height: 100vh;
+  height: 100vh;
   background-color: #141414;
   border-right: 1px solid rgba(209, 168, 75, 0.45);
   display: flex;
   flex-direction: column;
   padding: 0;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
 }
 
 
@@ -70,4 +72,8 @@
 .textoNav {
   /* line-height: 1; */
   font-size: .98rem;
+}
+
+.pagAtiva{
+  background: #c9a84c37;
 }

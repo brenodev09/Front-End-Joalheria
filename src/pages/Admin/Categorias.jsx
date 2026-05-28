@@ -1,9 +1,191 @@
 import style from "../../styles/Admin/categorias.module.css"
+import aneis from "../../img/Categorias/aneis.png"
 
 export default function Categorias() {
-    return(
-        <>
-            <h1>Pagina de categorias funcionando</h1>
-        </>
+    return (
+
+        <main>
+
+            <header className={style.headerCategoria}>
+
+                <div className={style.textTitle}>
+                    <h1>Categorias</h1>
+                    <p>Gerencie as categorias dos produtos.</p>
+                </div>
+
+                <button className={`btnPadrao ${style.btnAddCategoria}`}>
+                    <img width="23" height="23" src="https://img.icons8.com/ios-filled/23/ffffff/plus-math.png" alt="plus-math" />
+                    <p>ADICIONAR CATEGORIA</p>
+                </button>
+            </header>
+
+            <div className={style.acoesPage}>
+
+                <div className={style.inputBusca}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" placeholder="Buscar categoria..." />
+                </div>
+
+                <div className={style.filtros}>
+
+                    <select className={style.selectFiltro} name="categoria">
+                        <option value="">Categoria</option>
+                        <option value="aneis">Anéis</option>
+                    </select>
+
+                    <select className={style.selectFiltro} name="material">
+                        <option value="">Material</option>
+                        <option value="ouro">Ouro</option>
+                    </select>
+
+                    <select className={style.selectFiltro} name="status">
+                        <option value="">Status</option>
+                        <option value="ativo">Ativo</option>
+                    </select>
+
+                    <select className={style.selectFiltro} name="estoque">
+                        <option value="">Estoque</option>
+                        <option value="disponivel">Disponível</option>
+                    </select>
+
+                    <button className={style.botaoMaisFiltros}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="4" y1="6" x2="20" y2="6" />
+                            <line x1="8" y1="12" x2="16" y2="12" />
+                            <line x1="11" y1="18" x2="13" y2="18" />
+                        </svg>
+                        Mais Filtros
+                    </button>
+
+                </div>
+
+            </div>
+            <section className={style.secaoGrid}>
+
+                <div className={style.cardCategoria}>
+                    
+                    <div className={style.imagemCategoria}>
+                        <img src={aneis} alt="Anéis" />
+                    </div>
+
+                    <div className={style.infoCategoria}>
+                        <h3 className={style.tituloCategoria}>Anéis</h3>
+                        <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                        <p className={style.descricaoCategoria}>Anéis em ouro, prata e pedras preciosas</p>
+                        <div className={style.acoesCategoria}>
+                            <button className={style.botaoEditar}> 
+                                <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1"/>
+                                <p>Editar</p>
+                            </button>
+                            <button className={style.botaoExcluir}>
+                                <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash"/>
+                                <p>Excluir</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.cardCategoria}>
+                    <div className={style.imagemCategoria}>
+                        <img src={aneis} alt="Anéis" />
+                    </div>
+                    <div className={style.infoCategoria}>
+                        <h3 className={style.tituloCategoria}>Anéis</h3>
+                        <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                        <p className={style.descricaoCategoria}>Anéis em ouro, prata e pedras preciosas</p>
+                       <div className={style.acoesCategoria}>
+                            <button className={style.botaoEditar}> 
+                                <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1"/>
+                                <p>Editar</p>
+                            </button>
+                            <button className={style.botaoExcluir}>
+                                <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash"/>
+                                <p>Excluir</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.cardCategoria}>
+                    <div className={style.imagemCategoria}>
+                        <img src={aneis} alt="Anéis" />
+                    </div>
+                    <div className={style.infoCategoria}>
+                        <h3 className={style.tituloCategoria}>Anéis</h3>
+                        <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                        <p className={style.descricaoCategoria}>Anéis em ouro, prata e pedras preciosas</p>
+                       <div className={style.acoesCategoria}>
+                            <button className={style.botaoEditar}> 
+                                <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1"/>
+                                <p>Editar</p>
+                            </button>
+                            <button className={style.botaoExcluir}>
+                                <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash"/>
+                                <p>Excluir</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.cardCategoria}>
+                    <div className={style.imagemCategoria}>
+                        <img src={aneis} alt="Anéis" />
+                    </div>
+                    <div className={style.infoCategoria}>
+                        <h3 className={style.tituloCategoria}>Anéis</h3>
+                        <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                        <p className={style.descricaoCategoria}>Anéis em ouro, prata e pedras preciosas</p>
+                         <div className={style.acoesCategoria}>
+                            <button className={style.botaoEditar}> 
+                                <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1"/>
+                                <p>Editar</p>
+                            </button>
+                            <button className={style.botaoExcluir}>
+                                <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash"/>
+                                <p>Excluir</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.cardCategoria}>
+                    <div className={style.imagemCategoria}>
+                        <img src={aneis} alt="Anéis" />
+                    </div>
+                    <div className={style.infoCategoria}>
+                        <h3 className={style.tituloCategoria}>Anéis</h3>
+                        <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                        <p className={style.descricaoCategoria}>Anéis em ouro, prata e pedras preciosas</p>
+                        <div className={style.acoesCategoria}>
+                            <button className={style.botaoEditar}>✏ Editar</button>
+                            <button className={style.botaoExcluir}>🗑 Excluir</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.cardCategoria}>
+                    <div className={style.imagemCategoria}>
+                        <img src={aneis} alt="Anéis" />
+                    </div>
+                    <div className={style.infoCategoria}>
+                        <h3 className={style.tituloCategoria}>Anéis</h3>
+                        <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                        <p className={style.descricaoCategoria}>Anéis em ouro, prata e pedras preciosas</p>
+                        <div className={style.acoesCategoria}>
+                            <button className={style.botaoEditar}>✏ Editar</button>
+                            <button className={style.botaoExcluir}>🗑 Excluir</button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+
+
+
     )
 }

@@ -6,11 +6,11 @@ export default function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.cabecalho}>
-        <img src={Logo} alt="Logo" className={styles.logo} />
+        <a href="/"> <img  src={Logo} alt="Logo" className={styles.logo} /></a>
       </div>
 
       <nav className={styles.navegacao}>
-        <NavLink to="/admin" className={styles.itemNav}>
+        <NavLink to="/admin" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
             width="27"
             height="27"
@@ -30,7 +30,7 @@ export default function Sidebar() {
           <span className={styles.textoNav}>Produtos</span>
         </button>
         
-        <NavLink to="/admin/categorias" className={styles.itemNav}>
+        <NavLink to="/admin/categorias" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
          <img width="30" height="30" src="https://img.icons8.com/ios/50/ffffff/categorize.png" alt="categorize"/>
           <span className={styles.textoNav}>Categorias</span>
         </NavLink>
