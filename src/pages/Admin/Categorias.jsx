@@ -1,7 +1,12 @@
 import style from "../../styles/Admin/categorias.module.css"
 import aneis from "../../img/Categorias/aneis.png"
+import { useState } from "react"
+import ModalAddCategoria from "../../components/Admin/Modais/ModalTeste"
 
 export default function Categorias() {
+
+    const [openModal, setOpenModal] = useState(false)
+
     return (
 
         <main>
@@ -13,8 +18,8 @@ export default function Categorias() {
                     <p>Gerencie as categorias dos produtos.</p>
                 </div>
 
-                <button className={`btnPadrao ${style.btnAddCategoria}`}>
-                    <img width="23" height="23" src="https://img.icons8.com/ios-filled/23/ffffff/plus-math.png" alt="plus-math" />
+                <button onClick={() => setOpenModal(true)} className={style.btnAddCategoria}>
+                    <img width="20" height="20" src="https://img.icons8.com/ios-filled/23/plus-math.png" alt="plus-math" />
                     <p>ADICIONAR CATEGORIA</p>
                 </button>
             </header>
@@ -183,6 +188,9 @@ export default function Categorias() {
                 </div>
 
             </section>
+
+            <ModalAddCategoria aberto={openModal}/>
+
         </main>
 
 

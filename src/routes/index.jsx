@@ -9,6 +9,7 @@ import Categorias from "../pages/Admin/Categorias.jsx"
 
 // cadastro e login
 import Cadastro from "../pages/cadastro.jsx"
+import Login from "../pages/login.jsx"
 
 
 export default function Rotas() {
@@ -17,8 +18,9 @@ export default function Rotas() {
             <BrowserRouter>
 
                 <Routes>
+                    <Route path="/" element={<Inicial />} />
                     <Route path="/Cadastrar" element={<Cadastro />}></Route>
-                        <Route path="/" element={<Inicial />} />
+                    <Route path="/Login" element={<Login />}></Route>
 
                     <Route path="/admin" element={<AdminLayout />} >
                         <Route index element={<Dashboard />} />

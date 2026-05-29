@@ -6,16 +6,16 @@ export default function Cadastro() {
 
 
   const [nome,setNome] = useState(null)
-  const [sobrenome,setSobrenome] = useState(null)
   const [email,setEmail] = useState(null)
-  const [telefone,setTelefone] = useState(null)
+  const [senha,setSenha] = useState(null)
+  const [confirmarSenha,setConfirmarSenha] = useState(null)
   const [erro, setErro] = useState(null)
 
   function ValidarForm(event) {
 
       event.preventDefault()
 
-    if(!nome || !sobrenome || !email || !telefone) {
+    if(!nome || !email || !senha || !confirmarSenha) {
       setErro("Preencha todos os campos")
       
       setTimeout(() =>{
@@ -42,7 +42,7 @@ export default function Cadastro() {
        <form onSubmit={ValidarForm} className={style.form}>
         
         <div className={style.row}>
-          {/* Nome */}
+          {/* Nome de usuario */}
           <div className={style.formGroup}>
             <input 
               type="text" 
@@ -51,11 +51,11 @@ export default function Cadastro() {
               placeholder=" " /* Placeholder vazio para a lógica CSS */
                
             />
-            <label htmlFor="nome" className={style.label}>NOME</label>
+            <label htmlFor="nome" className={style.label}>NOME DE USUÁRIO</label>
             <div className={style.line} />
           </div>
 
-          {/* Sobrenome */}
+          {/* Email */}
           <div className={style.formGroup}>
             <input 
               type="text" 
@@ -64,34 +64,34 @@ export default function Cadastro() {
               placeholder=" "
                
             />
-            <label htmlFor="sobrenome" className={style.label}>SOBRENOME</label>
+            <label htmlFor="sobrenome" className={style.label}>EMAIL</label>
             <div className={style.line} />
           </div>
         </div>
 
-        {/* E-mail */}
+        {/* Senha */}
         <div className={style.formGroup}>
           <input 
-            type="email" 
+            type="password" 
             id="email" 
             className={style.input} 
             placeholder=" "
              
           />
-          <label htmlFor="email" className={style.label}>E-MAIL</label>
+          <label htmlFor="email" className={style.label}>SENHA</label>
           <div className={style.line} />
         </div>
 
-        {/* Telefone */}
+        {/* Confirmar senha */}
         <div className={style.formGroup}>
           <input 
-            type="tel" 
-            id="telefone" 
+            type="password" 
+            id="senha" 
             className={style.input} 
             placeholder=" "
              
           />
-          <label htmlFor="telefone" className={style.label}>TELEFONE</label>
+          <label htmlFor="senha" className={style.label}>CONFIRMAR SENHA</label>
           <div className={style.line} />
         </div>
 
@@ -102,7 +102,7 @@ export default function Cadastro() {
             <button type="submit" className={`btnPadrao ${style.btnCriar}`}>CRIAR CONTA</button>
             <div className={style.possuiConta}>
                 <p>Já possui uma conta? </p>
-                <a href="/">Entrar</a>
+                <a href="/Login">Entrar</a>
             </div>
             
         </div>

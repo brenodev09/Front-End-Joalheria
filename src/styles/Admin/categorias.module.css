@@ -28,9 +28,33 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    background-color: #C9A962;
+    cursor: pointer;
+    letter-spacing: 0.18rem;
+    background: #C9A962;
+    border: 1px solid rgba(201, 169, 110, 0.28);
+    padding: .7rem;
+    position: relative;
+    overflow: hidden;
+    /* transition: color 0.38s var(--ease-premium),
+        border-color 0.38s var(--ease-premium),
+        box-shadow 0.38s var(--ease-premium); */
+    transition: all .3s ease;
+
+    p {
+        color: black;
+        font-size: 12px;
+    font-weight: 700;
+
+
+
+    }
 }
 
+
+.btnAddCategoria:hover {
+    background: #937432;
+    box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
 
 
 .acoesPage {
@@ -154,7 +178,7 @@
     transition: all .3s ease;
     cursor: pointer;
 
-    &:hover{
+    &:hover {
         transform: scale(1.05);
         box-shadow: 0px 0px 10px #c9a86242;
     }
@@ -231,7 +255,7 @@
 }
 
 .botaoExcluir {
-   display: flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -246,12 +270,13 @@
 
     &:hover {
         background-color: #e74c3c;
-        p{
+
+        p {
             color: black;
         }
     }
 
-     p {
+    p {
         text-transform: uppercase;
         font-size: .96rem;
         color: #c0392b;

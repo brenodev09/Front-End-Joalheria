@@ -1,663 +1,495 @@
 /**
- * AzoryAccount — Página de Conta Administrativa
- * Azory Luxury Jewelry Management System
+ * Azory Luxury Jewelry — Minha Conta
+ * AccountPage.jsx
  *
- * Stack: React · CSS Modules · GSAP + useGSAP
- * Deps:  npm install gsap @gsap/react
+ * Stack: React 18 · CSS Modules · useGSAP (via @gsap/react)
+ * Install:  npm install gsap @gsap/react
  */
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import s from "./styles.module.css";
+import styles from "./styles.module.css";
 
-// ─── SIDEBAR DATA ─────────────────────────────────────────────────────────────
-
-const NAV = [
-  { icon: "⬡", label: "Dashboard" },
-  { icon: "◈", label: "Produtos" },
-  { icon: "◆", label: "Estoque" },
-  { icon: "◇", label: "Vendas" },
-  { icon: "≡", label: "Relatórios" },
-  { icon: "↺", label: "Fornecedores" },
-  { icon: "◎", label: "Conta", active: true },
-];
-
-// ─── MOCK DATA ────────────────────────────────────────────────────────────────
-
-const ADMIN = {
-  initials:    "SA",
-  name:        "Sofia Andrade",
-  role:        "Administradora Geral",
-  email:       "sofia.andrade@azory.com.br",
-  phone:       "+55 (11) 99874-3210",
-  username:    "@sofia.azory",
-  lastAccess:  "Hoje às 09:14",
-  memberSince: "Mar 2022",
-  stats: [
-    { label: "Produtos Cadastrados", value: "1.284", sub: "+12 este mês" },
-    { label: "Atividades Recentes",  value: "347",   sub: "últimos 30 dias" },
-    { label: "Tempo no Sistema",     value: "2a 3m",  sub: "desde o ingresso" },
-  ],
+/* ─────────────────────────────────────────
+   Mock admin data
+───────────────────────────────────────── */
+const INITIAL_DATA = {
+  firstName: "Isabella",
+  lastName: "Monteiro",
+  email: "isabella.monteiro@azory.com",
+  phone: "+55 (11) 99234-8801",
+  username: "isabella.admin",
+  role: "Administradora de Estoque",
+  lastAccess: "Hoje às 09:14",
+  joinedAt: "março de 2021",
+  productsCount: 1_847,
+  monthsActive: 38,
+  initials: "IM",
 };
 
-const SESSIONS = [
-  { device: "MacBook Pro 16", os: "macOS Sonoma", ip: "177.92.14.33", current: true },
-  { device: "iPhone 15 Pro",   os: "iOS 17.4",    ip: "177.92.14.33", current: false },
-  { device: "Chrome — Win 11", os: "Windows 11",  ip: "200.143.7.12",  current: false },
-];
+/* ─────────────────────────────────────────
+   Icons (inline SVG — zero deps)
+───────────────────────────────────────── */
+const Icon = {
+  Mail: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </svg>
+  ),
+  Clock: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+  ),
+  Edit: () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+  ),
+  Eye: ({ off }) => off ? (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>
+    </svg>
+  ) : (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  Upload: () => (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+  ),
+  Check: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
+  Diamond: () => (
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth=".6" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="32,4 60,24 32,60 4,24"/>
+      <polygon points="32,4 48,24 32,40 16,24"/>
+      <line x1="4" y1="24" x2="60" y2="24"/>
+    </svg>
+  ),
+};
 
-const LOGIN_HISTORY = [
-  { event: "Login bem-sucedido",  time: "Hoje, 09:14", ip: "177.92.14.33", ok: true },
-  { event: "Login bem-sucedido",  time: "Ontem, 18:42", ip: "177.92.14.33", ok: true },
-  { event: "Tentativa bloqueada", time: "22 mai, 03:17", ip: "45.80.114.9",  ok: false },
-  { event: "Login bem-sucedido",  time: "21 mai, 11:05", ip: "177.92.14.33", ok: true },
-  { event: "Login bem-sucedido",  time: "20 mai, 08:50", ip: "177.92.14.33", ok: true },
-];
+/* ─────────────────────────────────────────
+   Password strength helper
+───────────────────────────────────────── */
+function calcStrength(pw) {
+  if (!pw) return { score: 0, label: "", color: "transparent" };
+  let s = 0;
+  if (pw.length >= 8)  s++;
+  if (/[A-Z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  const map = [
+    null,
+    { label: "Fraca",    color: "#C0392B", pct: "25%" },
+    { label: "Razoável", color: "#D4A017", pct: "50%" },
+    { label: "Boa",      color: "#27AE60", pct: "75%" },
+    { label: "Forte",    color: "#2ECC71", pct: "100%" },
+  ];
+  return map[s] || map[1];
+}
 
-// ─── SIDEBAR ──────────────────────────────────────────────────────────────────
-
-function Sidebar() {
-  const ref = useRef();
-
-  useGSAP(() => {
-    gsap.from(ref.current.querySelectorAll("[data-nav]"), {
-      opacity: 0, x: -14,
-      duration: 0.5, stagger: 0.06, ease: "power2.out", delay: 0.1,
-    });
-  }, { scope: ref });
-
+/* ─────────────────────────────────────────
+   Reusable Field
+───────────────────────────────────────── */
+function Field({ label, value, onChange, disabled, type = "text", placeholder }) {
   return (
-    <aside ref={ref} className={s.sidebar}>
-      <div className={s.sidebarLogo} title="Azory">Az</div>
-
-      <nav className={s.sidebarNav}>
-        {NAV.map((item, i) => (
-          <div
-            key={i}
-            data-nav
-            className={`${s.navItem} ${item.active ? s.navItemActive : ""}`}
-          >
-            <span>{item.icon}</span>
-            <span className={s.navTooltip}>{item.label}</span>
-          </div>
-        ))}
-      </nav>
-
-      <div className={s.sidebarBottom}>
-        <div className={s.sidebarAva} title="Sofia Andrade">S</div>
-      </div>
-    </aside>
+    <div className={styles.field}>
+      <label className={styles.fieldLabel}>{label}</label>
+      <input
+        className={styles.fieldInput}
+        type={type}
+        value={value}
+        onChange={e => onChange?.(e.target.value)}
+        disabled={disabled}
+        placeholder={placeholder}
+        autoComplete="off"
+        spellCheck={false}
+      />
+    </div>
   );
 }
 
-// ─── PROFILE HERO ─────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────
+   PasswordField (with eye toggle + strength)
+───────────────────────────────────────── */
+function PasswordField({ label, value, onChange, disabled, showStrength }) {
+  const [show, setShow] = useState(false);
+  const strength = showStrength ? calcStrength(value) : null;
 
-function ProfileHero() {
   return (
-    <div className={s.profileHero} data-hero>
-      <div className={s.profileHeroBg} />
-      <div className={s.profileHeroBg2} />
-
-      <div className={s.profileHeroInner}>
-        {/* Avatar */}
-        <div className={s.profileAvaWrap}>
-          <div className={s.profileAva}>
-            {ADMIN.initials}
-            <div className={s.profileAvaRing} />
-          </div>
-          <div className={s.profileOnline} title="Online" />
-        </div>
-
-        {/* Info */}
-        <div className={s.profileInfo}>
-          <div className={s.profileName}>{ADMIN.name}</div>
-          <div className={s.profileRole}>{ADMIN.role}</div>
-          <div className={s.profileMeta}>
-            <div className={s.profileMetaItem}>
-              <span style={{ color: "var(--gold)", fontSize: 11 }}>✉</span>
-              <span>{ADMIN.email}</span>
-            </div>
-            <div className={s.profileMetaItem}>
-              <span style={{ color: "var(--gold)", fontSize: 11 }}>◎</span>
-              <span>Último acesso: <span>{ADMIN.lastAccess}</span></span>
-            </div>
-            <div className={s.profileMetaItem}>
-              <span style={{ color: "var(--gold)", fontSize: 11 }}>◆</span>
-              <span>Membro desde <span>{ADMIN.memberSince}</span></span>
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className={s.profileActions}>
-          <button className={s.btnEditProfile}>
-            <span>✎</span> Editar Perfil
+    <div className={styles.field}>
+      <label className={styles.fieldLabel}>{label}</label>
+      <div className={styles.fieldWrap}>
+        <input
+          className={styles.fieldInput}
+          type={show ? "text" : "password"}
+          value={value}
+          onChange={e => onChange?.(e.target.value)}
+          disabled={disabled}
+          autoComplete="new-password"
+          placeholder={disabled ? "••••••••" : ""}
+        />
+        {!disabled && (
+          <button className={styles.eyeBtn} type="button" onClick={() => setShow(v => !v)} aria-label="Mostrar senha">
+            <Icon.Eye off={show} />
           </button>
-          <div className={s.profileStatusChip}>Conta Ativa</div>
-        </div>
+        )}
       </div>
-
-      {/* Stats strip */}
-      <div className={s.statsRow}>
-        {ADMIN.stats.map((st, i) => (
-          <div key={i} className={s.statChip} data-stat>
-            <span className={s.statChipLabel}>{st.label}</span>
-            <span className={s.statChipValue}>{st.value}</span>
-            <span className={s.statChipSub}>{st.sub}</span>
+      {showStrength && value && (
+        <>
+          <div className={styles.strengthBar}>
+            <div className={styles.strengthFill} style={{ width: strength.pct, background: strength.color }} />
           </div>
-        ))}
-      </div>
+          <span className={styles.strengthLabel} style={{ color: strength.color }}>
+            Força da senha: {strength.label}
+          </span>
+        </>
+      )}
     </div>
   );
 }
 
-// ─── PERSONAL INFO SECTION ────────────────────────────────────────────────────
-
-function PersonalInfo() {
-  const [form, setForm] = useState({
-    nome:     ADMIN.name,
-    email:    ADMIN.email,
-    telefone: ADMIN.phone,
-    usuario:  ADMIN.username,
-    cargo:    ADMIN.role,
-  });
-
-  const field = (key) => ({
-    value: form[key],
-    onChange: e => setForm(p => ({ ...p, [key]: e.target.value })),
-  });
-
+/* ─────────────────────────────────────────
+   Toast
+───────────────────────────────────────── */
+function Toast({ message, onDone }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 2800);
+    return () => clearTimeout(t);
+  }, [onDone]);
   return (
-    <div className={s.sectionCard} data-card>
-      <div className={s.sectionHeader}>
-        <div className={s.sectionHeaderLeft}>
-          <div className={s.sectionIconWrap}>◈</div>
-          <div>
-            <div className={s.sectionTitle}>Informações Pessoais</div>
-            <div className={s.sectionSubtitle}>Dados do perfil administrativo</div>
-          </div>
-        </div>
-        <button className={s.btnSave}>Salvar</button>
-      </div>
-
-      <div className={s.sectionBody}>
-        <div className={s.formRow}>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Nome Completo</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◎</span>
-              <input className={s.formInput} {...field("nome")} />
-            </div>
-          </div>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Nome de Usuário</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>@</span>
-              <input className={s.formInput} {...field("usuario")} />
-              <span className={s.inputBadge}>único</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={s.formRow}>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>E-mail</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>✉</span>
-              <input className={s.formInput} type="email" {...field("email")} />
-            </div>
-          </div>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Telefone</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◇</span>
-              <input className={s.formInput} {...field("telefone")} />
-            </div>
-          </div>
-        </div>
-
-        <div className={`${s.formGroup}`}>
-          <label className={s.formLabel}>Cargo / Função</label>
-          <div className={s.inputWrap}>
-            <span className={s.inputIcon}>◆</span>
-            <input className={s.formInput} {...field("cargo")} />
-          </div>
-        </div>
-
-        <div className={s.formRow}>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>ID da Conta</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>⬡</span>
-              <input className={`${s.formInput} ${s.formInputReadonly}`} readOnly value="ADM-00142" />
-            </div>
-          </div>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Nível de Acesso</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◈</span>
-              <input className={`${s.formInput} ${s.formInputReadonly}`} readOnly value="Super Admin" />
-              <span className={s.inputBadge}>máximo</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className={styles.toast}>
+      <span className={styles.toastDot} />
+      {message}
     </div>
   );
 }
 
-// ─── SECURITY SECTION ─────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────
+   AccountPage
+───────────────────────────────────────── */
+export default function AccountPage() {
+  const data = INITIAL_DATA;
 
-function SecuritySection() {
-  const [pwd, setPwd] = useState({ current: "", nova: "", confirm: "" });
-  const [strength, setStrength] = useState(0);
+  /* edit states */
+  const [editInfo,  setEditInfo]  = useState(false);
+  const [editPass,  setEditPass]  = useState(false);
+  const [editPhoto, setEditPhoto] = useState(false);
 
-  const calcStrength = (v) => {
-    let sc = 0;
-    if (v.length >= 8) sc++;
-    if (/[A-Z]/.test(v)) sc++;
-    if (/[0-9]/.test(v)) sc++;
-    if (/[^A-Za-z0-9]/.test(v)) sc++;
-    setStrength(sc);
+  /* info form */
+  const [info, setInfo] = useState({
+    firstName: data.firstName,
+    lastName:  data.lastName,
+    email:     data.email,
+    phone:     data.phone,
+    username:  data.username,
+  });
+  const setInfoField = key => val => setInfo(p => ({ ...p, [key]: val }));
+
+  /* password form */
+  const [pass, setPass] = useState({ current: "", next: "", confirm: "" });
+  const setPassField = key => val => setPass(p => ({ ...p, [key]: val }));
+
+  /* photo */
+  const [photoSrc, setPhotoSrc] = useState(null);
+  const fileRef   = useRef(null);
+
+  /* toast */
+  const [toast, setToast] = useState(null);
+  const fireToast = msg => setToast(msg);
+
+  /* save handlers */
+  const saveInfo = useCallback(() => {
+    setEditInfo(false);
+    fireToast("Informações atualizadas com sucesso.");
+  }, []);
+
+  const savePass = useCallback(() => {
+    if (!pass.current || !pass.next) return fireToast("Preencha todos os campos.");
+    if (pass.next !== pass.confirm) return fireToast("As senhas não coincidem.");
+    setPass({ current: "", next: "", confirm: "" });
+    setEditPass(false);
+    fireToast("Senha alterada com sucesso.");
+  }, [pass]);
+
+  const handleFileChange = e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { setPhotoSrc(ev.target.result); fireToast("Foto atualizada."); };
+    reader.readAsDataURL(file);
   };
 
-  const strengthColor = ["var(--rim)", "var(--danger)", "var(--warn)", "#6BA368", "var(--success)"];
-  const strengthLabel = ["", "Fraca", "Razoável", "Boa", "Excelente"];
+  /* ── GSAP refs ── */
+  const bannerRef = useRef(null);
+  const stat0     = useRef(null);
+  const stat1     = useRef(null);
+  const card0     = useRef(null);
+  const card1     = useRef(null);
+  const card2     = useRef(null);
+
+  /* ── GSAP entrance ── */
+  useGSAP(() => {
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    tl.fromTo(bannerRef.current,
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: .7 }
+    )
+    .fromTo([stat0.current, stat1.current],
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: .5, stagger: .12 },
+      "-=.2"
+    )
+    .fromTo([card0.current, card1.current, card2.current],
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: .55, stagger: .14 },
+      "-=.2"
+    );
+  }, []);
+
+  /* ── Card glow on edit activate ── */
+  const animateCard = (ref) => {
+    gsap.fromTo(ref.current,
+      { boxShadow: "0 0 0px rgba(212,175,110,0)" },
+      { boxShadow: "0 0 28px rgba(212,175,110,0.15), 0 0 0 1px rgba(212,175,110,0.4)", duration: .4, ease: "power2.out" }
+    );
+  };
+
+  /* ── Number counter for stats ── */
+  const numRef0 = useRef(null);
+  const numRef1 = useRef(null);
+  useGSAP(() => {
+    const obj = { v: 0 };
+    gsap.to(obj, {
+      v: data.productsCount, duration: 1.6, delay: .7, ease: "power2.out",
+      onUpdate: () => {
+        if (numRef0.current) numRef0.current.textContent = Math.round(obj.v).toLocaleString("pt-BR");
+      }
+    });
+    const obj2 = { v: 0 };
+    gsap.to(obj2, {
+      v: data.monthsActive, duration: 1.2, delay: .85, ease: "power2.out",
+      onUpdate: () => {
+        if (numRef1.current) numRef1.current.textContent = Math.round(obj2.v);
+      }
+    });
+  }, []);
 
   return (
-    <div className={s.sectionCard} data-card>
-      <div className={s.sectionHeader}>
-        <div className={s.sectionHeaderLeft}>
-          <div className={s.sectionIconWrap}>⬡</div>
-          <div>
-            <div className={s.sectionTitle}>Segurança da Conta</div>
-            <div className={s.sectionSubtitle}>Senha, 2FA e acessos ativos</div>
+    <div className={styles.page}>
+
+      {/* ── Banner ── */}
+      <div className={styles.banner} ref={bannerRef}>
+        <div className={styles.bannerLines} />
+        <div className={styles.cornerOrnament}><Icon.Diamond /></div>
+
+        <div className={styles.bannerInner}>
+          {/* Avatar */}
+          <div className={styles.avatarWrap}>
+            <div className={styles.avatarRing} onClick={() => fileRef.current?.click()}>
+              <div className={styles.avatarInner}>
+                {photoSrc ? <img src={photoSrc} alt="Admin" /> : data.initials}
+              </div>
+            </div>
+            <div className={styles.statusDot} title="Online" />
+          </div>
+
+          {/* Text */}
+          <div className={styles.bannerText}>
+            <h1 className={styles.bannerName}>{info.firstName} {info.lastName}</h1>
+            <p className={styles.bannerRole}>{data.role}</p>
+            <div className={styles.bannerMeta}>
+              <div className={styles.metaRow}>
+                <Icon.Mail />
+                <span>{info.email}</span>
+              </div>
+              <div className={styles.metaRow}>
+                <Icon.Clock />
+                Último acesso: <span>{data.lastAccess}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <button
+            className={styles.editProfileBtn}
+            onClick={() => { setEditInfo(true); card0.current?.scrollIntoView({ behavior: "smooth", block: "center" }); animateCard(card0); }}
+          >
+            <Icon.Edit />
+            Editar Perfil
+          </button>
+        </div>
+
+        {/* Stats */}
+        <div className={styles.bannerStats}>
+          <div className={styles.statItem} ref={stat0}>
+            <span className={styles.statNum} ref={numRef0}>0</span>
+            <span className={styles.statLabel}>Produtos cadastrados</span>
+          </div>
+          <div className={styles.statItem} ref={stat1}>
+            <span className={styles.statNum}><span ref={numRef1}>0</span> meses</span>
+            <span className={styles.statLabel}>No sistema · desde {data.joinedAt}</span>
           </div>
         </div>
-        <button className={s.btnSave}>Atualizar</button>
       </div>
 
-      <div className={s.sectionBody}>
-        {/* Change password */}
-        <div className={s.formGroup}>
-          <label className={s.formLabel}>Senha Atual</label>
-          <div className={s.inputWrap}>
-            <span className={s.inputIcon}>◆</span>
-            <input
-              className={s.formInput} type="password" placeholder="••••••••"
-              value={pwd.current} onChange={e => setPwd(p => ({ ...p, current: e.target.value }))}
-            />
-          </div>
-        </div>
+      {/* ── Content ── */}
+      <div className={styles.content}>
 
-        <div className={s.formRow}>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Nova Senha</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◆</span>
-              <input
-                className={s.formInput} type="password" placeholder="Mínimo 8 caracteres"
-                value={pwd.nova}
-                onChange={e => { setPwd(p => ({ ...p, nova: e.target.value })); calcStrength(e.target.value); }}
-              />
+        {/* ─ Informações Pessoais ─ */}
+        <section>
+          <p className={styles.sectionLabel}>Informações Pessoais</p>
+          <div className={styles.card} ref={card0}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardTitle}>Dados da conta</span>
+              <button
+                className={`${styles.editBtn} ${editInfo ? styles.active : ""}`}
+                onClick={() => { setEditInfo(v => !v); if (!editInfo) animateCard(card0); }}
+              >
+                <Icon.Edit /> {editInfo ? "Editando" : "Editar"}
+              </button>
             </div>
-            {pwd.nova && (
-              <div className={s.pwdStrength}>
-                <div className={s.pwdStrengthBar}>
-                  {[1,2,3,4].map(i => (
-                    <div
-                      key={i}
-                      className={s.pwdStrengthSeg}
-                      style={{ background: strength >= i ? strengthColor[strength] : undefined }}
-                    />
-                  ))}
-                </div>
-                <span className={s.pwdStrengthLabel} style={{ color: strengthColor[strength] }}>
-                  {strengthLabel[strength]}
-                </span>
+
+            <div className={styles.formGrid}>
+              <Field label="Nome" value={info.firstName} onChange={setInfoField("firstName")} disabled={!editInfo} />
+              <Field label="Sobrenome" value={info.lastName} onChange={setInfoField("lastName")} disabled={!editInfo} />
+              <Field label="E-mail" value={info.email} onChange={setInfoField("email")} disabled={!editInfo} type="email" />
+              <Field label="Telefone" value={info.phone} onChange={setInfoField("phone")} disabled={!editInfo} />
+              <div className={styles.formGridFull}>
+                <Field label="Usuário" value={info.username} onChange={setInfoField("username")} disabled={!editInfo} />
+              </div>
+            </div>
+
+            {editInfo && (
+              <div className={styles.saveRow}>
+                <button className={styles.btnSecondary} onClick={() => setEditInfo(false)}>Cancelar</button>
+                <button className={styles.btnPrimary} onClick={saveInfo}>Salvar Alterações</button>
               </div>
             )}
           </div>
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Confirmar Senha</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◆</span>
-              <input
-                className={s.formInput} type="password" placeholder="Repita a nova senha"
-                value={pwd.confirm} onChange={e => setPwd(p => ({ ...p, confirm: e.target.value }))}
-                style={pwd.confirm && pwd.nova !== pwd.confirm ? { borderColor: "var(--danger)" } : {}}
+        </section>
+
+        {/* ─ Alteração de Senha ─ */}
+        <section>
+          <p className={styles.sectionLabel}>Segurança</p>
+          <div className={styles.card} ref={card1}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardTitle}>Alterar senha</span>
+              <button
+                className={`${styles.editBtn} ${editPass ? styles.active : ""}`}
+                onClick={() => { setEditPass(v => !v); if (!editPass) animateCard(card1); }}
+              >
+                <Icon.Edit /> {editPass ? "Editando" : "Editar"}
+              </button>
+            </div>
+
+            <div className={styles.formGrid}>
+              <div className={styles.formGridFull}>
+                <PasswordField
+                  label="Senha atual"
+                  value={pass.current}
+                  onChange={setPassField("current")}
+                  disabled={!editPass}
+                />
+              </div>
+              <PasswordField
+                label="Nova senha"
+                value={pass.next}
+                onChange={setPassField("next")}
+                disabled={!editPass}
+                showStrength
+              />
+              <PasswordField
+                label="Confirmar nova senha"
+                value={pass.confirm}
+                onChange={setPassField("confirm")}
+                disabled={!editPass}
               />
             </div>
+
+            {editPass && (
+              <div className={styles.saveRow}>
+                <button className={styles.btnSecondary} onClick={() => { setEditPass(false); setPass({ current: "", next: "", confirm: "" }); }}>Cancelar</button>
+                <button className={styles.btnPrimary} onClick={savePass}>Atualizar Senha</button>
+              </div>
+            )}
           </div>
-        </div>
+        </section>
 
-        <div className={s.divider} />
+        {/* ─ Foto de Perfil ─ */}
+        <section>
+          <p className={styles.sectionLabel}>Foto de Perfil</p>
+          <div className={styles.card} ref={card2}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardTitle}>Imagem da conta</span>
+              <button
+                className={`${styles.editBtn} ${editPhoto ? styles.active : ""}`}
+                onClick={() => { setEditPhoto(v => !v); if (!editPhoto) animateCard(card2); }}
+              >
+                <Icon.Edit /> {editPhoto ? "Editando" : "Editar"}
+              </button>
+            </div>
 
-        {/* 2FA & security settings */}
-        {[
-          {
-            icon: "◈", iconBg: "var(--gold-ghost)", iconColor: "var(--gold)",
-            title: "Autenticação em 2 Fatores",
-            desc: "Camada extra de segurança via aplicativo autenticador",
-            badge: "Ativado", badgeCls: s.securityBadgeGreen,
-          },
-          {
-            icon: "◇", iconBg: "var(--info-bg)", iconColor: "var(--info)",
-            title: "Chave de Recuperação",
-            desc: "Gerar novos códigos de recuperação de emergência",
-            badge: "3 restantes", badgeCls: s.securityBadgeOrange,
-          },
-          {
-            icon: "⬡", iconBg: "var(--danger-bg)", iconColor: "var(--danger)",
-            title: "Encerrar Todas as Sessões",
-            desc: "Desconectar todos os dispositivos imediatamente",
-            badge: "3 sessões", badgeCls: s.securityBadgeRed,
-          },
-        ].map((item, i) => (
-          <div key={i} className={s.securityItem}>
-            <div className={s.securityItemLeft}>
+            <div className={styles.photoRow}>
+              <div className={styles.photoPreview} onClick={editPhoto ? () => fileRef.current?.click() : undefined} style={{ cursor: editPhoto ? "pointer" : "default" }}>
+                {photoSrc ? <img src={photoSrc} alt="Foto de perfil" /> : data.initials}
+              </div>
+              <div className={styles.photoActions}>
+                <p className={styles.photoHint}>
+                  Foto exibida no painel e relatórios.<br />
+                  Recomendado: quadrada, mínimo 200×200 px.
+                </p>
+                {editPhoto && (
+                  <button className={styles.btnSecondary} style={{ alignSelf: "flex-start" }} onClick={() => fileRef.current?.click()}>
+                    Escolher foto
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {editPhoto && (
               <div
-                className={s.securityItemIcon}
-                style={{ background: item.iconBg, color: item.iconColor, border: "1px solid " + item.iconBg.replace("0.10", "0.3") }}
+                className={styles.uploadZone}
+                onClick={() => fileRef.current?.click()}
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = ev => { setPhotoSrc(ev.target.result); fireToast("Foto atualizada."); };
+                  reader.readAsDataURL(file);
+                }}
               >
-                {item.icon}
+                <div className={styles.uploadIcon}><Icon.Upload /></div>
+                <p className={styles.uploadText}><strong>Clique para enviar</strong> ou arraste a imagem aqui</p>
+                <p className={styles.uploadSub}>PNG, JPG, WEBP · máx 4 MB</p>
               </div>
-              <div>
-                <div className={s.securityItemTitle}>{item.title}</div>
-                <div className={s.securityItemDesc}>{item.desc}</div>
-              </div>
-            </div>
-            <span className={`${s.securityBadge} ${item.badgeCls}`}>{item.badge}</span>
-            <span className={s.securityItemArrow}>›</span>
+            )}
           </div>
-        ))}
+        </section>
 
-        <div className={s.divider} />
-
-        {/* Active sessions */}
-        <div>
-          <label className={s.formLabel} style={{ display: "block", marginBottom: 10 }}>Sessões Ativas</label>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {SESSIONS.map((session, i) => (
-              <div key={i} className={s.sessionItem}>
-                <div className={s.sessionDeviceIcon}>
-                  {session.os.startsWith("iOS") ? "◎" : session.os.startsWith("macOS") ? "◈" : "◆"}
-                </div>
-                <div className={s.sessionInfo}>
-                  <div className={s.sessionDevice}>{session.device}</div>
-                  <div className={s.sessionMeta}>{session.os} · {session.ip}</div>
-                </div>
-                {session.current
-                  ? <span className={s.sessionCurrent}>Esta sessão</span>
-                  : <button className={s.btnRevoke}>Revogar</button>
-                }
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={s.divider} />
-
-        {/* Login history */}
-        <div>
-          <label className={s.formLabel} style={{ display: "block", marginBottom: 10 }}>Histórico de Login</label>
-          <div className={s.historyList}>
-            {LOGIN_HISTORY.map((h, i) => (
-              <div key={i} className={s.historyItem}>
-                <div
-                  className={s.historyDot}
-                  style={{
-                    background: h.ok ? "var(--success)" : "var(--danger)",
-                    boxShadow: `0 0 6px ${h.ok ? "var(--success)" : "var(--danger)"}`,
-                  }}
-                />
-                <div className={s.historyInfo}>
-                  <div className={s.historyEvent}>{h.event}</div>
-                  <div className={s.historyTime}>{h.time}</div>
-                </div>
-                <span className={s.historyIp}>{h.ip}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── PREFERENCES SECTION ──────────────────────────────────────────────────────
-
-function PreferencesSection() {
-  const [theme, setTheme]     = useState("dark");
-  const [language, setLang]   = useState("pt-BR");
-  const [toggles, setToggles] = useState({
-    email_vendas:    true,
-    email_estoque:   true,
-    email_sistema:   false,
-    push_alerts:     true,
-    digest_semanal:  false,
-    relatorio_mensal: true,
-  });
-
-  const toggle = (key) => setToggles(p => ({ ...p, [key]: !p[key] }));
-
-  const THEMES = [
-    { key: "dark",    label: "Escuro",    preview: "linear-gradient(135deg,#0B0B0F,#1C1C23)" },
-    { key: "darker",  label: "Midnight",  preview: "linear-gradient(135deg,#060608,#111117)" },
-    { key: "light",   label: "Claro",     preview: "linear-gradient(135deg,#F8F6F2,#EDE8DF)" },
-  ];
-
-  return (
-    <div className={s.sectionCard} data-card style={{ gridColumn: "1 / -1" }}>
-      <div className={s.sectionHeader}>
-        <div className={s.sectionHeaderLeft}>
-          <div className={s.sectionIconWrap}>◇</div>
-          <div>
-            <div className={s.sectionTitle}>Preferências do Sistema</div>
-            <div className={s.sectionSubtitle}>Tema, notificações e idioma</div>
-          </div>
-        </div>
-        <button className={s.btnSave}>Salvar</button>
       </div>
 
-      <div className={s.sectionBody}>
-        <div className={s.formRow}>
-          {/* Theme */}
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Tema da Interface</label>
-            <div className={s.themeOptions}>
-              {THEMES.map(t => (
-                <div
-                  key={t.key}
-                  className={`${s.themeOption} ${theme === t.key ? s.themeOptionActive : ""}`}
-                  onClick={() => setTheme(t.key)}
-                >
-                  <div
-                    className={s.themePreview}
-                    style={{ background: t.preview }}
-                  />
-                  <span className={s.themeLabel}>{t.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Language */}
-          <div className={s.formGroup}>
-            <label className={s.formLabel}>Idioma</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◆</span>
-              <select
-                className={s.formSelect}
-                value={language}
-                onChange={e => setLang(e.target.value)}
-              >
-                <option value="pt-BR">Português (Brasil)</option>
-                <option value="en-US">English (US)</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-              </select>
-            </div>
-
-            <label className={s.formLabel} style={{ marginTop: 14 }}>Formato de Data</label>
-            <div className={s.inputWrap}>
-              <span className={s.inputIcon}>◈</span>
-              <select className={s.formSelect} defaultValue="dd/mm/yyyy">
-                <option>DD/MM/AAAA</option>
-                <option>MM/DD/AAAA</option>
-                <option>AAAA-MM-DD</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className={s.divider} />
-
-        {/* Notifications */}
-        <div>
-          <label className={s.formLabel} style={{ display: "block", marginBottom: 14 }}>Notificações</label>
-          <div className={s.notifGrid}>
-            {[
-              { key: "email_vendas",    label: "E-mail: Novas Vendas" },
-              { key: "email_estoque",   label: "E-mail: Estoque Baixo" },
-              { key: "email_sistema",   label: "E-mail: Atualizações do Sistema" },
-              { key: "push_alerts",     label: "Push: Alertas Críticos" },
-              { key: "digest_semanal",  label: "Digest Semanal" },
-              { key: "relatorio_mensal",label: "Relatório Mensal" },
-            ].map(n => (
-              <div key={n.key} className={s.notifItem}>
-                <span className={s.notifItemName}>{n.label}</span>
-                <label className={s.toggle}>
-                  <input
-                    type="checkbox"
-                    className={s.toggleInput}
-                    checked={toggles[n.key]}
-                    onChange={() => toggle(n.key)}
-                  />
-                  <span className={s.toggleSlider} />
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={s.divider} />
-
-        {/* More toggles */}
-        <div>
-          <label className={s.formLabel} style={{ display: "block", marginBottom: 12 }}>Comportamento</label>
-          {[
-            { label: "Confirmação antes de exclusões",    desc: "Exibir modal de confirmação ao excluir itens", key: "confirm_delete",  defaultChecked: true  },
-            { label: "Modo compacto de listagem",         desc: "Reduzir espaçamento nas tabelas de produtos",  key: "compact_mode",    defaultChecked: false },
-            { label: "Autosalvar rascunhos",              desc: "Salvar automaticamente formulários em edição", key: "autosave",        defaultChecked: true  },
-          ].map((item, i) => (
-            <div key={i} className={s.toggleRow}>
-              <div className={s.toggleInfo}>
-                <span className={s.toggleName}>{item.label}</span>
-                <span className={s.toggleDesc}>{item.desc}</span>
-              </div>
-              <label className={s.toggle}>
-                <input type="checkbox" className={s.toggleInput} defaultChecked={item.defaultChecked} />
-                <span className={s.toggleSlider} />
-              </label>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── DANGER ZONE ─────────────────────────────────────────────────────────────
-
-function DangerZone() {
-  return (
-    <div className={`${s.dangerZone} ${s.contentGridFull}`} data-card>
-      <div className={s.dangerZoneText}>
-        <div className={s.dangerZoneTitle}>Zona de Perigo</div>
-        <div className={s.dangerZoneDesc}>
-          Ações irreversíveis. A desativação da conta remove todos os acessos imediatamente.
-        </div>
-      </div>
-      <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-        <button className={s.btnDanger}>Exportar Dados</button>
-        <button className={s.btnDanger}>Desativar Conta</button>
-      </div>
-    </div>
-  );
-}
-
-// ─── ROOT ─────────────────────────────────────────────────────────────────────
-
-export default function AzoryAccount() {
-  const mainRef = useRef();
-
-  useGSAP(() => {
-    // Topbar
-    gsap.from("[data-topbar]", {
-      opacity: 0, y: -10, filter: "blur(4px)",
-      duration: 0.7, ease: "power3.out",
-    });
-
-    // Hero
-    gsap.from("[data-hero]", {
-      opacity: 0, y: 20, filter: "blur(6px)",
-      duration: 0.8, ease: "power2.out", delay: 0.15,
-    });
-
-    // Stat chips stagger
-    gsap.from("[data-stat]", {
-      opacity: 0, y: 10,
-      duration: 0.5, stagger: 0.1, ease: "power2.out", delay: 0.45,
-    });
-
-    // Section cards stagger
-    gsap.from("[data-card]", {
-      opacity: 0, y: 24, filter: "blur(4px)",
-      duration: 0.65, stagger: 0.12, ease: "power2.out", delay: 0.55,
-    });
-  }, { scope: mainRef });
-
-  return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap"
-        rel="stylesheet"
+      {/* hidden file input */}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
       />
 
-      <div className={s.root}>
-        <Sidebar />
-
-        <main ref={mainRef} className={s.main}>
-          {/* Topbar */}
-          <div className={s.topbar} data-topbar>
-            <div className={s.topbarLeft}>
-              <div className={s.topbarCrumb}>AZORY · SISTEMA DE JOALHERIA</div>
-              <h1 className={s.topbarTitle}>Minha Conta</h1>
-            </div>
-            <div className={s.topbarRight}>
-              <div className={s.topbarBadge}>
-                <span className={s.topbarBadgeDot} />
-                Sistema Operacional
-              </div>
-              <div className={s.topbarBadge}>◆ v2.4.1</div>
-            </div>
-          </div>
-
-          {/* Profile hero */}
-          <ProfileHero />
-
-          {/* Main content */}
-          <div className={s.contentGrid}>
-            <PersonalInfo />
-            <SecuritySection />
-            <PreferencesSection />
-            <DangerZone />
-          </div>
-        </main>
-      </div>
-    </>
+      {/* Toast */}
+      {toast && <Toast message={toast} onDone={() => setToast(null)} />}
+    </div>
   );
 }
