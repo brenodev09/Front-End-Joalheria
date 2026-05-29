@@ -1,0 +1,314 @@
+.user-modal-overlay {
+  position: fixed;
+  inset: 0;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.user-modal-overlay * {
+  box-sizing: border-box;
+}
+
+.user-product-modal {
+  position: relative;
+  width: 860px;
+  max-width: 94vw;
+  border-radius: 28px;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(245, 198, 107, 0.16), transparent 34%),
+    radial-gradient(circle at 82% 90%, rgba(255, 255, 255, 0.055), transparent 36%),
+    linear-gradient(145deg, rgba(22, 22, 22, 0.98), rgba(4, 4, 4, 0.98));
+  border: 1px solid rgba(245, 198, 107, 0.22);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.9);
+  animation: userModalIn 0.35s ease forwards;
+}
+
+.user-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.user-modal-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.user-product-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 520px;
+}
+
+.user-product-image-area {
+  padding: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at center, rgba(245, 198, 107, 0.14), transparent 52%),
+    rgba(255, 255, 255, 0.018);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.user-product-main-image {
+  position: relative;
+  width: 100%;
+  height: 390px;
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at center, rgba(245, 198, 107, 0.18), transparent 54%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.018));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.user-product-main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 34px;
+  filter: drop-shadow(0 30px 28px rgba(0, 0, 0, 0.65));
+}
+
+.user-jewel-render {
+  position: absolute;
+  inset: 0;
+}
+
+.user-jewel-glow {
+  position: absolute;
+  width: 270px;
+  height: 270px;
+  left: 50%;
+  top: 51%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 202, 80, 0.34), transparent 64%);
+  filter: blur(12px);
+}
+
+.user-jewel-ring {
+  position: absolute;
+  width: 230px;
+  height: 145px;
+  left: 50%;
+  top: 57%;
+  border-radius: 50%;
+  border: 31px solid #d99a2d;
+  transform: translate(-50%, -50%) rotate(-23deg);
+  box-shadow:
+    inset 10px -14px 16px rgba(66, 32, 0, 0.62),
+    inset -9px 9px 18px rgba(255, 228, 130, 0.36),
+    0 20px 28px rgba(0, 0, 0, 0.54);
+}
+
+.user-jewel-ring::before {
+  content: "";
+  position: absolute;
+  inset: -19px;
+  border-radius: 50%;
+  border: 7px solid rgba(255, 221, 120, 0.32);
+}
+
+.user-jewel-prong {
+  position: absolute;
+  width: 88px;
+  height: 20px;
+  left: 50%;
+  top: 35%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #a76418, #f4c15c, #a76418);
+  transform: translateX(-50%) rotate(-5deg);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.38);
+}
+
+.user-jewel-gem {
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  left: 50%;
+  top: 25%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 28% 24%, #fff 0 18%, #fff0d2 30%, #cf8e4c 62%, #663213 100%);
+  box-shadow:
+    inset -9px -10px 16px rgba(86, 40, 8, 0.42),
+    inset 5px 5px 13px rgba(255, 255, 255, 0.55),
+    0 0 22px rgba(255, 255, 255, 0.38),
+    0 16px 22px rgba(0, 0, 0, 0.48);
+}
+
+.user-jewel-shadow {
+  position: absolute;
+  width: 250px;
+  height: 38px;
+  left: 50%;
+  bottom: 58px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.42);
+  filter: blur(14px);
+}
+
+.user-product-info {
+  padding: 54px 42px 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.user-product-label {
+  color: #f5c66b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.4px;
+  margin-bottom: 14px;
+}
+
+.user-product-info h2 {
+  margin: 0;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 38px;
+  line-height: 1.05;
+}
+
+.user-product-description {
+  margin: 18px 0 26px;
+  color: #bdbdbd;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.user-product-details {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.user-product-details div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.user-product-details span {
+  color: #8f8f8f;
+  font-size: 13px;
+}
+
+.user-product-details strong {
+  color: #f1f1f1;
+  font-size: 13px;
+}
+
+.user-product-price {
+  margin-bottom: 26px;
+  color: #f5c66b;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.8px;
+}
+
+.user-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.user-favorite-btn,
+.user-cart-btn {
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.user-favorite-btn {
+  width: 52px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.075);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-favorite-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.user-cart-btn {
+  flex: 1;
+  color: #050505;
+  background: linear-gradient(135deg, #f3c46b, #e0a93c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.user-cart-btn:hover {
+  filter: brightness(1.08);
+}
+
+@keyframes userModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 860px) {
+  .user-product-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .user-product-content {
+    grid-template-columns: 1fr;
+  }
+
+  .user-product-image-area {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .user-product-main-image {
+    height: 310px;
+  }
+
+  .user-product-info {
+    padding: 34px 26px;
+  }
+
+  .user-product-info h2 {
+    font-size: 31px;
+  }
+}
