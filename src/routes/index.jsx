@@ -5,6 +5,8 @@ import AdminLayout from "../Layouts/AdminLayout.jsx";
 import Inicial from "../pages/Admin/inicial.jsx"
 import Dashboard from "../pages/Admin/dashboard.jsx"
 import Categorias from "../pages/Admin/Categorias.jsx"
+import Produtos from "../pages/Admin/ProdutosAdmin.jsx"
+import Materiais from "../pages/Admin/Materiais.jsx"
 
 
 // cadastro e login
@@ -23,6 +25,8 @@ export default function Rotas() {
                     <Route path="/admin" element={<AdminLayout />} >
                         <Route index element={<Dashboard />} />
                         <Route path="categorias" element={<Categorias />} />
+                        <Route path="produtos" element={<Produtos />} />
+                        <Route path="materiais" element={<Materiais />} />
                     </Route>
 
 

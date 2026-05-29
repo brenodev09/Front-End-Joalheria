@@ -48,7 +48,7 @@ p,a, button, span{
     font-weight: 600;
     letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: var(--ouro);
+    color: var(--texto-primario);
     border: 1px solid rgba(201, 169, 110, 0.28);
     padding: 14px 22px;
     position: relative;

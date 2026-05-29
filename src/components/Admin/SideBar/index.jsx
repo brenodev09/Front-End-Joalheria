@@ -20,7 +20,7 @@ export default function Sidebar() {
           <span className={styles.textoNav}>Dashboard</span>
         </NavLink>
 
-        <button className={styles.itemNav}>
+        <NavLink to="/admin/produtos" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
             width="27"
             height="27"
@@ -28,15 +28,15 @@ export default function Sidebar() {
             alt="box"
           />
           <span className={styles.textoNav}>Produtos</span>
-        </button>
-        
+        </NavLink>
+
         <NavLink to="/admin/categorias" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
          <img width="30" height="30" src="https://img.icons8.com/ios/50/ffffff/categorize.png" alt="categorize"/>
           <span className={styles.textoNav}>Categorias</span>
         </NavLink>
 
 
-        <button className={styles.itemNav}>
+        <NavLink to="/admin/materiais" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
             width="27"
             height="27"
@@ -44,7 +44,7 @@ export default function Sidebar() {
             alt="diamond"
           />
           <span className={styles.textoNav}>Materiais</span>
-        </button>
+        </NavLink>
 
         <button className={styles.itemNav}>
           <img
