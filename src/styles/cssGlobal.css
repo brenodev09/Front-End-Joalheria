@@ -24,6 +24,20 @@
 
 }
 
+/* Chrome, Edge e Safari */
+::-webkit-scrollbar {
+  width: 3.5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background:#313131;
+  border-radius: 999px;
+}
+
 h1{
   font-family: "Cormorant Garamond", serif;
   font-optical-sizing: auto;

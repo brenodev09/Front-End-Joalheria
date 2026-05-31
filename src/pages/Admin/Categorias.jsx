@@ -2,10 +2,13 @@ import style from "../../styles/Admin/categorias.module.css"
 import aneis from "../../img/Categorias/aneis.png"
 import { useState } from "react"
 import ModalAddCategoria from "../../components/Admin/Modais/ModalTeste"
+import ModalTeste from "../../components/Admin/Modais/ModalAddCategoria"
 
 export default function Categorias() {
 
     const [openModal, setOpenModal] = useState(false)
+    const [openModalTeste, setOpenModalTeste] = useState()
+
 
     return (
 
@@ -21,6 +24,12 @@ export default function Categorias() {
                 <button onClick={() => setOpenModal(true)} className={style.btnAddCategoria}>
                     <img width="20" height="20" src="https://img.icons8.com/ios-filled/23/plus-math.png" alt="plus-math" />
                     <p>ADICIONAR CATEGORIA</p>
+                </button>
+
+                {/* botaoa teste */}
+                <button onClick={() => setOpenModalTeste(true)} className={style.btnAddCategoria}>
+                    <img width="20" height="20" src="https://img.icons8.com/ios-filled/23/plus-math.png" alt="plus-math" />
+                    <p>ADICIONAR CATEGORIA TESTE</p>
                 </button>
             </header>
 
@@ -190,7 +199,7 @@ export default function Categorias() {
             </section>
 
             <ModalAddCategoria aberto={openModal}/>
-
+            <ModalTeste isOpen = {openModalTeste} fecharModal = {() => setOpenModalTeste(false)}/> 
         </main>
 
 
