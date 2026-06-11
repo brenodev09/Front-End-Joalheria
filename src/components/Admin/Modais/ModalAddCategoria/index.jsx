@@ -1,5 +1,7 @@
 import style from "./styles.module.css";
 import { useState } from "react";
+import {api} from "../../../services/api.js"
+import { useNavigate } from "react-router-dom";
 
 export default function ModalAddCategoria({ isOpen, fecharModal }) {
   // function closeModal(){
@@ -152,6 +154,15 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
   }
 
   if (!mostrarNotificacao && !isOpen) return null;
+
+
+  // funcao de cadastrar o produto
+
+  const navegar = useNavigate()
+
+  async function cadastrarCategoria() {
+
+  }
 
   return (
     <>

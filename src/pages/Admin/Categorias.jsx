@@ -11,7 +11,7 @@ export default function Categorias() {
     const [openModalTeste, setOpenModalTeste] = useState()
     const [categorias, setCategorias] = useState([])
     const [erro, setErro] = useState("")
-    
+    const [pesquisa, setPesquisar] = useState("")
 
     useEffect(() => {
         api.get("/categorias").then((resposta) => {
@@ -20,6 +20,10 @@ export default function Categorias() {
             setErro("Erro ao carregar as categorias, por favor tente novamnete")
         })
     }, [])
+
+    const categoriaPesquisada = categorias.filter((categoria) =>
+        categoria.nome.toLowerCase().includes(pesquisa.toLocaleLowerCase())
+)
 
 
     return (
@@ -52,7 +56,7 @@ export default function Categorias() {
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input type="text" placeholder="Buscar categoria..." />
+                    <input type="text" placeholder="Buscar categoria..." value={pesquisa} onChange={(event) => setPesquisar(event.target.value)}/>
                 </div>
 
                 <div className={style.filtros}>
@@ -101,7 +105,7 @@ export default function Categorias() {
 
                 {/* {categorias.map((categoria))} */}
 
-                {categorias.map((categoria) => (
+                {categoriaPesquisada.map((categoria) => (
                     <div key={categoria.id} className={style.cardCategoria}>
                         <div className={style.imagemCategoria}>
                             <img src={categoria.imagem} alt={`imagem da categoria: ${categoria.nome}`} />
