@@ -1,6 +1,7 @@
 import style from "../../styles/Admin/categorias.module.css"
 import aneis from "../../img/Categorias/aneis.png"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { api } from "../../services/api.js"
 import ModalAddCategoria from "../../components/Admin/Modais/ModalTeste"
 import ModalTeste from "../../components/Admin/Modais/ModalAddCategoria"
 
@@ -8,6 +9,17 @@ export default function Categorias() {
 
     const [openModal, setOpenModal] = useState(false)
     const [openModalTeste, setOpenModalTeste] = useState()
+    const [categorias, setCategorias] = useState([])
+    const [erro, setErro] = useState("")
+    
+
+    useEffect(() => {
+        api.get("/categorias").then((resposta) => {
+            setCategorias(resposta.data)
+        }).catch(() => {
+            setErro("Erro ao carregar as categorias, por favor tente novamnete")
+        })
+    }, [])
 
 
     return (
@@ -78,9 +90,45 @@ export default function Categorias() {
                 </div>
 
             </div>
+
+            {erro && <p>{erro}</p>}
+
+            {categorias.length === 0 && !erro && (
+                <p className={style.vazioMensagem}>Nenhum item cadastrado!</p>
+            )}
+
             <section className={style.secaoGrid}>
 
-                <div className={style.cardCategoria}>
+                {/* {categorias.map((categoria))} */}
+
+                {categorias.map((categoria) => (
+                    <div key={categoria.id} className={style.cardCategoria}>
+                        <div className={style.imagemCategoria}>
+                            <img src={categoria.imagem} alt={`imagem da categoria: ${categoria.nome}`} />
+                        </div>
+
+                        <div className={style.infoCategoria}>
+                            <h3 className={style.tituloCategoria}>{categoria.nome}</h3>
+                            <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                            <p className={style.descricaoCategoria}>{categoria.descricao}</p>
+
+                            <div className={style.acoesCategoria}>
+                                <button className={style.botaoEditar}>
+                                    <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1" />
+                                    <p>Editar</p>
+                                </button>
+                                <button className={style.botaoExcluir}>
+                                    <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash" />
+                                    <p>Excluir</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
+
+
+                {/* <div className={style.cardCategoria}>
                     
                     <div className={style.imagemCategoria}>
                         <img src={aneis} alt="Anéis" />
@@ -194,12 +242,12 @@ export default function Categorias() {
                             <button className={style.botaoExcluir}>🗑 Excluir</button>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
             </section>
 
-            <ModalAddCategoria aberto={openModal}/>
-            <ModalTeste isOpen = {openModalTeste} fecharModal = {() => setOpenModalTeste(false)}/> 
+            <ModalAddCategoria aberto={openModal} />
+            <ModalTeste isOpen={openModalTeste} fecharModal={() => setOpenModalTeste(false)} />
         </main>
 
 
