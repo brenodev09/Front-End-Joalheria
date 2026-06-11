@@ -1,0 +1,836 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+/* ─── VARIÁVEIS ─────────────────────────────────────────────── */
+:root {
+  --preto-profundo: #0a0a0a;
+  --preto-base: #111111;
+  --cinza-escuro: #1a1a1a;
+  --cinza-medio: #242424;
+  --cinza-claro: #2e2e2e;
+  --cinza-borda: #333333;
+  --cinza-texto: #888888;
+  --cinza-texto-claro: #aaaaaa;
+  --branco-suave: #e8e4dc;
+  --dourado-principal: #c9a84c;
+  --dourado-claro: #e2c27a;
+  --dourado-escuro: #a07830;
+  --dourado-brilho: #f0d98a;
+  --dourado-rgba: rgba(201, 168, 76, 0.12);
+  --dourado-rgba-hover: rgba(201, 168, 76, 0.2);
+  --sombra-dourada: 0 0 30px rgba(201, 168, 76, 0.08);
+  --sombra-painel: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --raio-painel: 16px;
+  --raio-campo: 10px;
+  --transicao: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── PÁGINA ─────────────────────────────────────────────── */
+.pagina {
+  min-height: 100vh;
+  font-family: 'Raleway', sans-serif;
+  color: var(--branco-suave);
+  padding-bottom: 80px;
+  overflow-x: hidden;
+}
+
+/* ─── CONTEÚDO ─────────────────────────────────────────────── */
+.conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ─── PAINEL BASE ─────────────────────────────────────────────── */
+.painel {
+  background: var(--cinza-escuro);
+  border: 1px solid var(--cinza-borda);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: var(--sombra-painel);
+  transition: var(--transicao);
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.painel:hover {
+  border-color: rgba(201, 168, 76, 0.2);
+  box-shadow: var(--sombra-painel), var(--sombra-dourada);
+}
+
+/* ─── PAINEL PERFIL ─────────────────────────────────────────────── */
+.painelPerfil {
+  position: relative;
+  overflow: hidden;
+}
+
+.painelPerfilFundo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.painelPerfilFundoLinhas {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(90deg,
+      transparent,
+      transparent 60px,
+      rgba(201, 168, 76, 0.02) 60px,
+      rgba(201, 168, 76, 0.02) 61px);
+  pointer-events: none;
+}
+
+.perfilCorpo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 40px 44px;
+}
+
+/* ─── AVATAR ─────────────────────────────────────────────── */
+.perfilAvatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.perfilAvatarAnel {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--dourado-claro), var(--dourado-escuro), var(--dourado-claro));
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.3);
+}
+
+.perfilAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.perfilAvatarBadge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid var(--cinza-escuro);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+.perfilAvatarBadge::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: pulsarStatus 2s ease-in-out infinite;
+}
+
+@keyframes pulsarStatus {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+/* ─── INFO DO PERFIL ─────────────────────────────────────────────── */
+.perfilInfo {
+  flex: 1;
+}
+
+.perfilNome {
+  /* font-family: 'Cinzel', serif; */
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--branco-suave);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.perfilBadgeCargo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--dourado-rgba);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+/* placeholder para ícone — substitua pelo componente da sua lib */
+.perfilBadgeCargoIconePlaceholder {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dourado-brilho);
+  opacity: 0.6;
+}
+
+.perfilBadgeCargoTexto {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: var(--dourado-claro);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.perfilMeta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.perfilMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--cinza-texto-claro);
+}
+
+/* placeholder para ícone — substitua pelo componente da sua lib */
+.perfilMetaIconePlaceholder {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--dourado-escuro);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.perfilMetaSeparador {
+  width: 3px;
+  height: 3px;
+  background: var(--cinza-borda);
+  border-radius: 50%;
+}
+
+/* ─── AÇÕES DO PERFIL ─────────────────────────────────────────────── */
+.perfilAcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.btnEditarPerfil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.18rem;
+  background: #C9A962;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  padding: .7rem;
+  position: relative;
+  overflow: hidden;
+  /* transition: color 0.38s var(--ease-premium),
+        border-color 0.38s var(--ease-premium),
+        box-shadow 0.38s var(--ease-premium); */
+  transition: all .3s ease;
+
+  p {
+    color: black;
+    font-size: 12px;
+    font-weight: 700;
+
+
+
+  }
+}
+
+
+.btnEditarPerfil:hover {
+  background: #937432;
+  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+:global(.btnPadrao).btnTrocarFoto {
+  width: 10rem;
+  padding: .8rem;
+  font-size: 10px;
+}
+
+
+/* ─── TÍTULO DE SEÇÃO ─────────────────────────────────────────────── */
+.secaoTitulo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 44px 22px;
+  border-bottom: 1px solid var(--cinza-borda);
+}
+
+.secaoTituloLinha {
+  width: 3px;
+  height: 22px;
+  background: linear-gradient(180deg, var(--dourado-brilho), var(--dourado-escuro));
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.secaoTituloTexto {
+  /* font-family: 'Cinzel', serif; */
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--dourado-claro);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.secaoTituloOrnamento {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.2), transparent);
+}
+
+/* ─── INFORMAÇÕES DA CONTA ─────────────────────────────────────────────── */
+.infoCorpo {
+  padding: 36px 44px 40px;
+}
+
+.infoGrade {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.infoGradeCompleta {
+  grid-template-columns: 1fr;
+  margin-bottom: 0;
+}
+
+/* ─── CAMPO DE FORMULÁRIO ─────────────────────────────────────────────── */
+.campoGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campoRotulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--cinza-texto);
+  text-transform: uppercase;
+}
+
+.campoWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campoWrapper > img {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.45;
+  transition: opacity 0.25s ease;
+}
+
+.campoWrapper:focus-within > img {
+  opacity: 0.7;
+}
+/* placeholder para ícone — substitua pelo componente da sua lib */
+.campoIconePlaceholder {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--cinza-borda);
+  pointer-events: none;
+  transition: background 0.25s ease;
+}
+
+  /* .campoWrapper:focus-within .campoIconePlaceholder {
+    background: var(--dourado-escuro);
+  } */
+
+.campoInput {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--cinza-borda);
+  border-radius: 2px;
+  color: var(--branco-suave);
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  transition: var(--transicao);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.campoInput::placeholder {
+  color: var(--cinza-borda);
+  font-size: 13px;
+}
+
+.campoInput:focus {
+  border-color: var(--dourado-principal);
+  background: rgba(201, 168, 76, 0.04);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08), 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.campoInputSenha {
+  padding-right: 48px;
+}
+
+.campoOlho {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.45;
+  transition: opacity 0.25s ease;
+}
+
+.campoOlho:hover {
+  opacity: 0.9;
+}
+
+/* Remove o background placeholder anterior do .campoOlho */
+
+.campoDescricao {
+  font-size: 11px;
+  color: var(--cinza-texto);
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+/* ─── SEGURANÇA ─────────────────────────────────────────────── */
+.segurancaCorpo {
+  padding: 36px 44px 40px;
+}
+
+.segurancaGrade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.segurancaCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--cinza-borda);
+  border-radius: 4px;
+  transition: var(--transicao);
+  cursor: pointer;
+}
+
+.segurancaCard:hover {
+  border-color: rgba(201, 168, 76, 0.25);
+  background: var(--dourado-rgba);
+}
+
+/* placeholder para ícone — substitua pelo componente da sua lib */
+.segurancaCardIconeWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  background: var(--dourado-rgba);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  flex-shrink: 0;
+}
+
+.segurancaCardInfo {
+  flex: 1;
+}
+
+.segurancaCardTitulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--branco-suave);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+
+.segurancaCardDescricao {
+  font-size: 11px;
+  color: var(--cinza-texto);
+}
+
+.segurancaCardSeta {
+  color: var(--dourado-escuro);
+  font-size: 14px;
+  transition: transform 0.25s ease;
+}
+
+.segurancaCard:hover .segurancaCardSeta {
+  transform: translateX(4px);
+}
+
+.segurancaStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 22px;
+  background: rgba(34, 197, 94, 0.06);
+  border: 1px solid rgba(34, 197, 94, 0.15);
+  border-radius: 4px;
+}
+
+.segurancaStatusIndicador {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+  flex-shrink: 0;
+  animation: pulsarStatus 2s ease-in-out infinite;
+}
+
+.segurancaStatusTexto {
+  font-size: 12px;
+  color: #4ade80;
+  font-weight: 500;
+}
+
+.segurancaStatusSub {
+  font-size: 11px;
+  color: var(--cinza-texto);
+  margin-left: auto;
+}
+
+/* ─── ATIVIDADE RECENTE ─────────────────────────────────────────────── */
+.atividadeCorpo {
+  padding: 36px 44px 40px;
+}
+
+.atividadeLista {
+  display: flex;
+  flex-direction: column;
+}
+
+.atividadeItem {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: var(--transicao);
+}
+
+.atividadeItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.atividadeItem:first-child {
+  padding-top: 0;
+}
+
+/* placeholder para ícone — substitua pelo componente da sua lib */
+.atividadeItemIconeWrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.atividadeItemIconeVerde {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.atividadeItemIconeAmarelo {
+  background: var(--dourado-rgba);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+.atividadeItemIconeAzul {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.atividadeItemIconeVermelho {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.atividadeItemInfo {
+  flex: 1;
+}
+
+.atividadeItemTitulo {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--branco-suave);
+  margin-bottom: 3px;
+}
+
+.atividadeItemSub {
+  font-size: 11px;
+  color: var(--cinza-texto);
+}
+
+.atividadeItemTempo {
+  font-size: 11px;
+  color: var(--cinza-texto);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ─── APARÊNCIA & PREFERÊNCIAS ─────────────────────────────────────────────── */
+.aparenciaCorpo {
+  padding: 36px 44px 40px;
+}
+
+.aparenciaGrade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.aparenciaOpcao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--cinza-borda);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.aparenciaOpcao:hover {
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+.aparenciaOpcaoInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* placeholder para ícone — substitua pelo componente da sua lib */
+.aparenciaOpcaoIconePlaceholder {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: var(--cinza-claro);
+  border: 1px solid var(--cinza-borda);
+  flex-shrink: 0;
+}
+
+.aparenciaOpcaoTextos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.aparenciaOpcaoTitulo {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--branco-suave);
+}
+
+.aparenciaOpcaoSub {
+  font-size: 11px;
+  color: var(--cinza-texto);
+}
+
+.aparenciaOpcaoSeta {
+  color: var(--dourado-escuro);
+  font-size: 14px;
+  transition: transform 0.25s ease;
+}
+
+.aparenciaOpcao:hover .aparenciaOpcaoSeta {
+  transform: translateX(3px);
+}
+
+/* ─── TOGGLE ─────────────────────────────────────────────── */
+.toggle {
+  position: relative;
+  width: 46px;
+  height: 25px;
+  background: var(--cinza-claro);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: 1px solid var(--cinza-borda);
+  flex-shrink: 0;
+}
+
+.toggleAtivo {
+  background: linear-gradient(90deg, var(--dourado-escuro), var(--dourado-principal));
+  border-color: var(--dourado-principal);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.25);
+}
+
+.toggleBolinha {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 17px;
+  height: 17px;
+  background: var(--cinza-texto);
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+}
+
+.toggleAtivo .toggleBolinha {
+  transform: translateX(21px);
+  background: var(--preto-profundo);
+}
+
+/* ─── RODAPÉ ─────────────────────────────────────────────── */
+.rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 44px;
+  margin-top: 4px;
+}
+
+.botaoSalvar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--dourado-principal), var(--dourado-escuro));
+  border: none;
+  border-radius: 11px;
+  color: var(--preto-profundo);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transicao);
+  box-shadow: 0 4px 24px rgba(201, 168, 76, 0.3);
+}
+
+.botaoSalvar:hover {
+  background: linear-gradient(135deg, var(--dourado-brilho), var(--dourado-principal));
+  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.45);
+  transform: translateY(-2px);
+}
+
+
+:global(.btnPadrao).btnCancelar:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  box-shadow: 0 0 22px rgba(184, 25, 25, 0.1);
+
+}
+
+.rodapeAcoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rodapeTexto {
+  font-size: 11px;
+  color: var(--cinza-texto);
+  letter-spacing: 0.5px;
+}
+
+/* ─── RESPONSIVO ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .conteudo {
+    padding: 28px 20px 0;
+  }
+
+  .perfilCorpo {
+    flex-wrap: wrap;
+    padding: 28px 24px;
+  }
+
+  .perfilAcoes {
+    align-items: flex-start;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .infoGrade {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aparenciaGrade {
+    grid-template-columns: 1fr;
+  }
+
+  .secaoTitulo,
+  .infoCorpo,
+  .segurancaCorpo,
+  .atividadeCorpo,
+  .aparenciaCorpo,
+  .rodape {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .infoGrade {
+    grid-template-columns: 1fr;
+  }
+
+  .rodape {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .rodapeAcoes {
+    flex-direction: column;
+  }
+
+  .botaoSalvar,
+  .botaoCancelar {
+    width: 100%;
+    justify-content: center;
+  }
+}

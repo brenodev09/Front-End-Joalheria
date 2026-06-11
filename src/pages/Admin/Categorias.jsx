@@ -21,15 +21,15 @@ export default function Categorias() {
                     <p>Gerencie as categorias dos produtos.</p>
                 </div>
 
-                <button onClick={() => setOpenModal(true)} className={style.btnAddCategoria}>
+                {/* <button onClick={() => setOpenModal(true)} className={style.btnAddCategoria}>
                     <img width="20" height="20" src="https://img.icons8.com/ios-filled/23/plus-math.png" alt="plus-math" />
                     <p>ADICIONAR CATEGORIA</p>
-                </button>
+                </button> */}
 
                 {/* botaoa teste */}
                 <button onClick={() => setOpenModalTeste(true)} className={style.btnAddCategoria}>
                     <img width="20" height="20" src="https://img.icons8.com/ios-filled/23/plus-math.png" alt="plus-math" />
-                    <p>ADICIONAR CATEGORIA TESTE</p>
+                    <p>ADICIONAR CATEGORIA </p>
                 </button>
             </header>
 

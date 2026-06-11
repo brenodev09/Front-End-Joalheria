@@ -46,7 +46,7 @@ export default function Sidebar() {
           <span className={styles.textoNav}>Materiais</span>
         </NavLink>
 
-        <button className={styles.itemNav}>
+        <NavLink to="/admin/conta" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
             width="27"
             height="27"
@@ -54,7 +54,7 @@ export default function Sidebar() {
             alt="user"
           />
           <span className={styles.textoNav}>Conta</span>
-        </button>
+        </NavLink>
       </nav>
     </aside>
   );
