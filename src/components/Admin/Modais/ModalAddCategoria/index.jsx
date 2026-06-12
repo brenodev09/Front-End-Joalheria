@@ -1,6 +1,6 @@
 import style from "./styles.module.css";
 import { useState } from "react";
-import {api} from "../../../services/api.js"
+import { api } from "../../../../services/api"
 import { useNavigate } from "react-router-dom";
 
 export default function ModalAddCategoria({ isOpen, fecharModal }) {
@@ -12,7 +12,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
 
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [ativo, setAtivo] = useState();
+  const [ativo, setAtivo] = useState(true);
   const [imagem, setImagem] = useState(null);
   const [imagemPreview, setImagemPreview] = useState(null);
 
@@ -96,7 +96,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
               </button>
             </div>
 
-            <button className={style.btnSalvar} onClick={SalvarCategoria}>
+            <button className={style.btnSalvar} onClick={cadastrarCategoria}>
               <img
                 width="25"
                 height="25"
@@ -120,7 +120,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
   function PreenchaCampos(event) {
     // event.preventDefault()
 
-    if (!nome || !descricao || !imagem) {
+    if (!nome || !descricao) {
       setErro("Preencha todos os campos para prosseguir!");
 
       setTimeout(() => {
@@ -144,25 +144,61 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
 
   const [mostrarNotificacao, setMostrarNotificacao] = useState(false);
 
-  function SalvarCategoria() {
-    setMostrarNotificacao(true);
-    fecharModal();
+  // function SalvarCategoria() {
+  //   setMostrarNotificacao(true);
+  //   fecharModal();
 
-    setTimeout(() => {
-      setMostrarNotificacao(false);
-    }, 4500);
-  }
-
-  if (!mostrarNotificacao && !isOpen) return null;
+  //   setTimeout(() => {
+  //     setMostrarNotificacao(false);
+  //   }, 4500);
+  // }
 
 
-  // funcao de cadastrar o produto
+
+
+  // funcao de cadastrar a categoria
 
   const navegar = useNavigate()
+  const [erroCategoria, setErroCategoria] = useState("")
 
-  async function cadastrarCategoria() {
+  async function cadastrarCategoria(event) {
+    event.preventDefault()
 
+    try {
+      setErroCategoria("")
+
+
+      const formData = new FormData()
+
+      formData.append("nome", nome)
+      formData.append("descricao", descricao)
+      formData.append("imagem", imagem)
+      formData.append("ativo", ativo)
+
+      // 
+      await api.post("/categorias", formData)
+
+      setMostrarNotificacao(true);
+
+      setTimeout(() => {
+        setMostrarNotificacao(false);
+      }, 4500);
+
+      fecharModal();
+
+      navegar("/categorias")
+
+    } catch (erro) {
+      console.error(erro)
+      console.error(erro.response?.data)
+
+      setErroCategoria("Erro ao cadastrar a categoria!")
+    }
   }
+
+  console.log(cadastrarCategoria)
+
+  if (!mostrarNotificacao && !isOpen) return null;
 
   return (
     <>
@@ -174,41 +210,36 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
             <div className={style.etapasModal}>
               <div className={style.itemEtapa}>
                 <div
-                  className={`${style.circuloEtapa} ${
-                    etapa >= 1 ? style.etapaAtiva : ""
-                  } ${etapa === 2 ? style.etapaConcluida : ""}`}
+                  className={`${style.circuloEtapa} ${etapa >= 1 ? style.etapaAtiva : ""
+                    } ${etapa === 2 ? style.etapaConcluida : ""}`}
                 >
                   <span>{etapa === 2 ? "✓" : "1"}</span>
                 </div>
 
                 <span
-                  className={`${style.textoEtapa} ${
-                    etapa >= 1 ? style.textoEtapaAtiva : ""
-                  }`}
+                  className={`${style.textoEtapa} ${etapa >= 1 ? style.textoEtapaAtiva : ""
+                    }`}
                 >
                   Informações
                 </span>
               </div>
 
               <div
-                className={`${style.linhaEtapa} ${
-                  etapa === 2 ? style.linhaPreenchida : ""
-                }`}
+                className={`${style.linhaEtapa} ${etapa === 2 ? style.linhaPreenchida : ""
+                  }`}
               ></div>
 
               <div className={style.itemEtapa}>
                 <div
-                  className={`${style.circuloEtapa} ${
-                    etapa === 2 ? style.etapaAtiva : ""
-                  }`}
+                  className={`${style.circuloEtapa} ${etapa === 2 ? style.etapaAtiva : ""
+                    }`}
                 >
                   <span>2</span>
                 </div>
 
                 <span
-                  className={`${style.textoEtapa} ${
-                    etapa === 2 ? style.textoEtapaAtiva : ""
-                  }`}
+                  className={`${style.textoEtapa} ${etapa === 2 ? style.textoEtapaAtiva : ""
+                    }`}
                 >
                   Revisão
                 </span>
@@ -264,6 +295,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
                     type="text"
                     placeholder="Ex: Aneis"
                     className={style.inputCampo}
+                    value={nome}
                     onChange={(event) => setNome(event.target.value)}
                   />
                 </div>
@@ -275,6 +307,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
                   <textarea
                     placeholder="Ex: Aneis de luxo com diamante..."
                     className={style.textareaCampo}
+                    value={descricao}
                     onChange={(event) => setDescricao(event.target.value)}
                   />
                 </div>
@@ -350,7 +383,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
                     <input
                       type="checkbox"
                       checked={ativo}
-                      onChange={() => setAtivo(!ativo)}
+                      onChange={(event) => setAtivo(event.target.checked)}
                     />
                     <span className={style.slider}></span>
                   </label>

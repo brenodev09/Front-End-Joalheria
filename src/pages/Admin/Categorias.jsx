@@ -17,7 +17,7 @@ export default function Categorias() {
         api.get("/categorias").then((resposta) => {
             setCategorias(resposta.data)
         }).catch(() => {
-            setErro("Erro ao carregar as categorias, por favor tente novamnete")
+            setErro("Erro ao carregar as categorias, por favor tente novamente!")
         })
     }, [])
 
@@ -103,12 +103,12 @@ export default function Categorias() {
 
             <section className={style.secaoGrid}>
 
-                {/* {categorias.map((categoria))} */}
 
                 {categoriaPesquisada.map((categoria) => (
                     <div key={categoria.id} className={style.cardCategoria}>
                         <div className={style.imagemCategoria}>
-                            <img src={categoria.imagem} alt={`imagem da categoria: ${categoria.nome}`} />
+                            <img src={categoria.imagem?.startsWith("http") ? categoria.imagem : `http://localhost:3000${categoria.imagem}`} 
+                            alt={`imagem da categoria: ${categoria.nome}`} />
                         </div>
 
                         <div className={style.infoCategoria}>
