@@ -186,7 +186,7 @@ export default function ModalAddCategoria({ isOpen, fecharModal }) {
 
       fecharModal();
 
-      navegar("/categorias")
+      navegar("")
 
     } catch (erro) {
       console.error(erro)
