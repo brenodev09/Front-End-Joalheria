@@ -1,6 +1,7 @@
 import "./adminModais.css";
 import { X, Save, AlertTriangle, ImagePlus } from "lucide-react";
 
+
 export default function AdminModais({
   type,
   product,

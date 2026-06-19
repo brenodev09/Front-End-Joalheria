@@ -1,13 +1,63 @@
 import style from "../../styles/Admin/categorias.module.css"
 import aneis from "../../img/Categorias/aneis.png"
-import { useState } from "react"
-import ModalAddCategoria from "../../components/Admin/Modais/ModalTeste"
-import ModalTeste from "../../components/Admin/Modais/ModalAddCategoria"
+import { useState, useEffect } from "react"
+import { api } from "../../services/api.js"
+import ModalAddCategoria from "../../components/Admin/Modais/ModalAddCategoria"
+import ModalDeleteCategoria from "../../components/Admin/Modais/ModalDeletarCategoria"
 
 export default function Categorias() {
 
-    const [openModal, setOpenModal] = useState(false)
-    const [openModalTeste, setOpenModalTeste] = useState()
+    const [openModal, setOpenModal] = useState()
+    const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [categoriaSelecionada, setCategoriaSelecionada] = useState(null)
+    const [categorias, setCategorias] = useState([])
+    const [erro, setErro] = useState("")
+    const [excluindo, setExcluindo] = useState(false)
+    const [pesquisa, setPesquisar] = useState("")
+
+
+
+    // listagem dos produtos na pagina
+    useEffect(() => {
+        api.get("/categorias").then((resposta) => {
+            setCategorias(resposta.data)
+        }).catch(() => {
+            setErro("Erro ao carregar as categorias, por favor tente novamente!")
+        })
+    }, [])
+
+
+
+    // função de deletar a categoria
+
+    async function excluirCategoria() {
+        if (!categoriaSelecionada) return
+
+
+        setExcluindo(true)
+
+        try {
+            await api.delete(`/categorias/${categoriaSelecionada.id}`)
+
+
+            setCategorias((categoriasAtuais) =>
+                categoriasAtuais.filter((categoria) => categoria.id !== categoriaSelecionada.id)
+            )
+
+            setOpenModalDelete(false)
+        } catch (error) {
+            setErro("Erro ao excluir a categoria, por favor tente novamente!")
+        } finally {
+            setExcluindo(false)
+        }
+    }
+
+
+    // funcao de filtrar a categoria para pesquisar 
+    const categoriaPesquisada = categorias.filter((categoria) =>
+        categoria.nome.toLowerCase().includes(pesquisa.toLocaleLowerCase())
+    )
+
 
 
     return (
@@ -27,7 +77,7 @@ export default function Categorias() {
                 </button> */}
 
                 {/* botaoa teste */}
-                <button onClick={() => setOpenModalTeste(true)} className={style.btnAddCategoria}>
+                <button onClick={() => setOpenModal(true)} className={style.btnAddCategoria}>
                     <img width="20" height="20" src="https://img.icons8.com/ios-filled/23/plus-math.png" alt="plus-math" />
                     <p>ADICIONAR CATEGORIA </p>
                 </button>
@@ -40,7 +90,7 @@ export default function Categorias() {
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input type="text" placeholder="Buscar categoria..." />
+                    <input type="text" placeholder="Buscar categoria..." value={pesquisa} onChange={(event) => setPesquisar(event.target.value)} />
                 </div>
 
                 <div className={style.filtros}>
@@ -78,9 +128,45 @@ export default function Categorias() {
                 </div>
 
             </div>
+
+            {erro && <p>{erro}</p>}
+
+            {categorias.length === 0 && !erro && (
+                <p className={style.vazioMensagem}>Nenhum item cadastrado!</p>
+            )}
+
             <section className={style.secaoGrid}>
 
-                <div className={style.cardCategoria}>
+
+                {categoriaPesquisada.map((categoria) => (
+                    <div key={categoria.id} className={style.cardCategoria}>
+                        <div className={style.imagemCategoria}>
+                            <img src={categoria.imagem?.startsWith("http") ? categoria.imagem : `http://localhost:3000${categoria.imagem}`}
+                                alt={`imagem da categoria: ${categoria.nome}`} />
+                        </div>
+
+                        <div className={style.infoCategoria}>
+                            <h3 className={style.tituloCategoria}>{categoria.nome}</h3>
+                            <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                            <p className={style.descricaoCategoria}>{categoria.descricao}</p>
+
+                            <div className={style.acoesCategoria}>
+                                <button className={style.botaoEditar}>
+                                    <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1" />
+                                    <p>Editar</p>
+                                </button>
+                                <button onClick={() => { setOpenModalDelete(true); setCategoriaSelecionada(categoria) }} className={style.botaoExcluir}>
+                                    <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash" />
+                                    <p>Excluir</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
+
+
+                {/* <div className={style.cardCategoria}>
                     
                     <div className={style.imagemCategoria}>
                         <img src={aneis} alt="Anéis" />
@@ -194,12 +280,13 @@ export default function Categorias() {
                             <button className={style.botaoExcluir}>🗑 Excluir</button>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
             </section>
 
-            <ModalAddCategoria aberto={openModal}/>
-            <ModalTeste isOpen = {openModalTeste} fecharModal = {() => setOpenModalTeste(false)}/> 
+            <ModalDeleteCategoria aberto={openModalDelete} categoria={categoriaSelecionada}
+                aoConfirmar={excluirCategoria} aoFechar={() => { setOpenModalDelete(false) }} />
+            <ModalAddCategoria isOpen={openModal} fecharModal={() => setOpenModal(false)} />
         </main>
 
 
