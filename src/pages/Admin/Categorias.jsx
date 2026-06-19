@@ -4,11 +4,13 @@ import { useState, useEffect } from "react"
 import { api } from "../../services/api.js"
 import ModalAddCategoria from "../../components/Admin/Modais/ModalAddCategoria"
 import ModalDeleteCategoria from "../../components/Admin/Modais/ModalDeletarCategoria"
+import ModalEditarCategoria from "../../components/Admin/Modais/ModalEditarCategoria/index.jsx"
 
 export default function Categorias() {
 
     const [openModal, setOpenModal] = useState()
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [openModalEditar, setOpenModalEditar] = useState(false)
     const [categoriaSelecionada, setCategoriaSelecionada] = useState(null)
     const [categorias, setCategorias] = useState([])
     const [erro, setErro] = useState("")
@@ -151,7 +153,7 @@ export default function Categorias() {
                             <p className={style.descricaoCategoria}>{categoria.descricao}</p>
 
                             <div className={style.acoesCategoria}>
-                                <button className={style.botaoEditar}>
+                                <button onClick={() => {setOpenModalEditar(true); setCategoriaSelecionada(categoria)}} className={style.botaoEditar}>
                                     <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1" />
                                     <p>Editar</p>
                                 </button>
@@ -286,6 +288,11 @@ export default function Categorias() {
 
             <ModalDeleteCategoria aberto={openModalDelete} categoria={categoriaSelecionada}
                 aoConfirmar={excluirCategoria} aoFechar={() => { setOpenModalDelete(false) }} />
+            <ModalEditarCategoria isOpen={openModalEditar} fecharModal={() => setOpenModalEditar(false)} 
+            categoria={categoriaSelecionada} 
+            aoSalvar ={(categoriaAtualizada) => {
+                setCategorias((atual) => atual.map((c) => (c.id === categoriaAtualizada.id ? categoriaAtualizada : c)))
+            }}/>
             <ModalAddCategoria isOpen={openModal} fecharModal={() => setOpenModal(false)} />
         </main>
 
