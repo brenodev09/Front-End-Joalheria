@@ -66,7 +66,6 @@
 }
 
 .tituloModal {
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-weight: 600;
   font-size: 28px;
   letter-spacing: 0.03em;
@@ -81,7 +80,6 @@
 }
 
 .subtituloModal span {
-  font-family: "Playfair Display", Georgia, serif;
   font-style: italic;
   color: #e8cf94;
 }
@@ -332,7 +330,6 @@
   padding: 12px 14px;
   font-size: 14px;
   color: #f3ead8;
-  font-family: inherit;
   transition: border-color 0.18s ease;
 }
 

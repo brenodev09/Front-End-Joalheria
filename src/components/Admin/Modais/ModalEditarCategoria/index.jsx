@@ -161,7 +161,7 @@ export default function ModalEditarCategoria({ isOpen, fecharModal, categoria, a
             </div>
 
             <div className={style.grupoCampo}>
-              <label className={style.labelCampo}>NOME DA CATEGORIA</label>
+              <p className={style.labelCampo}>NOME DA CATEGORIA</p>
 
               <input
                 type="text"
@@ -173,7 +173,7 @@ export default function ModalEditarCategoria({ isOpen, fecharModal, categoria, a
             </div>
 
             <div className={style.grupoCampo}>
-              <label className={style.labelCampo}>DESCRIÇÃO</label>
+              <p className={style.labelCampo}>DESCRIÇÃO</p>
 
               <textarea
                 placeholder="Ex: Aneis de luxo com diamante..."
@@ -184,7 +184,7 @@ export default function ModalEditarCategoria({ isOpen, fecharModal, categoria, a
             </div>
 
             <div className={style.grupoCampo}>
-              <label className={style.labelCampo}>IMAGEM DA CATEGORIA</label>
+              <p className={style.labelCampo}>IMAGEM DA CATEGORIA</p>
 
               <div className={style.areaUpload}>
                 <input

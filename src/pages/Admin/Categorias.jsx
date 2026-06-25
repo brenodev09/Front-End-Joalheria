@@ -134,7 +134,7 @@ export default function Categorias() {
             {erro && <p>{erro}</p>}
 
             {categorias.length === 0 && !erro && (
-                <p className={style.vazioMensagem}>Nenhum item cadastrado!</p>
+                <p className={style.vazioMensagem}>Nenhuma categoria cadastrado!</p>
             )}
 
             <section className={style.secaoGrid}>

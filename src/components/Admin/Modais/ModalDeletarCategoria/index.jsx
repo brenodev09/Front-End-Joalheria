@@ -44,7 +44,7 @@ export default function ModalExcluirCategoria({
           <div className={styles.avisoProdutos}>
             <span className={styles.avisoProdutosIcone}>!</span>
             <span>
-              QUantidade de produtos
+              Quantidade de produtos nesta categoria:
             </span>
           </div>
 
