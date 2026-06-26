@@ -1,4 +1,7 @@
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+
+import RotasPublicas from "./rotasPublicas.jsx";
+import RotasPrivadas from "./rotasPrivadas.jsx";
 
 // PAGINAS DO ADMIN
 import AdminLayout from "../Layouts/AdminLayout.jsx";
@@ -19,23 +22,26 @@ export default function Rotas() {
     return (
         <>
             <BrowserRouter>
-
                 <Routes>
-                    <Route path="/" element={<Inicial />} />
-                    <Route path="/Cadastrar" element={<Cadastro />}></Route>
-                    <Route path="/Login" element={<Login />}></Route>
 
-                    <Route path="/admin" element={<AdminLayout />} >
-                        <Route index element={<Dashboard />} />
-                        <Route path="categorias" element={<Categorias />} />
-                        <Route path="produtos" element={<Produtos />} />
-                        <Route path="materiais" element={<Materiais />} />
-                        <Route path="conta" element={<InfoConta />} />
+                    <Route path="/" element={<Inicial />} />
+
+                    <Route element={<RotasPrivadas />}>
+                        <Route path="/admin" element={<AdminLayout />} >
+                            <Route path="dashboard" element={<Dashboard />} />
+                            <Route path="categorias" element={<Categorias />} />
+                            <Route path="produtos" element={<Produtos />} />
+                            <Route path="materiais" element={<Materiais />} />
+                            <Route path="conta" element={<InfoConta />} />
+                        </Route>
                     </Route>
 
+                    <Route element={<RotasPublicas />}>
+                        <Route path="/Cadastrar" element={<Cadastro />}></Route>
+                        <Route path="/Login" element={<Login />}></Route>
+                    </Route>
 
                 </Routes>
-
             </BrowserRouter>
 
         </>

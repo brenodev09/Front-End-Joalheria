@@ -10,7 +10,7 @@ export default function Sidebar() {
       </div>
 
       <nav className={styles.navegacao}>
-        <NavLink to="/admin" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
+        <NavLink to="/admin/dashboard" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
             width="27"
             height="27"

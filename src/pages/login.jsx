@@ -1,32 +1,54 @@
 import style from "../styles/login.module.css"
 import { useState } from "react"
 import background from "../img/bg-login.png"
+import { useAuth } from "../context/authContext"
+import { useNavigate } from "react-router-dom"
 
 
 export default function Login() {
-  const [nome, setNome] = useState(null)
-  const [email, setEmail] = useState(null)
-  const [senha, setSenha] = useState(null)
-  const [confirmarSenha, setConfirmarSenha] = useState(null)
-  const [erro, setErro] = useState(null)
+  // const [nome, setNome] = useState()
+  const [email, setEmail] = useState("")
+  const [senha, setSenha] = useState("")
+  // const [confirmarSenha, setConfirmarSenha] = useState()
+  const [erro, setErro] = useState("")
+  const navegar = useNavigate()
+
+  const { login } = useAuth()
 
   function ValidarForm() {
 
 
-    if (!nome || !email || !senha || !confirmarSenha) {
+    if (!email || !senha) {
       setErro("Preencha todos os campos")
 
       setTimeout(() => {
         setErro("")
       }, 4500)
-      return
+      return false
     }
+
+    return true
 
     setErro("")
   }
 
 
- 
+  async function fazerLogin(event) {
+    event.preventDefault()
+    setErro("")
+
+    if (!ValidarForm()) return;
+
+    const resultado = await login(email, senha)
+
+    if (resultado.sucesso) {
+      navegar("/")
+    } else {
+      setErro(resultado.mensagem)
+    }
+  }
+
+
 
 
   return (
@@ -39,30 +61,17 @@ export default function Login() {
           <p>Informe seus dados para entrar em sua conta exclusiva</p>
         </div>
 
-        <form onSubmit={ValidarForm} className={style.form}>
-
-          <div className={style.row}>
-            {/* Nome de usuario */}
-            <div className={style.formGroup}>
-              <input
-                type="text"
-                id="nome"
-                className={style.input}
-                placeholder=" " /* Placeholder vazio para a lógica CSS */
-
-              />
-              <label htmlFor="nome" className={style.label}>NOME DE USUÁRIO</label>
-              <div className={style.line} />
-            </div>
+        <form onSubmit={fazerLogin} className={style.form}>
 
 
-          </div>
 
           {/* Email */}
           <div className={style.formGroup}>
             <input
               type="text"
               id="sobrenome"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               className={style.input}
               placeholder=" "
 
@@ -76,6 +85,8 @@ export default function Login() {
             <input
               type="password"
               id="email"
+              value={senha}
+              onChange={(event) => setSenha(event.target.value)}
               className={style.input}
               placeholder=" "
 
