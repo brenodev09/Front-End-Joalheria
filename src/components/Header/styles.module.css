@@ -8,20 +8,27 @@ header {
     align-items: center;
     justify-content: space-between;
     padding: 2rem 3rem 0rem 3rem;
+    padding-bottom: 3rem;
     background: transparent;
     /* position: fixed; */
+    z-index: 10000;
 
 }
 
 
 .logo{
     width:9rem;
+    z-index: 10000;
 }
 
 nav {
     display: flex;
     align-items: center;
+    margin: 0 auto;
+    justify-content: center;
     gap: 1.4rem;
+    z-index: 10000;
+    
 
 
 
@@ -95,4 +102,57 @@ nav {
     border-color: rgba(201, 169, 110, 0.6);
     color: var(--ouro-claro);
     box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+
+
+.btnsAcoes{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    button{
+        padding: .7rem;
+        width: 8.8rem;
+    }
+}
+
+:global(.btnPadrao).btnCadastrar{
+    letter-spacing: 0.18rem;
+    background: #C9A962;
+    border: 1px solid rgba(201, 169, 110, 0.28);
+    padding: .7rem;
+    color: black;
+        transition: all .3s ease;
+
+
+    &:hover{
+        background: #937432;
+        color: rgb(255, 255, 255);
+    box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+    }
+}
+
+
+
+
+
+
+.acoesUser{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    
+
+    button{
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 1rem;
+
+        img{
+            opacity: 70%;
+        }
+    }
 }

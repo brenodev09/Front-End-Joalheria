@@ -4,7 +4,7 @@ import { Donut } from "lucide-react"
 
 export default function RotasPrivadas(){
     
-    const {carregando, estaLogado} = useAuth()
+    const {carregando, estaLogado, usuario} = useAuth()
 
     if(carregando){
         return <p>Está carregando!</p>
@@ -12,6 +12,10 @@ export default function RotasPrivadas(){
 
     if(!estaLogado) {
         return <Navigate to = "/login"/>
+    }
+
+    if (usuario.tipo !== "admin"){
+        return <Navigate to="/"/>
     }
 
     return <Outlet/>

@@ -11,7 +11,7 @@ export default function RotasPublicas(){
     }
 
     if(estaLogado){
-        return <Navigate to="admin/dashboard"/>
+        return <Navigate to="/admin/dashboard"/>
     }
 
     return <Outlet/>
