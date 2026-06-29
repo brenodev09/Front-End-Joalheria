@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import {useAuth} from "../../context/authContext"
 import breno from "../../img/breno.jpeg";
 import styles from "../../styles/Admin/infoConta.module.css";
 
@@ -51,9 +52,14 @@ export default function ContaAdmin() {
   const painelAtividadeRef = useRef(null);
   const painelAparenciaRef = useRef(null);
   const rodapeRef = useRef(null);
+  
 
   const [temaEscuro, setTemaEscuro] = useState(true);
   const [alertasEmail, setAlertasEmail] = useState(false);
+  const [erro, setErro] = useState("")
+
+  const {usuario} = useAuth()
+  console.log("USUARIO:", usuario);
 
   /* ─── ANIMAÇÕES DE ENTRADA COM GSAP ─────────────────── */
   useGSAP(() => {
@@ -162,9 +168,18 @@ export default function ContaAdmin() {
     );
   });
 
+ 
+
+
   /* ─── RENDER ─────────────────────────────────────────────── */
   return (
-    <div className={styles.pagina}>
+
+    <>
+
+
+      {erro &&  <p>{erro}</p>}
+
+      <div className={styles.pagina}>
       <main className={styles.conteudo}>
         {/* ════ PAINEL PERFIL ════ */}
         <section
@@ -189,7 +204,7 @@ export default function ContaAdmin() {
 
             {/* Info */}
             <div className={`${styles.perfilInfo} nomeAnim`}>
-              <h1 className={styles.perfilNome}>Breno Nunes</h1>
+              <h1 className={styles.perfilNome}>{usuario.nome}</h1>
 
               <div className={styles.perfilBadgeCargo}>
                 {/* substitua por ícone da sua lib */}
@@ -203,7 +218,7 @@ export default function ContaAdmin() {
                 <div className={styles.perfilMetaItem}>
                   {/* substitua por ícone da sua lib */}
                   <span className={styles.perfilMetaIconePlaceholder} />
-                  <span>breadmin1010@gmail.com</span>
+                  <span>{usuario.email}</span>
                 </div>
                 <span className={styles.perfilMetaSeparador} />
                 <div className={styles.perfilMetaItem}>
@@ -529,5 +544,8 @@ export default function ContaAdmin() {
         </div>
       </main>
     </div>
+    </>
+
+    
   );
 }

@@ -9,7 +9,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <ErrorBoundary>
       <AuthProvider>
         <App />
-
       </AuthProvider>
     </ErrorBoundary>
   </React.StrictMode>
