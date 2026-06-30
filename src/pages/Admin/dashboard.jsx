@@ -1,8 +1,14 @@
 import style from "../../styles/Admin/dashboard.module.css";
 import SideBar from "../../components/Admin/SideBar";
 import HeaderAdmin from "../../components/Admin/Header";
+import {useAuth} from "../../context/authContext"
+
 
 export default function Dashboard() {
+
+
+  const {usuario} = useAuth()
+
   return (
     <>
 
@@ -12,7 +18,7 @@ export default function Dashboard() {
           <p className={style.saudacaoRotulo}>
             PAINEL DE CONTROLE - AZORY JOALHERIA
           </p>
-          <h1 className={style.saudacaoTitulo}>Olá, Breno.</h1>
+          <h1 className={style.saudacaoTitulo}>Olá, {usuario.nome}.</h1>
           <p className={style.saudacaoSubtitulo}>
             Todas as informações da sua coleção centralizadas em um único
             painel.

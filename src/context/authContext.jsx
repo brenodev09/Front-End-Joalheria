@@ -92,6 +92,15 @@ export default function AuthProvider({ children }) {
         }
     }
 
+    function atualizarUsuario(novosDados) {
+    setUsuario(novosDados);
+
+    localStorage.setItem(
+        "usuario",
+        JSON.stringify(novosDados)
+    );
+}
+
     const estaLogado = usuario !== null;
 
     return (
@@ -101,6 +110,7 @@ export default function AuthProvider({ children }) {
                 login,
                 logout,
                 cadastrar,
+                atualizarUsuario,
                 estaLogado,
                 carregando,
             }}

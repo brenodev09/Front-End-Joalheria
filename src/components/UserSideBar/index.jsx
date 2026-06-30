@@ -209,8 +209,8 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                             />
                             <ItemMenu
                                 icone={<IcoUsuarios />}
-                                rotulo="Usuários"
-                                onClick={() => navegar_e_fechar("/admin/usuarios")}
+                                rotulo="Minha conta"
+                                onClick={() => navegar_e_fechar("/admin/conta")}
                             />
                         </ul>
                     ) : (

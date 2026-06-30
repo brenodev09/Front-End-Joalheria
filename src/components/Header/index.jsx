@@ -71,10 +71,10 @@ export default function Header() {
             </header>
 
 
-            {openSideBarUser && (
+            {/* {openSideBarUser && ( */}
             <SideBarUser isOpen={openSideBarUser} fecharSideBar={() => setOpenSideBarUser(false)} />
 
-            )}
+            {/* )} */}
         </>
     )
 }
