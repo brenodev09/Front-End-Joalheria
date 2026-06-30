@@ -1,7 +1,7 @@
 import style from "./styles.module.css"
 import logo from "../../img/logo.svg"
 import { useAuth } from "../../context/authContext"
-import SideBarUser from "../User/SideBar"
+import SideBarUser from "../UserSideBar"
 import { useState } from "react"
 import { NavLink } from "react-router-dom"
 
@@ -71,7 +71,10 @@ export default function Header() {
             </header>
 
 
+            {openSideBarUser && (
             <SideBarUser isOpen={openSideBarUser} fecharSideBar={() => setOpenSideBarUser(false)} />
+
+            )}
         </>
     )
 }

@@ -168,7 +168,7 @@ export default function inicial(){
               o mesmo nível de cuidado, sofisticação e excelência presente em cada
               peça da coleção.
             </p>
-            <a href="/admin" className={style.cta}>
+            <a href="/admin/dashboard" className={style.cta}>
               <span className={style.ctaTexto}>Acessar sistema</span>
               <img width="15" height="15" src="https://img.icons8.com/material-rounded/24/c9a96e/right.png" alt="right" />
 

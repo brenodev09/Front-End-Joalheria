@@ -11,14 +11,14 @@ header {
     padding-bottom: 3rem;
     background: transparent;
     /* position: fixed; */
-    z-index: 10000;
+    z-index: 1000;
 
 }
 
 
 .logo{
     width:9rem;
-    z-index: 10000;
+    /* z-index: 10000; */
 }
 
 nav {
@@ -27,7 +27,7 @@ nav {
     margin: 0 auto;
     justify-content: center;
     gap: 1.4rem;
-    z-index: 10000;
+    /* z-index: 10000; */
     
 
 
