@@ -1,0 +1,435 @@
+    /* =========================================================
+   OVERLAY
+========================================================= */
+.overlayModal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 5, 4, 0.74);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  padding: 24px;
+}
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+========================================================= */
+.containerModal {
+  width: 100%;
+  max-width: 90rem;
+  max-height: 92vh;
+  overflow: hidden;
+
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 0%,
+    #0d0c0a 50%,
+    #0d0d0c 100%
+  );
+
+  border: 1px solid rgba(201, 169, 98, 0.16);
+  border-radius: 16px;
+
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+
+  padding: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.cabecalhoModal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.tituloModal {
+  font-size: 26px;
+  font-weight: 600;
+  color: #f3ead8;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.subtituloModal {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.botaoFechar {
+  width: 36px;
+  height: 36px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.botaoFechar:hover {
+  border-color: rgba(201, 169, 98, 0.5);
+  color: #e8cf94;
+  background: rgba(201, 169, 98, 0.08);
+}
+
+/* =========================================================
+   LAYOUT PRINCIPAL
+========================================================= */
+.contentModal {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 4rem;
+
+  height: 100%;
+  overflow: hidden;
+}
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+.containerPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.containerPreview p {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cardPreview {
+  background: #1c1c1c;
+  border: 1px solid rgba(201, 169, 98, 0.18);
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.imagemCategoria {
+  height: 14rem;
+  background: #272727;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagemPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.textCard {
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.textCard h1 {
+  font-size: 1.3rem;
+  font-style: italic;
+  color: #fff;
+  opacity: 0.9;
+}
+
+.textCard p {
+  font-size: 0.85rem;
+  color: #aaa;
+  opacity: 0.8;
+}
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+.containerFormulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding-right: 6px;
+
+  overflow-y: auto;
+}
+
+/* scroll bonito */
+.containerFormulario::-webkit-scrollbar {
+  width: 6px;
+}
+
+.containerFormulario::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 98, 0.3);
+  border-radius: 10px;
+}
+.grupoCampo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}   
+/* =========================================================
+   SEÇÃO
+========================================================= */
+.cabecalhoSecao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 10px;
+}
+
+.labelCampo {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.tituloSecao {
+  font-size: 12px;
+  color: #e8cf94;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.linhaTitulo {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 169, 98, 0.4),
+    transparent
+  );
+}
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+.inputCampo,
+.textareaCampo {
+  width: 100%;
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: #fff;
+  font-size: 14px;
+
+  transition: 0.2s ease;
+}
+
+.inputCampo:focus,
+.textareaCampo:focus {
+  border-color: #c9a962;
+  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.12);
+}
+
+.textareaCampo {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+.areaUpload {
+  position: relative;
+
+  height: 130px;
+
+  border-radius: 10px;
+  border: 1px dashed rgba(201, 169, 98, 0.25);
+
+  background: rgba(255, 255, 255, 0.02);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.areaUpload:hover {
+  border-color: rgba(201, 169, 98, 0.5);
+  background: rgba(201, 169, 98, 0.05);
+}
+
+.inputArquivo {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.conteudoUpload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  color: #bbb;
+}
+
+.iconeUpload {
+  font-size: 26px;
+  color: #c9a962;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+.cardStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* switch */
+.switch {
+  position: relative;
+  width: 46px;
+  height: 22px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #333;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  top: 2px;
+  left: 2px;
+
+  background: #fff;
+  border-radius: 50%;
+
+  transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+  background: #c9a962;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+/* =========================================================
+   ERRO
+========================================================= */
+.erro {
+  color: #ff5c5c;
+  font-size: 12px;
+}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+.botoesAcao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-top: 10px;
+}
+
+.btnCancelar {
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  background: transparent;
+  color: #fff;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.btnCancelar:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btnSalvar {
+  padding: 12px;
+
+  border-radius: 10px;
+  border: none;
+
+  background: linear-gradient(135deg, #c9a962, #b68a3c);
+  color: #1a1206;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.btnSalvar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(201, 169, 98, 0.2);
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+@media (max-width: 900px) {
+  .contentModal {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

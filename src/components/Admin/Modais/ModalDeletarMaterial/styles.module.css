@@ -1,0 +1,237 @@
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.sobreposicao {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 7, 5, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  padding: 20px;
+}
+
+.sobreposicaoAberta {
+  animation: fadeInOverlay 0.28s ease forwards;
+}
+
+.sobreposicaoFechada {
+  animation: fadeOutOverlay 0.22s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOutOverlay {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 35rem;
+  background: linear-gradient(180deg, #161412 0%, #100f0d 100%);
+  border: 1px solid rgba(212, 175, 92, 0.18);
+  border-radius: 4px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.4);
+  padding: 38px 32px 28px;
+  text-align: center;
+}
+
+.modalAberto {
+  animation: entradaModal 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.modalFechado {
+  animation: saidaModal 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes entradaModal {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes saidaModal {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+
+/* =========================================================
+   FECHAR
+========================================================= */
+
+.botaoFechar {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 22px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: 0.18s ease;
+}
+
+.botaoFechar:hover {
+  color: #efe2c0;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.icone {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(196, 64, 64, 0.12);
+  border: 1px solid rgba(196, 64, 64, 0.28);
+}
+
+/* =========================================================
+   TEXTOS
+========================================================= */
+
+.titulo {
+  font-family: "Playfair Display", serif;
+  font-size: 22px;
+  color: #f3ead8;
+  margin-bottom: 12px;
+}
+
+.mensagem {
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+
+.nomeDestaque {
+  font-family: "Playfair Display", serif;
+  color: #e8cf94;
+  font-style: italic;
+}
+
+/* =========================================================
+   AVISO
+========================================================= */
+
+.avisoProdutos {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(212, 175, 92, 0.07);
+  border: 1px solid rgba(212, 175, 92, 0.22);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: left;
+}
+
+.avisoIcone {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(212, 175, 92, 0.18);
+  color: #e8cf94;
+  font-style: italic;
+}
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.acoes {
+  display: flex;
+  gap: 12px;
+}
+
+.botaoCancelar {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.botaoCancelar:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.botaoExcluir {
+  flex: 1;
+  background: #750707;
+  border: 1px solid transparent;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.botaoExcluir:hover {
+  background: #a10b0b;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(168, 63, 63, 0.38);
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 32px 22px;
+  }
+
+  .acoes {
+    flex-direction: column-reverse;
+  }
+}

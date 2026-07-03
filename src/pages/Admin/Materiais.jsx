@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../services/api";
 import ModalAddMaterial from "../../components/Admin/Modais/ModalAddMaterial";
+import ModalEditarMaterial from "../../components/Admin/Modais/ModaleditarMaterial";
 import styles from "../../styles/Admin/material.module.css";
+import ModalExcluirMaterial from "../../components/Admin/Modais/ModalDeletarMaterial";
 import {
   Search,
   Pencil,
@@ -15,13 +17,26 @@ import {
 export default function Materiais() {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
-
+const [modalDelete, setModalDelete] = useState(false);
+const [materialToDelete, setMaterialToDelete] = useState(null);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [modalAdd, setModalAdd] = useState(false);
-
+const [modalEdit, setModalEdit] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  async function deletarMaterial(id) {
+  try {
+    await api.delete(`/materiais/${id}`);
+
+    setModalDelete(false);
+    setMaterialToDelete(null);
+
+    carregarMateriais();
+  } catch (error) {
+    console.error("Erro ao deletar material:", error);
+  }
+}
 
   async function carregarMateriais() {
     try {
@@ -218,17 +233,25 @@ export default function Materiais() {
                   <ChevronRight size={16} />
                 </button>
 
-                <button
-                  className={`${styles.actionBtn} ${styles.editBtn}`}
-                >
-                  <Pencil size={16} />
-                </button>
+               <button
+  className={`${styles.actionBtn} ${styles.editBtn}`}
+  onClick={() => {
+    setSelectedMaterial(material);
+    setModalEdit(true);
+  }}
+>
+  <Pencil size={16} />
+</button>
 
-                <button
-                  className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                >
-                  <Trash2 size={16} />
-                </button>
+               <button
+  className={`${styles.actionBtn} ${styles.deleteBtn}`}
+  onClick={() => {
+    setMaterialToDelete(material);
+    setModalDelete(true);
+  }}
+>
+  <Trash2 size={16} />
+</button>
               </div>
             </div>
           </article>
@@ -292,6 +315,26 @@ export default function Materiais() {
           carregarMateriais();
         }}
       />
+      <ModalEditarMaterial
+  isOpen={modalEdit}
+  material={selectedMaterial}
+  fecharModal={() => {
+    setModalEdit(false);
+    setSelectedMaterial(null);
+    carregarMateriais();
+  }}
+  aoSalvar={() => carregarMateriais()}
+/>
+
+<ModalExcluirMaterial
+  aberto={modalDelete}
+  material={materialToDelete}
+  aoFechar={() => {
+    setModalDelete(false);
+    setMaterialToDelete(null);
+  }}
+  aoConfirmar={() => deletarMaterial(materialToDelete?.id)}
+/>
     </main>
   );
 }
