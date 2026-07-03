@@ -189,7 +189,7 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                 <div className={style.divisoria} />
 
                 {/* Navegação principal */}
-                <nav className={style.navegacao}>
+                <nav className={style.linksNavegacao}>
                     {usuario?.tipo === "admin" ? (
                         <ul className={style.listaMenu}>
                             <ItemMenu

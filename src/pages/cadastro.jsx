@@ -13,6 +13,7 @@ export default function Cadastro() {
   const [senha, setSenha] = useState(null)
   const [confirmarSenha, setConfirmarSenha] = useState(null)
   const [erro, setErro] = useState(null)
+  const [criando, setCriando] = useState(false)
   const navegar = useNavigate()
 
   const { cadastrar } = useAuth()
@@ -48,13 +49,14 @@ export default function Cadastro() {
 
     if (!ValidarForm()) return;
 
-
+    setCriando(true)
     const resultado = await cadastrar(nome, email, senha)
 
     if (resultado.sucesso) {
       navegar("/admin/dashboard")
     } else {
       setErro(resultado.mensagem)
+      setCriando(false)
     }
   }
 
@@ -140,7 +142,8 @@ export default function Cadastro() {
 
 
           <div className={style.rodapeForm}>
-            <button type="submit" className={`btnPadrao ${style.btnCriar}`}>CRIAR CONTA</button>
+            <button disabled={criando} type="submit" className={`btnPadrao ${style.btnCriar}`}>
+             {criando ? "CRIANDO CONTA" : "CRIAR CONTA "} </button>
             <div className={style.possuiConta}>
               <p>Já possui uma conta? </p>
               <a href="/Login">Entrar</a>

@@ -4,12 +4,12 @@ import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
   return (
-    <aside className={styles.sidebar}>
+    <aside className={styles.sideBarr}>
       <div className={styles.cabecalho}>
         <a href="/"> <img  src={Logo} alt="Logo" className={styles.logo} /></a>
       </div>
 
-      <nav className={styles.navegacao}>
+      <main className={styles.navegacao}>
         <NavLink to="/admin/dashboard" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
             width="27"
@@ -55,7 +55,7 @@ export default function Sidebar() {
           />
           <span className={styles.textoNav}>Conta</span>
         </NavLink>
-      </nav>
+      </main>
     </aside>
   );
 }

@@ -11,6 +11,7 @@ export default function Login() {
   const [senha, setSenha] = useState("")
   // const [confirmarSenha, setConfirmarSenha] = useState()
   const [erro, setErro] = useState("")
+  const [entrando, setEntrando] = useState(false)
   const navegar = useNavigate()
 
   const { login } = useAuth()
@@ -39,12 +40,15 @@ export default function Login() {
 
     if (!ValidarForm()) return;
 
+    setEntrando(true)
+
     const resultado = await login(email, senha)
 
     if (resultado.sucesso) {
       navegar("/")
     } else {
       setErro(resultado.mensagem)
+      setEntrando(false)
     }
   }
 
@@ -101,7 +105,9 @@ export default function Login() {
 
 
           <div className={style.rodapeForm}>
-            <button type="submit" className={`btnPadrao ${style.btnCriar}`}>ENTRAR</button>
+            <button disabled = {entrando} type="submit" className={`btnPadrao ${style.btnCriar} ${entrando ? style.btnEntrando : ""}`}> 
+            {entrando ? "ENTRANDO..." : "ENTRAR"}</button>
+
             <div className={style.possuiConta}>
               <p>Não possui uma conta? </p>
               <a href="/Cadastrar">Criar agora</a>
