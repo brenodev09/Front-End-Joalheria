@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import styles from "../../styles/Admin/produtosAdmin.module.css";
-import AdminModais from "../../components/Admin/AdminModais/AdminModais";
+import { api } from "../../services/api";
 
 import {
   Search,
@@ -15,196 +15,126 @@ import {
   X,
 } from "lucide-react";
 
-const initialProducts = [
-  {
-    id: "A1201",
-    name: "Anel Imperial Gold",
-    collection: "Imperial",
-    category: "Anéis",
-    material: "Ouro 18k",
-    price: 2890,
-    stock: 12,
-    minStock: 5,
-    location: "Vitrine 01",
-    status: "Ativo",
-    description: "Anel em ouro 18k com acabamento premium e design exclusivo.",
-    images: [],
-  },
-  {
-    id: "A1202",
-    name: "Colar Brilho Eterno",
-    collection: "Eterno",
-    category: "Colares",
-    material: "Ouro 18k",
-    price: 4120,
-    stock: 8,
-    minStock: 4,
-    location: "Vitrine 02",
-    status: "Ativo",
-    description: "Colar delicado com brilho sofisticado para ocasiões especiais.",
-    images: [],
-  },
-  {
-    id: "A1204",
-    name: "Brinco Ponto de Luz",
-    collection: "Clássicos",
-    category: "Brincos",
-    material: "Ouro 18k",
-    price: 1890,
-    stock: 3,
-    minStock: 5,
-    location: "Vitrine 03",
-    status: "Estoque baixo",
-    description: "Brinco clássico com ponto de luz elegante.",
-    images: [],
-  },
-];
+
 
 export default function Produtos() {
-  const [products, setProducts] = useState(initialProducts);
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [material, setMaterial] = useState("");
-  const [status, setStatus] = useState("");
-  const [modal, setModal] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState(initialProducts[0]);
-  const [toast, setToast] = useState(null);
 
+
+useEffect(() => {
+  buscarProdutos()
+}, [])
+
+async function buscarProdutos() {
+  try {
+    const response = await api.get("/produtos")
+    setProducts(response.data)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    setLoading(false)
+  }
+}
+const [products, setProducts] = useState([]);
+const [loading, setLoading] = useState(true);
+
+const [search, setSearch] = useState("");
+const [category, setCategory] = useState("");
+const [material, setMaterial] = useState("");
+const [status, setStatus] = useState("");
+
+const [selectedProduct, setSelectedProduct] = useState(null);
+  useEffect(() => {
+  buscarProdutos();
+}, []);
+
+async function buscarProdutos() {
+  try {
+    const response = await api.get("/produtos");
+    setProducts(response.data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+}
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const searchMatch =
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.id.toLowerCase().includes(search.toLowerCase()) ||
-        product.collection.toLowerCase().includes(search.toLowerCase());
+  return products.filter((product) => {
+    const searchMatch =
+      product.nome?.toLowerCase().includes(search.toLowerCase()) ||
+      String(product.id).includes(search) ||
+      product.categoria?.toLowerCase().includes(search.toLowerCase());
 
-      return (
-        searchMatch &&
-        (!category || product.category === category) &&
-        (!material || product.material === material) &&
-        (!status || product.status === status)
-      );
-    });
-  }, [products, search, category, material, status]);
-
-  const summary = useMemo(() => {
-    const totalProducts = products.length;
-
-    const lowStockProducts = products.filter(
-      (product) => Number(product.stock) <= Number(product.minStock)
-    ).length;
-
-    const totalValue = products.reduce(
-      (sum, product) => sum + Number(product.price) * Number(product.stock),
-      0
+    return (
+      searchMatch &&
+      (!category || product.categoria === category) &&
+      (!material || product.material === material) &&
+      (!status ||
+        getStatusByStock(
+          product.estoque,
+          product.estoque_minimo
+        ) === status)
     );
+  });
+}, [
+  products,
+  search,
+  category,
+  material,
+  status,
+]);
 
-    const activeProducts = products.filter(
-      (product) => product.status === "Ativo"
-    ).length;
+ const summary = useMemo(() => {
+  const totalProducts = products.length;
 
-    return {
-      totalProducts,
-      lowStockProducts,
-      totalValue,
-      activeProducts,
-    };
-  }, [products]);
+  const lowStockProducts = products.filter(
+    (product) =>
+      Number(product.estoque) <=
+      Number(product.estoque_minimo)
+  ).length;
 
-  function showToast(title, text, variant = "success") {
-    setToast({ title, text, variant });
-    setTimeout(() => setToast(null), 2800);
-  }
+  const totalValue = products.reduce(
+    (sum, product) =>
+      sum +
+      Number(product.preco) *
+        Number(product.estoque),
+    0
+  );
 
-  function openModal(type, product = null) {
-    if (type === "view") {
-      setSelectedProduct(product);
-      return;
-    }
+  const activeProducts = products.filter(
+    (product) => product.ativo === 1
+  ).length;
 
-    setSelectedProduct(product);
-    setModal(type);
-  }
+  return {
+    totalProducts,
+    lowStockProducts,
+    totalValue,
+    activeProducts,
+  };
+}, [products]);
 
-  function closeModal() {
-    setModal(null);
-  }
+  
 
-  function addProduct(product) {
-    const newProduct = {
-      ...product,
-      id: `A${1201 + products.length}`,
-      collection: product.collection || "Nova Coleção",
-      price: Number(product.price),
-      stock: Number(product.stock),
-      minStock: Number(product.minStock || 5),
-      location: product.location || "Estoque",
-      status: getStatusByStock(Number(product.stock)),
-      images: product.images || [],
-    };
+ 
+ 
 
-    setProducts((prev) => [...prev, newProduct]);
-    setSelectedProduct(newProduct);
-    closeModal();
 
-    showToast(
-      "Produto adicionado",
-      `${newProduct.name} foi cadastrado com sucesso.`
-    );
-  }
+ 
+    
 
-  function updateProduct(updatedProduct) {
-    const normalizedProduct = {
-      ...updatedProduct,
-      price: Number(updatedProduct.price),
-      stock: Number(updatedProduct.stock),
-      minStock: Number(updatedProduct.minStock || 5),
-      status: getStatusByStock(Number(updatedProduct.stock)),
-      images: updatedProduct.images || [],
-    };
+  
 
-    setProducts((prev) =>
-      prev.map((item) =>
-        item.id === normalizedProduct.id ? normalizedProduct : item
-      )
-    );
 
-    setSelectedProduct(normalizedProduct);
-    closeModal();
-
-    showToast(
-      "Produto atualizado",
-      `${normalizedProduct.name} foi editado com sucesso.`
-    );
-  }
-
-  function deleteProduct() {
-    const deletedName = selectedProduct?.name || "Produto";
-
-    setProducts((prev) => prev.filter((item) => item.id !== selectedProduct.id));
-    setSelectedProduct(null);
-    closeModal();
-
-    showToast(
-      "Produto excluído",
-      `${deletedName} foi removido da coleção.`,
-      "danger"
-    );
-  }
+ if (loading) {
+  return (
+    <main className={styles.adminProductsPage}>
+      <h2>Carregando produtos...</h2>
+    </main>
+  )
+}
 
   return (
     <main className={styles.adminProductsPage}>
-      {toast && (
-        <div className={styles.toastStack}>
-          <div
-            className={`${styles.premiumToast} ${
-              toast.variant === "danger" ? styles.dangerToast : ""
-            }`}
-          >
-            <strong>{toast.title}</strong>
-            <span>{toast.text}</span>
-          </div>
-        </div>
-      )}
+     
 
       <div className={styles.adminProductsShell}>
         <section className={styles.adminProductsContent}>
@@ -221,7 +151,7 @@ export default function Produtos() {
 
             <button
               className={`${styles.btnPadrao} ${styles.addProductBtn}`}
-              onClick={() => openModal("add")}
+             onClick={() => console.log("Adicionar produto")}
             >
               <img
                 width="20"
@@ -338,10 +268,16 @@ export default function Produtos() {
                   >
                     <td>
                       <div className={styles.productCell}>
-                        <ProductThumb image={product.images?.[0]?.url} />
+                        <ProductThumb
+  image={
+    product.imagem
+      ? `http://localhost:3000${product.imagem}`
+      : null
+  }
+/>
 
                         <div>
-                          <strong>{product.name}</strong>
+                          <strong>{product.nome}</strong>
                           <span>ID: PRD-{product.id}</span>
                         </div>
                       </div>
@@ -349,32 +285,37 @@ export default function Produtos() {
 
                     <td>
                       <strong className={styles.collectionName}>
-                        {product.collection}
+                       
                       </strong>
                       <span className={styles.collectionType}>● Premium</span>
                     </td>
 
-                    <td>{product.category}</td>
+                    <td>{product.categoria}</td>
                     <td>{product.material}</td>
                     <td className={styles.price}>
-                      {formatCurrency(product.price)}
+                      {formatCurrency(product.preco)}
                     </td>
-                    <td>{product.stock} un.</td>
+                    <td>{product.estoque} un.</td>
                     <td>
-                      <StatusBadge status={product.status} />
+                     <StatusBadge
+  status={getStatusByStock(
+    product.estoque,
+    product.estoque_minimo
+  )}
+/>
                     </td>
                     <td>
                       <div className={styles.actions}>
                         <button
                           title="Visualizar"
-                          onClick={() => openModal("view", product)}
+                         onClick={() => console.log(product)}
                         >
                           <Eye size={15} />
                         </button>
 
                         <button
                           title="Editar"
-                          onClick={() => openModal("edit", product)}
+                          onClick={() => console.log(product)}
                         >
                           <Pencil size={15} />
                         </button>
@@ -382,7 +323,7 @@ export default function Produtos() {
                         <button
                           title="Excluir"
                           className={styles.delete}
-                          onClick={() => openModal("delete", product)}
+                         onClick={() => console.log(product)}
                         >
                           <Trash2 size={15} />
                         </button>
@@ -402,16 +343,7 @@ export default function Produtos() {
       
       </div>
 
-      <AdminModais
-        type={modal}
-        context="product-admin"
-        item={selectedProduct}
-        product={selectedProduct}
-        onClose={closeModal}
-        onSubmitAdd={addProduct}
-        onSubmitEdit={updateProduct}
-        onDelete={deleteProduct}
-      />
+    
     </main>
   );
 }
@@ -430,23 +362,9 @@ function MetricCard({ icon, label, value, text }) {
   );
 }
 
-function DetailSection({ title, children }) {
-  return (
-    <section className={styles.detailSection}>
-      <h3>{title}</h3>
-      <div className={styles.detailSectionGrid}>{children}</div>
-    </section>
-  );
-}
 
-function DetailGrid({ label, value }) {
-  return (
-    <div className={styles.detailItem}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
+
+
 
 function SelectBox({ value, onChange, placeholder, children }) {
   return (
@@ -489,9 +407,15 @@ function ProductThumb({ image }) {
   );
 }
 
-function getStatusByStock(stock) {
-  if (stock <= 1) return "Crítico";
-  if (stock <= 5) return "Estoque baixo";
+function getStatusByStock(
+  estoque,
+  estoqueMinimo
+) {
+  if (estoque <= 1) return "Crítico";
+
+  if (estoque <= estoqueMinimo)
+    return "Estoque baixo";
+
   return "Ativo";
 }
 
@@ -499,5 +423,12 @@ function formatCurrency(value) {
   return Number(value).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
+
+
   });
+
+
+
+
+
 }
