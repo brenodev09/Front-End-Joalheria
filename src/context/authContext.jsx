@@ -93,11 +93,15 @@ export default function AuthProvider({ children }) {
     }
 
     function atualizarUsuario(novosDados) {
-    setUsuario(novosDados);
+        const usuarioAtualizado = {
+            ...usuario,
+            ...novosDados
+        }
+    setUsuario(usuarioAtualizado);
 
     localStorage.setItem(
         "usuario",
-        JSON.stringify(novosDados)
+        JSON.stringify(usuarioAtualizado)
     );
 }
 

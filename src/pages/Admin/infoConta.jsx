@@ -3,41 +3,41 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useAuth } from "../../context/authContext"
 import { api } from "../../services/api"
-import breno from "../../img/breno.jpeg";
+import semFoto from "../../img/semFotoImg.png";
 import styles from "../../styles/Admin/infoConta.module.css";
 import NotificacaoEdicao from "../../components/Admin/PopUps/PopInfoConta"
 
 /* ─── DADOS ESTÁTICOS (apenas visual) ─────────────────────────── */
-const ATIVIDADES = [
-  {
-    icone: null /* substitua por ícone da sua lib */,
-    cor: "Verde",
-    titulo: "Login realizado com sucesso",
-    sub: "Chrome · Windows · São Paulo, BR",
-    tempo: "Agora",
-  },
-  {
-    icone: null /* substitua por ícone da sua lib */,
-    cor: "Amarelo",
-    titulo: "Perfil atualizado",
-    sub: "Nome e avatar alterados",
-    tempo: "2h atrás",
-  },
-  {
-    icone: null /* substitua por ícone da sua lib */,
-    cor: "Azul",
-    titulo: "Senha alterada",
-    sub: "Via configurações de segurança",
-    tempo: "3 dias",
-  },
-  {
-    icone: null /* substitua por ícone da sua lib */,
-    cor: "Vermelho",
-    titulo: "Tentativa de acesso negada",
-    sub: "IP desconhecido bloqueado",
-    tempo: "1 semana",
-  },
-];
+// const ATIVIDADES = [
+//   {
+//     icone: null /* substitua por ícone da sua lib */,
+//     cor: "Verde",
+//     titulo: "Login realizado com sucesso",
+//     sub: "Chrome · Windows · São Paulo, BR",
+//     tempo: "Agora",
+//   },
+//   {
+//     icone: null /* substitua por ícone da sua lib */,
+//     cor: "Amarelo",
+//     titulo: "Perfil atualizado",
+//     sub: "Nome e avatar alterados",
+//     tempo: "2h atrás",
+//   },
+//   {
+//     icone: null /* substitua por ícone da sua lib */,
+//     cor: "Azul",
+//     titulo: "Senha alterada",
+//     sub: "Via configurações de segurança",
+//     tempo: "3 dias",
+//   },
+//   {
+//     icone: null /* substitua por ícone da sua lib */,
+//     cor: "Vermelho",
+//     titulo: "Tentativa de acesso negada",
+//     sub: "IP desconhecido bloqueado",
+//     tempo: "1 semana",
+//   },
+// ];
 
 const COR_ICONE = {
   Verde: styles.atividadeItemIconeVerde,
@@ -130,12 +130,49 @@ export default function ContaAdmin() {
     } catch (erro) {
       console.log("STATUS:", erro.response?.status)
       console.log("DADOS:", erro.response?.data)
-      
+
       console.error(erro)
       setErro("Erro ao editar o usuario")
       console.error(erro)
     }
   }
+
+
+  const inputFotoRef = useRef(null)
+
+  // funcao de enviar a imagem para o back
+
+  async function enviarFoto(event) {
+    const arquivo = event.target.files[0]
+
+    if (!arquivo) return
+
+    try {
+      const formData = new FormData()
+
+      formData.append("foto", arquivo)
+
+      const resposta = await api.put(
+        `/usuarios/${usuario.id}/foto`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      )
+
+      atualizarUsuario({
+        foto_perfil: resposta.data.foto_perfil
+      });
+
+      console.log(resposta.data)
+
+    } catch (erro) {
+      console.error(erro)
+    }
+  }
+
 
   /* ─── ANIMAÇÕES DE ENTRADA COM GSAP ─────────────────── */
   useGSAP(() => {
@@ -245,27 +282,27 @@ export default function ContaAdmin() {
   });
 
   const dataCriacao = usuario?.criado_em
-  ? new Date(usuario.criado_em).toLocaleDateString("pt-BR", {
+    ? new Date(usuario.criado_em).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "short",
       year: "numeric"
     }) : ""
 
   function calcularDias(data) {
-  const hoje = new Date()
-  const dataAlteracao = new Date(data)
+    const hoje = new Date()
+    const dataAlteracao = new Date(data)
 
-  const diferencaMs = hoje - dataAlteracao
+    const diferencaMs = hoje - dataAlteracao
 
-  return Math.floor(
-    diferencaMs / (1000 * 60 * 60 * 24)
-  )
-}
+    return Math.floor(
+      diferencaMs / (1000 * 60 * 60 * 24)
+    )
+  }
 
 
-const dias = usuario?.atualizado_em
-  ? calcularDias(usuario.atualizado_em)
-  : 0
+  const dias = usuario?.atualizado_em
+    ? calcularDias(usuario.atualizado_em)
+    : 0
 
   /* ─── RENDER ─────────────────────────────────────────────── */
   return (
@@ -289,7 +326,7 @@ const dias = usuario?.atualizado_em
               <div className={`${styles.perfilAvatarWrapper} avatarAnim`}>
                 <div className={`${styles.perfilAvatarAnel} anelAnim`}>
                   <img
-                    src={breno}
+                    src={usuario?.foto_perfil ? `http://localhost:3000${usuario.foto_perfil}` : semFoto}
                     alt="Avatar do usuário"
                     className={styles.perfilAvatar}
                   />
@@ -313,7 +350,7 @@ const dias = usuario?.atualizado_em
                   <div className={styles.perfilMetaItem}>
                     {/* substitua por ícone da sua lib */}
                     <div className={styles.perfilMetaIconePlaceholder}>
-                        {/* <img width="10" height="10" src="https://img.icons8.com/parakeet-line/48/ffffff/new-post.png" alt="new-post"/> */}
+                      {/* <img width="10" height="10" src="https://img.icons8.com/parakeet-line/48/ffffff/new-post.png" alt="new-post"/> */}
                     </div>
                     <span>{usuario.email}</span>
                   </div>
@@ -343,10 +380,18 @@ const dias = usuario?.atualizado_em
                   />
                   <p>EDITAR PERFIL </p>
                 </button>
-                <button className={`btnPadrao ${styles.btnTrocarFoto}`}>
+                <button className={`btnPadrao ${styles.btnTrocarFoto}`} onClick={() => inputFotoRef.current.click()}>
                   {/* substitua por ícone da sua lib */}
                   Alterar foto
                 </button>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={inputFotoRef}
+                  style={{ display: "none" }}
+                  onChange={enviarFoto}
+                />
               </div>
             </div>
           </section>
@@ -479,7 +524,7 @@ const dias = usuario?.atualizado_em
                         <img
                           width="20"
                           height="20"
-                          src= { mostrarSenha ? "https://img.icons8.com/material-outlined/24/ffffff/invisible.png" : "https://img.icons8.com/fluency-systems-regular/48/ffffff/visible--v1.png"}
+                          src={mostrarSenha ? "https://img.icons8.com/material-outlined/24/ffffff/invisible.png" : "https://img.icons8.com/fluency-systems-regular/48/ffffff/visible--v1.png"}
                           alt=""
                           aria-hidden="true"
                         />
@@ -665,7 +710,7 @@ const dias = usuario?.atualizado_em
         </main>
       </div>
 
-     <NotificacaoEdicao visivel = {mostrarNotificacao}/>
+      <NotificacaoEdicao visivel={mostrarNotificacao} />
     </>
 
 

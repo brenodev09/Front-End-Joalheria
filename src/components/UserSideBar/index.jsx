@@ -103,7 +103,7 @@ export default function SideBar({ isOpen, fecharSideBar }) {
     const { usuario } = useAuth()
     const { logout } = useAuth()
 
-    if(!usuario) {
+    if (!usuario) {
         return null
     }
     const ehAdmin = usuario?.tipo === "admin"
@@ -166,14 +166,14 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                 {/* Perfil do usuário */}
                 <section className={style.secaoPerfil}>
                     <div className={style.avatarWrapper}>
-                        {usuario?.avatar ? (
+                        {usuario?.foto_perfil ? (
                             <img
-                                src={dadosUsuario.avatar}
+                                src={`http://localhost:3000${usuario.foto_perfil}`}
                                 alt={`Avatar de ${usuario?.nome}`}
                                 className={style.avatarImagem}
                             />
                         ) : (
-                            <div className={style.avatarFallback}>B</div>
+                            <div className={style.avatarFallback}>{inicialNome}</div>
                         )}
                         <span className={style.avatarStatus} />
                     </div>
