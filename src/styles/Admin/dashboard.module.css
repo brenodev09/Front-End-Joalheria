@@ -1,8 +1,7 @@
-
 .painelPrincipal {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   /* padding: 24px; */
   padding-top: 4rem;
   width: 100%;
@@ -98,7 +97,7 @@
   flex-direction: column;
   gap: 8px;
   min-width: 150px;
-  flex: 1;  
+  flex: 1;
   transition: border-color 0.2s ease;
 }
 
@@ -150,6 +149,197 @@
   font-size: 0.8rem;
   color: #cdcdcd;
   margin: 0;
+}
+
+
+.painelGraficos {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2rem;
+  padding-top: 2rem;
+
+}
+
+.cardGrafico {
+  /* flex: 1; */
+  max-width: 40rem;
+  max-height: 25rem;
+  background: #151515;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.cabecalhoGrafico {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.cabecalhoGrafico span {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.1rem;
+  color: #C9A84C;
+  opacity: 94%;
+}
+
+.cabecalhoGrafico p {
+  color: #a3a3a3;
+  font-size: .9rem;
+  margin-top: 6px;
+}
+
+.cardRecentes {
+  background: #151515;
+  border: 1.7px solid rgba(201, 168, 76, 0.21);
+  border-radius: 10px;
+  width:25rem;
+  padding: 24px;
+
+  /* min-height: 420px; */
+}
+
+.cabecalhoRecentes {
+  margin-bottom: 24px;
+}
+
+.tituloRecentes {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.1rem;
+  color: #C9A84C;
+  opacity: 94%;
+  text-transform: uppercase;
+}
+
+.subtituloRecentes {
+  color: #a3a3a3;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.listaRecentes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.itemRecente {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 16px;
+  /* 
+    background: rgba(255,255,255,0.03);
+
+    border: 1px solid rgba(255,255,255,0.05); */
+
+  border-radius: 12px;
+
+  transition: 0.2s ease;
+}
+
+.itemRecente:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(201, 168, 76, 0.4);
+
+  background: rgba(201, 168, 76, 0.06);
+}
+
+.nomeRecente {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.categoriaRecente {
+  color: #8f8f8f;
+  font-size: 0.85rem;
+}
+
+.estoqueRecente {
+  color: #C9A84C;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.semProdutos {
+  color: #8f8f8f;
+}
+
+.cardEstoque {
+  width: 100%;
+  width: 20rem;
+  max-height: 40rem;
+
+  padding: 28px;
+
+  background: #090304;
+  border: 1px solid rgba(255, 0, 34, 0.5);
+  border-radius: 9px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icone {
+  color: #ff2d43;
+  font-size: 1.3rem;
+}
+
+.titulo {
+  color: #ff2d43;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.listaProdutos {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.itemProduto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.informacoesProduto {
+  display: flex;
+  flex-direction: column;
+}
+
+.nomeProduto {
+  color: #f5f5f5;
+  font-size: .98rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.categoriaProduto {
+  color: #7d787d;
+  font-size: .9rem;
+}
+
+.quantidadeProduto {
+  color: #ff2d43;
+  font-size: .9rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ── Responsivo ── */

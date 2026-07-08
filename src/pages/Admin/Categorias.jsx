@@ -19,7 +19,7 @@ export default function Categorias() {
 
 
 
-    // listagem dos produtos na pagina
+    // listagem das categorias na pagina
     useEffect(() => {
         api.get("/categorias").then((resposta) => {
             setCategorias(resposta.data)

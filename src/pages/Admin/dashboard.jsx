@@ -1,15 +1,34 @@
 import style from "../../styles/Admin/dashboard.module.css";
 import SideBar from "../../components/Admin/SideBar";
 import HeaderAdmin from "../../components/Admin/Header";
-import {useAuth} from "../../context/authContext"
-
+import { useAuth } from "../../context/authContext"
+import { api } from "../../services/api"
+import dadosDashboard from "../../context/dataContext"
+import { useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
 
 export default function Dashboard() {
 
+  const { usuario } = useAuth()
+  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, carregando } = dadosDashboard()
 
-  const {usuario} = useAuth()
+  if (carregando) {
+    return <p className={style.carregando}>Carregando dados de dashboard...</p>
+  }
+
+  // const totalProdutos = produtos.length
 
   return (
+
+
+
     <>
 
       <main className={style.painelPrincipal}>
@@ -37,7 +56,7 @@ export default function Dashboard() {
         </div>
 
         {/* Bloco de cards métricos */}
-        <div className={style.cardsMetricos}>
+        <section className={style.cardsMetricos}>
           <div className={style.card}>
             <div className={style.cardTopo}>
               <div className={style.iconeCard}>
@@ -50,7 +69,7 @@ export default function Dashboard() {
               </div>
               <span className={style.cardRotulo}>PRODUTOS ATIVOS</span>
             </div>
-            <h1 className={style.cardValor}>243</h1>
+            <h1 className={style.cardValor}>{metricas.produtosAtivos}</h1>
             <p className={style.cardDescricao}>produtos ativos em estoque</p>
           </div>
 
@@ -66,7 +85,7 @@ export default function Dashboard() {
               </div>
               <span className={style.cardRotulo}>RECEITA MENSAL</span>
             </div>
-            <h1 className={style.cardValor}>R$ 320k</h1>
+            <h1 className={style.cardValor}>R$ {Number(metricas.valorEstoque || 0).toLocaleString("pt-BR")}</h1>
             <p className={style.cardDescricao}>produtos ativos em estoque</p>
           </div>
 
@@ -101,7 +120,119 @@ export default function Dashboard() {
             <h1 className={style.cardValor}>243</h1>
             <p className={style.cardDescricao}>produtos ativos em estoque</p>
           </div>
-        </div>
+        </section>
+
+
+        {/* graficos e cards */}
+        <section className={style.painelGraficos}>
+
+          <div className={style.cardGrafico}>
+            <div className={style.cabecalhoGrafico}>
+              <span>ESTOQUE POR CATEGORIA</span>
+              <p>Total de peças disponíveis em cada categoria</p>
+            </div>
+
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={estoqueCategorias}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 0,
+                  bottom: 10
+                }}
+              >
+                <XAxis dataKey="categoria" />
+                <YAxis />
+                <Tooltip
+                  cursor={{ fill: "transparent" }}
+                  contentStyle={{
+                    backgroundColor: "#1b1b1b",
+                    border: "1px solid #C9A84C",
+                    borderRadius: "2px"
+                  }}
+                />      <Bar
+                  dataKey="estoque"
+                  fill="#C9A84C"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+
+          <div className={style.cardRecentes}>
+            <div className={style.cabecalhoRecentes}>
+              <div>
+                <p className={style.tituloRecentes}>
+                  Produtos Recentes
+                </p>
+
+                <p className={style.subtituloRecentes}>
+                  Últimos produtos cadastrados
+                </p>
+              </div>
+            </div>
+
+            <div className={style.listaRecentes}>
+              {produtosRecentes.length === 0 ? (
+                <p className={style.semProdutos}>
+                  Nenhum produto cadastrado recentemente.
+                </p>
+              ) : (
+                produtosRecentes.map((produtoRecente) => (
+                  <div
+                    key={produtoRecente.id}
+                    className={style.itemRecente}
+                  >
+                    <div className={style.informacoesRecente}>
+                      <p className={style.nomeRecente}>
+                        {produtoRecente.nome}
+                      </p>
+
+                      <span className={style.categoriaRecente}>
+                        {produtoRecente.categoria}
+                      </span>
+                    </div>
+
+                    <div className={style.dadosRecente}>
+                      <span className={style.estoqueRecente}>
+                        {produtoRecente.estoque} un.
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          <div className={style.cardEstoque}>
+            <div className={style.cabecalho}>
+              <span className={style.icone}>⚠</span>
+              <span className={style.titulo}>ALERTAS DE ESTOQUE</span>
+            </div>
+
+            <div className={style.listaProdutos}>
+
+              {alertasEstoque.length === 0 ? (
+                <p>Nenhum alerta de estoque</p>
+              ) : (
+                alertasEstoque.map((produtoAlerta) => (
+                  <div className={style.itemProduto}>
+                    <div className={style.informacoesProduto}>
+                      <p className={style.nomeProduto}>{produtoAlerta.nome}</p>
+                      <span className={style.categoriaProduto}>{produtoAlerta.categoria}</span>
+                    </div>
+
+                    <span className={style.quantidadeProduto}>
+                      {produtoAlerta.estoque} uni.
+                    </span>
+                  </div>
+                ))
+              )}
+
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );

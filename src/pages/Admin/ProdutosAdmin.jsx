@@ -20,130 +20,130 @@ import {
 export default function Produtos() {
 
 
-useEffect(() => {
-  buscarProdutos()
-}, [])
-
-async function buscarProdutos() {
-  try {
-    const response = await api.get("/produtos")
-    setProducts(response.data)
-  } catch (error) {
-    console.error(error)
-  } finally {
-    setLoading(false)
-  }
-}
-const [products, setProducts] = useState([]);
-const [loading, setLoading] = useState(true);
-
-const [search, setSearch] = useState("");
-const [category, setCategory] = useState("");
-const [material, setMaterial] = useState("");
-const [status, setStatus] = useState("");
-
-const [selectedProduct, setSelectedProduct] = useState(null);
   useEffect(() => {
-  buscarProdutos();
-}, []);
+    buscarProdutos()
+  }, [])
 
-async function buscarProdutos() {
-  try {
-    const response = await api.get("/produtos");
-    setProducts(response.data);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setLoading(false);
+  async function buscarProdutos() {
+    try {
+      const response = await api.get("/produtos")
+      setProducts(response.data)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
   }
-}
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [material, setMaterial] = useState("");
+  const [status, setStatus] = useState("");
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  useEffect(() => {
+    buscarProdutos();
+  }, []);
+
+  async function buscarProdutos() {
+    try {
+      const response = await api.get("/produtos");
+      setProducts(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
   const filteredProducts = useMemo(() => {
-  return products.filter((product) => {
-    const searchMatch =
-      product.nome?.toLowerCase().includes(search.toLowerCase()) ||
-      String(product.id).includes(search) ||
-      product.categoria?.toLowerCase().includes(search.toLowerCase());
+    return products.filter((product) => {
+      const searchMatch =
+        product.nome?.toLowerCase().includes(search.toLowerCase()) ||
+        String(product.id).includes(search) ||
+        product.categoria?.toLowerCase().includes(search.toLowerCase());
 
-    return (
-      searchMatch &&
-      (!category || product.categoria === category) &&
-      (!material || product.material === material) &&
-      (!status ||
-        getStatusByStock(
-          product.estoque,
-          product.estoque_minimo
-        ) === status)
-    );
-  });
-}, [
-  products,
-  search,
-  category,
-  material,
-  status,
-]);
+      return (
+        searchMatch &&
+        (!category || product.categoria === category) &&
+        (!material || product.material === material) &&
+        (!status ||
+          getStatusByStock(
+            product.estoque,
+            product.estoque_minimo
+          ) === status)
+      );
+    });
+  }, [
+    products,
+    search,
+    category,
+    material,
+    status,
+  ]);
 
- const summary = useMemo(() => {
-  const totalProducts = products.length;
+  const summary = useMemo(() => {
+    const totalProducts = products.length;
 
-  const lowStockProducts = products.filter(
-    (product) =>
-      Number(product.estoque) <=
-      Number(product.estoque_minimo)
-  ).length;
+    const lowStockProducts = products.filter(
+      (product) =>
+        Number(product.estoque) <=
+        Number(product.estoque_minimo)
+    ).length;
 
-  const totalValue = products.reduce(
-    (sum, product) =>
-      sum +
-      Number(product.preco) *
+    const totalValue = products.reduce(
+      (sum, product) =>
+        sum +
+        Number(product.preco) *
         Number(product.estoque),
-    0
-  );
+      0
+    );
 
-  const activeProducts = products.filter(
-    (product) => product.ativo === 1
-  ).length;
+    const activeProducts = products.filter(
+      (product) => product.ativo === 1
+    ).length;
 
-  return {
-    totalProducts,
-    lowStockProducts,
-    totalValue,
-    activeProducts,
-  };
-}, [products]);
-
-  
-
- 
- 
+    return {
+      totalProducts,
+      lowStockProducts,
+      totalValue, 
+      activeProducts,
+    };
+  }, [products]);
 
 
- 
-    
-
-  
 
 
- if (loading) {
+
+
+
+
+
+
+
+
+
+  if (loading) {
+    return (
+      <main className={styles.adminProductsPage}>
+        <h2>Carregando produtos...</h2>
+      </main>
+    )
+  }
+
   return (
     <main className={styles.adminProductsPage}>
-      <h2>Carregando produtos...</h2>
-    </main>
-  )
-}
 
-  return (
-    <main className={styles.adminProductsPage}>
-     
 
       <div className={styles.adminProductsShell}>
         <section className={styles.adminProductsContent}>
           <header className={styles.adminProductsHeader}>
             <div>
-              
+
 
               <h1>
-                Produtos 
+                Produtos
               </h1>
 
               <p>Gerencie suas peças, coleções, estoques e valores.</p>
@@ -151,7 +151,7 @@ async function buscarProdutos() {
 
             <button
               className={`${styles.btnPadrao} ${styles.addProductBtn}`}
-             onClick={() => console.log("Adicionar produto")}
+              onClick={() => console.log("Adicionar produto")}
             >
               <img
                 width="20"
@@ -269,12 +269,12 @@ async function buscarProdutos() {
                     <td>
                       <div className={styles.productCell}>
                         <ProductThumb
-  image={
-    product.imagem
-      ? `http://localhost:3000${product.imagem}`
-      : null
-  }
-/>
+                          image={   
+                            product.imagem
+                              ? `http://localhost:3000${product.imagem}`
+                              : null
+                          }
+                        />
 
                         <div>
                           <strong>{product.nome}</strong>
@@ -285,7 +285,7 @@ async function buscarProdutos() {
 
                     <td>
                       <strong className={styles.collectionName}>
-                       
+
                       </strong>
                       <span className={styles.collectionType}>● Premium</span>
                     </td>
@@ -297,18 +297,18 @@ async function buscarProdutos() {
                     </td>
                     <td>{product.estoque} un.</td>
                     <td>
-                     <StatusBadge
-  status={getStatusByStock(
-    product.estoque,
-    product.estoque_minimo
-  )}
-/>
+                      <StatusBadge
+                        status={getStatusByStock(
+                          product.estoque,
+                          product.estoque_minimo
+                        )}
+                      />
                     </td>
                     <td>
                       <div className={styles.actions}>
                         <button
                           title="Visualizar"
-                         onClick={() => console.log(product)}
+                          onClick={() => console.log(product)}
                         >
                           <Eye size={15} />
                         </button>
@@ -323,7 +323,7 @@ async function buscarProdutos() {
                         <button
                           title="Excluir"
                           className={styles.delete}
-                         onClick={() => console.log(product)}
+                          onClick={() => console.log(product)}
                         >
                           <Trash2 size={15} />
                         </button>
@@ -340,10 +340,10 @@ async function buscarProdutos() {
           </section>
         </section>
 
-      
+
       </div>
 
-    
+
     </main>
   );
 }
@@ -384,8 +384,8 @@ function StatusBadge({ status }) {
     status === "Ativo"
       ? `${styles.statusBadge} ${styles.active}`
       : status === "Estoque baixo"
-      ? `${styles.statusBadge} ${styles.low}`
-      : `${styles.statusBadge} ${styles.critical}`;
+        ? `${styles.statusBadge} ${styles.low}`
+        : `${styles.statusBadge} ${styles.critical}`;
 
   return <span className={className}>{status}</span>;
 }
@@ -426,9 +426,6 @@ function formatCurrency(value) {
 
 
   });
-
-
-
 
 
 }
