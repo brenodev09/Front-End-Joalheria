@@ -129,8 +129,8 @@
 
 .avatarImagem,
 .avatarFallback {
-  width: 54px;
-  height: 54px;
+  width:5rem;
+  height: 5rem;
   border-radius: 50%;
   border: 2px solid var(--cor-dourado);
   object-fit: cover;

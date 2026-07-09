@@ -249,9 +249,27 @@ setTimeout(() => setMostrarNotificacao(false), 2000);
                 </div>
 
                 <div className={style.botoesRodape}>
-                  <button className="btnPadrao" onClick={() => setEtapa(2)}>Voltar</button>
-                  <button className={style.btnSalvar} onClick={salvar}>Salvar</button>
+                  <div className={style.cancelBtns}>
+                               <button className="btnPadrao" onClick={fecharModal}>
+                                 CANCELAR
+                               </button>
+                               <button className="btnPadrao" onClick={() => setEtapa(2)}>
+                                 VOLTAR
+                               </button>
+                             </div>
+                  
+                              <button className={style.btnSalvar} onClick={salvar}>
+                                <img
+                                  width="25"
+                                  height="25"
+                                  src="https://img.icons8.com/fluency-systems-filled/48/downloading-updates.png"
+                                  alt="downloading-updates"
+                                />
+                                SALVAR CATEGORIA
+                              </button>
+                              
                 </div>
+            
 
               </section>
 

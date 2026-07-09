@@ -1,6 +1,9 @@
 import React, { useMemo, useState, useEffect } from "react";
 import styles from "../../styles/Admin/produtosAdmin.module.css";
 import { api } from "../../services/api";
+import ModalAddProduto from "../../components/Admin/Modais/ModalAddProduto";
+import ModalDeletarProduto from "../../components/Admin/Modais/ModalDeletarProduto";
+import ModalEditarProduto from "../../components/Admin/Modais/ModalEditarProduto";
 
 import {
   Search,
@@ -36,8 +39,15 @@ export default function Produtos() {
   }
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalExcluirAberto, setModalExcluirAberto] =
+  useState(false);
+
+
+  const [abrirModalEditar, setAbrirModalEditar] = useState(false);
+const [produtoSelecionado, setProdutoSelecionado] = useState(null);
 
   const [search, setSearch] = useState("");
+   const [abrirModal, setAbrirModal] = useState(false);
   const [category, setCategory] = useState("");
   const [material, setMaterial] = useState("");
   const [status, setStatus] = useState("");
@@ -47,6 +57,32 @@ export default function Produtos() {
     buscarProdutos();
   }, []);
 
+  function abrirEditarProduto(produto) {
+  setProdutoSelecionado(produto);
+  setAbrirModalEditar(true);
+}
+
+
+  async function excluirProduto() {
+  try {
+    await api.delete(
+      `/produtos/${produtoSelecionado.id}`
+    );
+
+    setProducts((produtos) =>
+      produtos.filter(
+        (produto) =>
+          produto.id !== produtoSelecionado.id
+      )
+    );
+
+    setModalExcluirAberto(false);
+    setProdutoSelecionado(null);
+
+  } catch (error) {
+    console.error(error);
+  }
+}
   async function buscarProdutos() {
     try {
       const response = await api.get("/produtos");
@@ -149,18 +185,18 @@ export default function Produtos() {
               <p>Gerencie suas peças, coleções, estoques e valores.</p>
             </div>
 
-            <button
-              className={`${styles.btnPadrao} ${styles.addProductBtn}`}
-              onClick={() => console.log("Adicionar produto")}
-            >
-              <img
-                width="20"
-                height="20"
-                src="https://img.icons8.com/ios-filled/23/plus-math.png"
-                alt="plus-math"
-              />
-              <p>ADICIONAR PRODUTO</p>
-            </button>
+           <button
+  className={`${styles.btnPadrao} ${styles.addProductBtn}`}
+  onClick={() => setAbrirModal(true)}
+>
+  <img
+    width="20"
+    height="20"
+    src="https://img.icons8.com/ios-filled/23/plus-math.png"
+    alt="plus-math"
+  />
+  <p>ADICIONAR PRODUTO</p>
+</button>
           </header>
 
           <section className={styles.productsMetrics}>
@@ -306,27 +342,25 @@ export default function Produtos() {
                     </td>
                     <td>
                       <div className={styles.actions}>
-                        <button
-                          title="Visualizar"
-                          onClick={() => console.log(product)}
-                        >
-                          <Eye size={15} />
-                        </button>
+                        
+
+                       <button
+  title="Editar"
+  onClick={() => abrirEditarProduto(product)}
+>
+  <Pencil size={15} />
+</button>
 
                         <button
-                          title="Editar"
-                          onClick={() => console.log(product)}
-                        >
-                          <Pencil size={15} />
-                        </button>
-
-                        <button
-                          title="Excluir"
-                          className={styles.delete}
-                          onClick={() => console.log(product)}
-                        >
-                          <Trash2 size={15} />
-                        </button>
+  title="Excluir"
+  className={styles.delete}
+  onClick={() => {
+    setProdutoSelecionado(product);
+    setModalExcluirAberto(true);
+  }}
+>
+  <Trash2 size={15} />
+</button>
                       </div>
                     </td>
                   </tr>
@@ -342,7 +376,34 @@ export default function Produtos() {
 
 
       </div>
-
+<ModalAddProduto
+  isOpen={abrirModal}
+  fecharModal={() => {
+    setAbrirModal(false);
+    buscarProdutos();
+  }}
+/>
+<ModalDeletarProduto
+  aberto={modalExcluirAberto}
+  produto={produtoSelecionado}
+  aoFechar={() => {
+    setModalExcluirAberto(false);
+    setProdutoSelecionado(null);
+  }}
+  aoConfirmar={excluirProduto}
+/>
+<ModalEditarProduto
+  isOpen={abrirModalEditar}
+  fecharModal={() => {
+    setAbrirModalEditar(false);
+    setProdutoSelecionado(null);
+  }}
+  produto={produtoSelecionado}
+  aoSalvar={() => {
+    buscarProdutos();
+    setAbrirModalEditar(false);
+  }}
+/>
 
     </main>
   );

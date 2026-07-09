@@ -56,12 +56,15 @@ const [nomeImagem, setNomeImagem] = useState("");
   setNomeImagem(arquivo.name);
 }
 
-  async function salvar(e) {
-    e.preventDefault();
+  async function salvarAlteracoes(event) {
+    event.preventDefault();
 
-    if (!nome || !estoque || !unidade) {
-      setErro("Preencha os campos obrigatórios.");
-      setTimeout(() => setErro(""), 3000);
+    if (!nome || !descricao) {
+      setErro("Preencha todos os campos para salvar!");
+
+      setTimeout(() => {
+        setErro("");
+      }, 3500);
       return;
     }
 
@@ -72,24 +75,21 @@ const [nomeImagem, setNomeImagem] = useState("");
 
       formData.append("nome", nome);
       formData.append("descricao", descricao);
-      formData.append("estoque", estoque);
-      formData.append("unidade", unidade);
-      formData.append("valor_medio", valorMedio);
-      formData.append("fornecedor", fornecedor);
       formData.append("ativo", ativo);
 
-      if (imagem) formData.append("imagem", imagem);
+      if (imagem) {
+        formData.append("imagem", imagem);
+      }
 
-      const res = await api.put(
-        `/materiais/${material.id}`,
-        formData
-      );
+      const resposta = await api.put(`/categorias/${categoria.id}`, formData);
 
-      aoSalvar?.(res.data);
+      aoSalvar?.(resposta.data);
       fecharModal();
-    } catch (err) {
-      console.error(err);
-      setErro("Erro ao salvar material.");
+    } catch (erro) {
+      console.error(erro);
+      console.error(erro.response?.data);
+
+      setErro("Erro ao salvar as alterações, tente novamente!");
     } finally {
       setSalvando(false);
     }
@@ -146,17 +146,27 @@ const [nomeImagem, setNomeImagem] = useState("");
             {erro && <p className={style.erro}>{erro}</p>}
 
             <div className={style.botoesAcao}>
-              <button className={style.btnCancelar} onClick={fecharModal}>
-                CANCELAR
-              </button>
-
-              <button
-                className={style.btnSalvar}
-                onClick={salvar}
-                disabled={salvando}
-              >
-                {salvando ? "SALVANDO..." : "SALVAR"}
-              </button>
+               <button
+                              className={`btnPadrao `}
+                              onClick={fecharModal}
+                              disabled={salvando}
+                            >
+                              CANCELAR
+                            </button>
+              
+                            <button
+                              className={style.btnSalvar}
+                              onClick={salvarAlteracoes}
+                              disabled={salvando}
+                            >
+                              <img
+                                width="20"
+                                height="20"
+                                src="https://img.icons8.com/fluency-systems-filled/48/checkmark--v1.png"
+                                alt="checkmark--v1"
+                              />
+                              {salvando ? "SALVANDO..." : "SALVAR ALTERAÇÕES"}
+                            </button>
             </div>
           </aside>
 

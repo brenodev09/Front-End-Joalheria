@@ -39,7 +39,7 @@ export default function Dashboard() {
           </p>
           <h1 className={style.saudacaoTitulo}>Olá, {usuario.nome}.</h1>
           <p className={style.saudacaoSubtitulo}>
-            Todas as informações da sua coleção centralizadas em um único
+            Todas as informações do seu sistema centralizadas em um único
             painel.
           </p>
 

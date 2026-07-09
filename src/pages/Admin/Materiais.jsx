@@ -223,35 +223,30 @@ const [modalEdit, setModalEdit] = useState(false);
               />
 
               <div className={styles.materialCardActions}>
-                <button
-                  className={styles.detailsBtn}
-                  onClick={() =>
-                    setSelectedMaterial(material)
-                  }
-                >
-                  Ver detalhes
-                  <ChevronRight size={16} />
-                </button>
+
 
                <button
-  className={`${styles.actionBtn} ${styles.editBtn}`}
+  className={`${styles.actionBtn} ${styles.botaoEditar}`}
   onClick={() => {
     setSelectedMaterial(material);
     setModalEdit(true);
   }}
 >
-  <Pencil size={16} />
+  <p>Editar</p>
+  <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1" />
 </button>
 
                <button
-  className={`${styles.actionBtn} ${styles.deleteBtn}`}
+  className={`${styles.actionBtn} ${styles.botaoExcluir}`}
   onClick={() => {
     setMaterialToDelete(material);
     setModalDelete(true);
   }}
 >
-  <Trash2 size={16} />
+  <p>Excluir</p>
+   <img width="21" height="21" src="https://img.icons8.com/material-outlined/24/B50A0A/filled-trash.png" alt="filled-trash" />
 </button>
+
               </div>
             </div>
           </article>

@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./styles.module.css";
 
-export default function ModalExcluirMaterial({
+export default function ModalExcluirProduto({
   aberto = false,
-  material = null,
+  produto = null,
   aoFechar = () => {},
   aoConfirmar = () => {},
 }) {
@@ -12,12 +12,16 @@ export default function ModalExcluirMaterial({
   return (
     <div
       className={`${styles.sobreposicao} ${
-        aberto ? styles.sobreposicaoAberta : styles.sobreposicaoFechada
+        aberto
+          ? styles.sobreposicaoAberta
+          : styles.sobreposicaoFechada
       }`}
     >
       <div
         className={`${styles.modal} ${
-          aberto ? styles.modalAberto : styles.modalFechado
+          aberto
+            ? styles.modalAberto
+            : styles.modalFechado
         }`}
       >
         <button
@@ -37,31 +41,37 @@ export default function ModalExcluirMaterial({
           />
         </div>
 
-        <h2 className={styles.titulo}>Excluir material</h2>
+        <h2 className={styles.titulo}>
+          Excluir produto
+        </h2>
 
         <p className={styles.mensagem}>
-          Tem certeza que deseja excluir o material
+          Tem certeza que deseja excluir o produto
           <span className={styles.nomeDestaque}>
             {" "}
-            {material?.nome}
+            {produto?.nome}
           </span>
           ? Essa ação não poderá ser desfeita.
         </p>
 
         <div className={styles.avisoProdutos}>
-          <span className={styles.avisoIcone}>!</span>
+          <span className={styles.avisoIcone}>
+            !
+          </span>
+
           <span>
-            Esse material pode estar vinculado a produtos cadastrados no sistema.
+            O produto será removido permanentemente do
+            sistema e não poderá ser recuperado.
           </span>
         </div>
 
         <div className={styles.acoes}>
-           <button type="button" className={`btnPadrao ${styles.botaoCancelar}`} onClick={aoFechar}>
-                     Cancelar
-                   </button>
-                   <button type="button" className={`btnPadrao ${styles.btnExcluir}`} onClick={aoConfirmar}>
-                     Excluir categoria
-                   </button>
+            <button type="button" className={`btnPadrao ${styles.botaoCancelar}`} onClick={aoFechar}>
+                      Cancelar
+                    </button>
+                    <button type="button" className={`btnPadrao ${styles.btnExcluir}`} onClick={aoConfirmar}>
+                      Excluir Produto
+                    </button>
         </div>
       </div>
     </div>

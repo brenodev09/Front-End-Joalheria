@@ -9,9 +9,9 @@
   align-items: center;
   justify-content: center;
   background: rgba(8, 7, 5, 0.72);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 1000;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 9999;
   padding: 20px;
 }
 
@@ -25,13 +25,21 @@
 }
 
 @keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOutOverlay {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* =========================================================
@@ -41,23 +49,59 @@
 .modal {
   position: relative;
   width: 100%;
-  max-width: 35rem;
-  background: linear-gradient(180deg, #161412 0%, #100f0d 100%);
-  border: 1px solid rgba(212, 175, 92, 0.18);
-  border-radius: 4px;
+  max-width: 38rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      #171512 0%,
+      #0f0e0c 100%
+    );
+
+  border: 1px solid rgba(212, 175, 92, 0.15);
+
+  border-radius: 8px;
+
+  padding: 38px 34px 30px;
+
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(0, 0, 0, 0.4);
-  padding: 38px 32px 28px;
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.3);
+
   text-align: center;
+
+  overflow: hidden;
+}
+
+.modal::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 92, 0.8),
+    transparent
+  );
 }
 
 .modalAberto {
-  animation: entradaModal 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: entradaModal 0.32s
+    cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
 }
 
 .modalFechado {
-  animation: saidaModal 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: saidaModal 0.22s
+    cubic-bezier(0.4, 0, 1, 1)
+    forwards;
 }
 
 @keyframes entradaModal {
@@ -65,6 +109,7 @@
     opacity: 0;
     transform: translateY(14px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -76,6 +121,7 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateY(10px) scale(0.96);
@@ -88,25 +134,40 @@
 
 .botaoFechar {
   position: absolute;
+
   top: 14px;
   right: 16px;
-  width: 32px;
-  height: 32px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  background: transparent;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 22px;
-  cursor: pointer;
+
   border-radius: 50%;
-  transition: 0.18s ease;
+
+  color: rgba(255, 255, 255, 0.45);
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
 }
 
 .botaoFechar:hover {
-  color: #efe2c0;
-  background-color: rgba(255, 255, 255, 0.06);
+  color: #fff;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.08
+  );
 }
 
 /* =========================================================
@@ -114,15 +175,31 @@
 ========================================================= */
 
 .icone {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 18px;
+  width: 68px;
+  height: 68px;
+
+  margin: 0 auto 20px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   border-radius: 50%;
-  background: rgba(196, 64, 64, 0.12);
-  border: 1px solid rgba(196, 64, 64, 0.28);
+
+  background: rgba(
+    167,
+    30,
+    30,
+    0.12
+  );
+
+  border: 1px solid
+    rgba(167, 30, 30, 0.28);
+}
+
+.icone img {
+  width: 30px;
+  height: 30px;
 }
 
 /* =========================================================
@@ -131,22 +208,120 @@
 
 .titulo {
   font-family: "Playfair Display", serif;
-  font-size: 22px;
+
+  font-size: 24px;
+
   color: #f3ead8;
+
   margin-bottom: 12px;
 }
 
 .mensagem {
-  font-size: 14.5px;
-  color: rgba(255, 255, 255, 0.62);
-  line-height: 1.55;
-  margin-bottom: 18px;
+  color: rgba(
+    255,
+    255,
+    255,
+    0.65
+  );
+
+  line-height: 1.7;
+
+  font-size: 15px;
+
+  margin-bottom: 22px;
 }
 
 .nomeDestaque {
-  font-family: "Playfair Display", serif;
   color: #e8cf94;
+
+  font-family:
+    "Playfair Display",
+    serif;
+
   font-style: italic;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   CARD PRODUTO
+========================================================= */
+
+.cardProduto {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 14px;
+
+  margin-bottom: 20px;
+
+  border-radius: 10px;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.03
+  );
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.06);
+}
+
+.imagemProduto {
+  width: 70px;
+  height: 70px;
+
+  border-radius: 8px;
+
+  overflow: hidden;
+
+  background: #1a1a1a;
+
+  flex-shrink: 0;
+}
+
+.imagemProduto img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.infoProduto {
+  flex: 1;
+
+  text-align: left;
+}
+
+.infoProduto h4 {
+  color: #f5f5f5;
+
+  margin-bottom: 6px;
+
+  font-size: 15px;
+}
+
+.infoProduto p {
+  color: rgba(
+    255,
+    255,
+    255,
+    0.55
+  );
+
+  font-size: 13px;
+}
+
+.infoProduto span {
+  color: #d4af5c;
+
+  font-size: 13px;
+
+  font-weight: 600;
 }
 
 /* =========================================================
@@ -155,32 +330,65 @@
 
 .avisoProdutos {
   display: flex;
-  gap: 10px;
+
   align-items: center;
-  background: rgba(212, 175, 92, 0.07);
-  border: 1px solid rgba(212, 175, 92, 0.22);
-  border-radius: 8px;
+
+  gap: 10px;
+
   padding: 12px 14px;
-  margin-bottom: 22px;
+
+  border-radius: 8px;
+
+  background: rgba(
+    212,
+    175,
+    92,
+    0.06
+  );
+
+  border: 1px solid
+    rgba(212, 175, 92, 0.18);
+
+  color: rgba(
+    255,
+    255,
+    255,
+    0.72
+  );
+
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+
   text-align: left;
+
+  margin-bottom: 24px;
 }
 
 .avisoIcone {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: rgba(212, 175, 92, 0.18);
+
+  background: rgba(
+    212,
+    175,
+    92,
+    0.15
+  );
+
   color: #e8cf94;
-  font-style: italic;
+
+  font-weight: bold;
 }
 
 /* =========================================================
-   AÇÕES
+   BOTÕES
 ========================================================= */
 
 .acoes {
@@ -236,9 +444,18 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .modal {
-    padding: 32px 22px;
+    padding: 28px 22px;
+  }
+
+  .cardProduto {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .infoProduto {
+    text-align: center;
   }
 
   .acoes {
