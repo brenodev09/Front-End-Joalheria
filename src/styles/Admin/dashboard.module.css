@@ -1,3 +1,12 @@
+.carregando{
+  display: flex;
+  justify-content: center;
+  padding-top: 20rem;
+  align-items: center;
+  font-size: 1.1rem;
+  opacity: 85%;
+}
+
 .painelPrincipal {
   display: flex;
   flex-direction: column;

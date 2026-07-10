@@ -51,6 +51,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [category, setCategory] = useState("");
   const [material, setMaterial] = useState("");
   const [status, setStatus] = useState("");
+  const [viewMode, setViewMode] = useState("table");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   useEffect(() => {
@@ -277,6 +278,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
             >
               Limpar
             </button>
+            
           </section>
 
           <section className={styles.productsTableCard}>

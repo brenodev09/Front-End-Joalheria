@@ -22,12 +22,10 @@
   max-height: 92vh;
   overflow: hidden;
 
-  background: linear-gradient(
-    90deg,
-    #1a1a1a 0%,
-    #0d0c0a 50%,
-    #0d0d0c 100%
-  );
+   background: linear-gradient(90deg,
+        #1a1a1a 0%,
+        #0d0c0a 50%,
+        #0D0D0C 100%);
 
   border: 1px solid rgba(201, 169, 98, 0.16);
   border-radius: 16px;
@@ -54,11 +52,11 @@
 }
 
 .tituloModal {
-  font-size: 26px;
   font-weight: 600;
-  color: #f3ead8;
-  letter-spacing: 0.04em;
-  margin: 0;
+    font-size: 28px;
+    letter-spacing: 0.03em;
+    color: #f3ead8;
+    margin: 0 0 6px;
 }
 
 .subtituloModal {
@@ -207,10 +205,12 @@
 }
 
 .tituloSecao {
-  font-size: 12px;
-  color: #e8cf94;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
+ font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #e8cf94;
+    white-space: nowrap;
+    margin: 0;
 }
 
 .linhaTitulo {
@@ -228,30 +228,31 @@
 ========================================================= */
 .inputCampo,
 .textareaCampo {
-  width: 100%;
-  padding: 12px 14px;
-
-  border-radius: 10px;
-
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  color: #fff;
-  font-size: 14px;
-
-  transition: 0.2s ease;
+   width: 100%;
+    background: #171717;
+    border: 1px solid #242424;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #f3ead8;
+    transition: border-color 0.18s ease;
 }
 
-.inputCampo:focus,
-.textareaCampo:focus {
-  border-color: #c9a962;
-  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.12);
-}
+.inputCampo::placeholder,
+  .textareaCampo::placeholder {
+    color: rgba(255, 255, 255, 0.32);
+  }
 
-.textareaCampo {
-  min-height: 90px;
-  resize: vertical;
-}
+  .inputCampo:focus,
+  .textareaCampo:focus {
+    outline: none;
+    border-color: rgba(212, 175, 92, 0.5);
+  }
+
+  .textareaCampo {
+    min-height: 84px;
+    resize: vertical;
+  }
 
 /* =========================================================
    UPLOAD
@@ -306,6 +307,11 @@
   color: #c9a962;
 }
 
+.textoAuxiliar {
+  color: #8f8f8f;
+  font-size: .85rem;
+}
+
 /* =========================================================
    STATUS
 ========================================================= */
@@ -316,7 +322,7 @@
 
   padding: 14px;
 
-  border-radius: 10px;
+  border-radius: 4px;
 
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -369,9 +375,10 @@
 /* =========================================================
    ERRO
 ========================================================= */
-.erro {
-  color: #ff5c5c;
-  font-size: 12px;
+.mensagemErro {
+  font-size: 12.5px;
+    color: #d97373;
+    margin: 12px 0 0;
 }
 
 /* =========================================================

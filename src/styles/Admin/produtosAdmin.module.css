@@ -633,6 +633,8 @@
   color: #ff5267;
 }
 
+
+
 @media (max-width: 1180px) {
   .adminProductsShell.hasDetails {
     grid-template-columns: 1fr;

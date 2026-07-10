@@ -7,12 +7,12 @@ export default function ModalAddProduto({
     fecharModal,
 }) {
     const [etapa, setEtapa] = useState(1);
-   
+
 
     const [nome, setNome] = useState("");
     const [descricao, setDescricao] = useState("");
-  const [categoriasDisponiveis, setCategoriasDisponiveis] = useState([]);
-const [categoriaId, setCategoriaId] = useState("");
+    const [categoriasDisponiveis, setCategoriasDisponiveis] = useState([]);
+    const [categoriaId, setCategoriaId] = useState("");
 
     const [preco, setPreco] = useState("");
     const [estoque, setEstoque] = useState("");
@@ -30,16 +30,16 @@ const [categoriaId, setCategoriaId] = useState("");
 
     const [materialId, setMaterialId] = useState("");
 
-  useEffect(() => {
-    carregarMateriais();
-    carregarCategorias();
-}, []);
+    useEffect(() => {
+        carregarMateriais();
+        carregarCategorias();
+    }, []);
 
-const categoriaSelecionada =
-    categoriasDisponiveis.find(
-        (categoria) =>
-            categoria.id === Number(categoriaId)
-    );
+    const categoriaSelecionada =
+        categoriasDisponiveis.find(
+            (categoria) =>
+                categoria.id === Number(categoriaId)
+        );
 
     async function carregarMateriais() {
         try {
@@ -50,40 +50,40 @@ const categoriaSelecionada =
         }
     }
     async function carregarCategorias() {
-    try {
-        const response = await api.get("/categorias");
-        setCategoriasDisponiveis(response.data);
-    } catch (error) {
-        console.error(error);
+        try {
+            const response = await api.get("/categorias");
+            setCategoriasDisponiveis(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     }
-}
 
-  function limparFormulario() {
-    setEtapa(1);
+    function limparFormulario() {
+        setEtapa(1);
 
-    setNome("");
-    setDescricao("");
+        setNome("");
+        setDescricao("");
 
-    setCategoriaId("");
+        setCategoriaId("");
 
-    setPreco("");
-    setEstoque("");
-    setEstoqueMinimo("");
+        setPreco("");
+        setEstoque("");
+        setEstoqueMinimo("");
 
-    setMaterialId("");
+        setMaterialId("");
 
-    setAtivo(true);
+        setAtivo(true);
 
-    setImagem(null);
-    setImagemPreview(null);
+        setImagem(null);
+        setImagemPreview(null);
 
-    setErro("");
-}
+        setErro("");
+    }
 
-function fechar() {
-    limparFormulario();
-    fecharModal();
-}
+    function fechar() {
+        limparFormulario();
+        fecharModal();
+    }
 
     const materialSelecionado =
         materiaisDisponiveis.find(
@@ -111,13 +111,13 @@ function fechar() {
     }
 
     function validarEtapa1() {
-       if (
-    !nome ||
-    !descricao ||
-    !categoriaId ||
-    !preco ||
-    !estoque
-) {
+        if (
+            !nome ||
+            !descricao ||
+            !categoriaId ||
+            !preco ||
+            !estoque
+        ) {
             setErro(
                 "Preencha todos os campos obrigatórios."
             );
@@ -132,72 +132,72 @@ function fechar() {
         setEtapa(2);
     }
 
- async function salvarProduto() {
-    try {
-        if (!materialId) {
-            setErro("Selecione um material.");
+    async function salvarProduto() {
+        try {
+            if (!materialId) {
+                setErro("Selecione um material.");
+
+                setTimeout(() => {
+                    setErro("");
+                }, 3000);
+
+                return;
+            }
+
+            const formData = new FormData();
+
+            formData.append("nome", nome);
+            formData.append("descricao", descricao);
+            formData.append("preco", preco);
+            formData.append("estoque", estoque);
+            formData.append(
+                "estoque_minimo",
+                estoqueMinimo || 0
+            );
+
+            formData.append("categoria_id", categoriaId);
+            formData.append("material_id", materialId);
+            formData.append(
+                "ativo",
+                ativo ? "true" : "false"
+            );
+
+            if (imagem) {
+                formData.append("imagem", imagem);
+            }
+
+            await api.post("/produtos", formData, {
+                headers: {
+                    "Content-Type":
+                        "multipart/form-data",
+                },
+            });
+
+            limparFormulario();
+            fecharModal();
+
+        } catch (error) {
+            console.error(error);
+
+            setErro(
+                "Erro ao cadastrar produto."
+            );
 
             setTimeout(() => {
                 setErro("");
             }, 3000);
-
-            return;
         }
-
-        const formData = new FormData();
-
-        formData.append("nome", nome);
-        formData.append("descricao", descricao);
-        formData.append("preco", preco);
-        formData.append("estoque", estoque);
-        formData.append(
-            "estoque_minimo",
-            estoqueMinimo || 0
-        );
-
-        formData.append("categoria_id", categoriaId);
-        formData.append("material_id", materialId);
-        formData.append(
-            "ativo",
-            ativo ? "true" : "false"
-        );
-
-        if (imagem) {
-            formData.append("imagem", imagem);
-        }
-
-        await api.post("/produtos", formData, {
-            headers: {
-                "Content-Type":
-                    "multipart/form-data",
-            },
-        });
-
-        limparFormulario();
-        fecharModal();
-
-    } catch (error) {
-        console.error(error);
-
-        setErro(
-            "Erro ao cadastrar produto."
-        );
-
-        setTimeout(() => {
-            setErro("");
-        }, 3000);
     }
-}
 
     function PreviewProduto() {
         return (
             <div className={style.cardPreview}>
-                <div className={style.imagemCategoria}>
+                <div className={style.imagemProduto}>
                     {imagemPreview ? (
                         <img
                             src={imagemPreview}
                             alt=""
-                            className={style.imagemPreview}
+                            className={style.imagemProduto}
                         />
                     ) : (
                         <p>Imagem aparecerá aqui</p>
@@ -215,9 +215,9 @@ function fechar() {
                     </p>
 
                     <span className={style.previewCategoria}>
-    {categoriaSelecionada?.nome ||
-        "Categoria não selecionada"}
-</span>
+                        {categoriaSelecionada?.nome ||
+                            "Categoria não selecionada"}
+                    </span>
 
                     <strong
                         className={style.previewPreco}
@@ -250,8 +250,34 @@ function fechar() {
                         ADICIONAR PRODUTO
                     </h1>
 
+                    <div className={style.steps}>
+                        <div
+                            className={`${style.step} ${etapa >= 1
+                                ? style.stepActive
+                                : ""
+                                }`}
+                        >
+                            <span>1</span>
+                            <p>Informações</p>
+                        </div>
+
+                        <div
+                            className={style.stepLine}
+                        ></div>
+
+                        <div
+                            className={`${style.step} ${etapa >= 2
+                                ? style.stepActive
+                                : ""
+                                }`}
+                        >
+                            <span>2</span>
+                            <p>Materiais</p>
+                        </div>
+                    </div>
+
                     <button
-                       onClick={fechar}
+                        onClick={fechar}
                         className={
                             style.botaoFechar
                         }
@@ -261,31 +287,7 @@ function fechar() {
                 </div>
 
                 {/* ETAPAS */}
-                <div className={style.steps}>
-                    <div
-                        className={`${style.step} ${etapa >= 1
-                            ? style.stepActive
-                            : ""
-                            }`}
-                    >
-                        <span>1</span>
-                        <p>Informações</p>
-                    </div>
 
-                    <div
-                        className={style.stepLine}
-                    ></div>
-
-                    <div
-                        className={`${style.step} ${etapa >= 2
-                            ? style.stepActive
-                            : ""
-                            }`}
-                    >
-                        <span>2</span>
-                        <p>Materiais</p>
-                    </div>
-                </div>
 
                 {/* ETAPA 1 */}
                 {etapa === 1 && (
@@ -349,24 +351,11 @@ function fechar() {
                                 style.containerFormulario
                             }
                         >
-                            <div
-                                className={
-                                    style.cabecalhoSecao
-                                }
-                            >
-                                <p
-                                    className={
-                                        style.tituloSecao
-                                    }
-                                >
-                                    DADOS DO PRODUTO
+                            <div className={style.cabecalhoSecao}>
+                                <p className={style.tituloSecao}>
+                                    INFORME OS DADOS DO PRODUTO
                                 </p>
-
-                                <div
-                                    className={
-                                        style.linhaTitulo
-                                    }
-                                ></div>
+                                <div className={style.linhaTitulo}></div>
                             </div>
 
                             <div
@@ -428,28 +417,28 @@ function fechar() {
                                         CATEGORIA
                                     </label>
 
-                                   <select
-    className={style.inputCampo}
-    value={categoriaId}
-    onChange={(e) =>
-        setCategoriaId(e.target.value)
-    }
->
-    <option value="">
-        Selecione
-    </option>
+                                    <select
+                                        className={style.inputCampo}
+                                        value={categoriaId}
+                                        onChange={(e) =>
+                                            setCategoriaId(e.target.value)
+                                        }
+                                    >
+                                        <option value="">
+                                            Selecione
+                                        </option>
 
-    {categoriasDisponiveis.map(
-        (categoria) => (
-            <option
-                key={categoria.id}
-                value={categoria.id}
-            >
-                {categoria.nome}
-            </option>
-        )
-    )}
-</select>
+                                        {categoriasDisponiveis.map(
+                                            (categoria) => (
+                                                <option
+                                                    key={categoria.id}
+                                                    value={categoria.id}
+                                                >
+                                                    {categoria.nome}
+                                                </option>
+                                            )
+                                        )}
+                                    </select>
                                 </div>
 
                                 <div
@@ -554,45 +543,31 @@ function fechar() {
                                             capturarImagem
                                         }
                                     />
-
-                                    <div
-                                        className={
-                                            style.conteudoUpload
-                                        }
-                                    >
-                                        {imagemPreview ? (
-                                            <>
+                                    <div className={style.conteudoUpload}>
+                                        {imagem ? (
+                                            <div className={style.arquivoSelecionado}>
                                                 <img
-                                                    src={
-                                                        imagemPreview
-                                                    }
-                                                    alt=""
-                                                    className={
-                                                        style.imagemSelecionada
-                                                    }
+                                                    src={imagemPreview}
+                                                    alt="imagem selecionada"
+                                                    className={style.imagemSelecionada}
                                                 />
-
-                                                <p>
-                                                    {
-                                                        imagem?.name
-                                                    }
-                                                </p>
-                                            </>
+                                                <p>{imagem.name}</p>
+                                            </div>
                                         ) : (
                                             <>
-                                                <span
-                                                    className={
-                                                        style.iconeUpload
-                                                    }
-                                                >
-                                                    +
+                                                <img
+                                                    width="45"
+                                                    height="45"
+                                                    src="https://img.icons8.com/pastel-glyph/64/C9A962/upload--v1.png"
+                                                    alt="upload--v1"
+                                                />
+                                                <span className={style.textoUpload}>
+                                                    Clique aqui para adicionar a imagem
                                                 </span>
 
-                                                <p>
-                                                    Clique para
-                                                    enviar uma
-                                                    imagem
-                                                </p>
+                                                <span className={style.textoAuxiliar}>
+                                                    PNG, JPG, Webp - tamanho recomendado: 800x900
+                                                </span>
                                             </>
                                         )}
                                     </div>
@@ -635,132 +610,132 @@ function fechar() {
                     </div>
                 )}
 
-              {etapa === 2 && (
-    <div className={style.contentModal}>
-        <aside className={style.containerPreview}>
-            <p>RESUMO DO PRODUTO</p>
+                {etapa === 2 && (
+                    <div className={style.contentModal}>
+                        <aside className={style.containerPreview}>
+                            <p>RESUMO DO PRODUTO</p>
 
-            <PreviewProduto />
+                            <PreviewProduto />
 
-            <div className={style.resumoMateriais}>
-                <div className={style.linhaResumo}>
-                    <span>Material selecionado</span>
+                            <div className={style.resumoMateriais}>
+                                <div className={style.linhaResumo}>
+                                    <span>Material selecionado</span>
 
-                    <strong>
-                        {materialSelecionado?.nome ||
-                            "Nenhum material"}
-                    </strong>
-                </div>
+                                    <strong>
+                                        {materialSelecionado?.nome ||
+                                            "Nenhum material"}
+                                    </strong>
+                                </div>
 
-                <div className={style.linhaResumo}>
-                    <span>Custo médio do material</span>
+                                <div className={style.linhaResumo}>
+                                    <span>Custo médio do material</span>
 
-                    <strong>
-                        R$ {custoMaterial.toFixed(2)}
-                    </strong>
-                </div>
+                                    <strong>
+                                        R$ {custoMaterial.toFixed(2)}
+                                    </strong>
+                                </div>
 
-                <div className={style.linhaResumo}>
-                    <span>Preço de venda</span>
+                                <div className={style.linhaResumo}>
+                                    <span>Preço de venda</span>
 
-                    <strong>
-                        R$ {Number(preco || 0).toFixed(2)}
-                    </strong>
-                </div>
+                                    <strong>
+                                        R$ {Number(preco || 0).toFixed(2)}
+                                    </strong>
+                                </div>
 
-                <div className={style.linhaResumo}>
-                    <span>Margem estimada</span>
+                                <div className={style.linhaResumo}>
+                                    <span>Margem estimada</span>
 
-                    <strong>
-                        R$ {margemEstimada.toFixed(2)}
-                    </strong>
-                </div>
-            </div>
-            {erro && (
-    <p className={style.erro}>
-        {erro}
-    </p>
-)}
+                                    <strong>
+                                        R$ {margemEstimada.toFixed(2)}
+                                    </strong>
+                                </div>
+                            </div>
+                            {erro && (
+                                <p className={style.erro}>
+                                    {erro}
+                                </p>
+                            )}
 
-            <div className={style.botoesAcao}>
-                <button
-                    className={`btnPadrao ${style.btnCancelar}`}
-                    onClick={() => setEtapa(1)}
-                >
-                    VOLTAR
-                </button>
+                            <div className={style.botoesAcao}>
+                                <button
+                                    className={`btnPadrao ${style.btnCancelar}`}
+                                    onClick={() => setEtapa(1)}
+                                >
+                                    VOLTAR
+                                </button>
 
-              <button
-    className={style.btnSalvar}
-    onClick={salvarProduto}
->
-    SALVAR PRODUTO
-</button>
-            </div>
-        </aside>
+                                <button
+                                    className={style.btnSalvar}
+                                    onClick={salvarProduto}
+                                >
+                                    SALVAR PRODUTO
+                                </button>
+                            </div>
+                        </aside>
 
-        <section className={style.containerFormulario}>
-            <div className={style.cabecalhoSecao}>
-                <p className={style.tituloSecao}>
-                    MATERIAL PRINCIPAL
-                </p>
+                        <section className={style.containerFormulario}>
+                            <div className={style.cabecalhoSecao}>
+                                <p className={style.tituloSecao}>
+                                    MATERIAL PRINCIPAL
+                                </p>
 
-                <div className={style.linhaTitulo}></div>
-            </div>
+                                <div className={style.linhaTitulo}></div>
+                            </div>
 
-            <div className={style.grupoCampo}>
-                <label>
-                    MATERIAL UTILIZADO
-                </label>
+                            <div className={style.grupoCampo}>
+                                <label>
+                                    MATERIAL UTILIZADO
+                                </label>
 
-                <select
-                    className={style.inputCampo}
-                    value={materialId}
-                    onChange={(e) =>
-                        setMaterialId(
-                            e.target.value
-                        )
-                    }
-                >
-                    <option value="">
-                        Selecione um material
-                    </option>
+                                <select
+                                    className={style.inputCampo}
+                                    value={materialId}
+                                    onChange={(e) =>
+                                        setMaterialId(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+                                    <option value="">
+                                        Selecione um material
+                                    </option>
 
-                    {materiaisDisponiveis.map(
-                        (material) => (
-                            <option
-                                key={material.id}
-                                value={material.id}
-                            >
-                                {material.nome}
-                            </option>
-                        )
-                    )}
-                </select>
-            </div>
+                                    {materiaisDisponiveis.map(
+                                        (material) => (
+                                            <option
+                                                key={material.id}
+                                                value={material.id}
+                                            >
+                                                {material.nome}
+                                            </option>
+                                        )
+                                    )}
+                                </select>
+                            </div>
 
-            {materialSelecionado && (
-                <div className={style.cardMaterialSelecionado}>
-                    <h4>
-                        {materialSelecionado.nome}
-                    </h4>
+                            {materialSelecionado && (
+                                <div className={style.cardMaterialSelecionado}>
+                                    <h4>
+                                        {materialSelecionado.nome}
+                                    </h4>
 
-                    <p>
-                        Estoque atual:{" "}
-                        {materialSelecionado.quantidade}
-                    </p>
+                                    <p>
+                                        Estoque atual:{" "}
+                                        {materialSelecionado.quantidade}
+                                    </p>
 
-                    <p>
-                        Valor médio: R${" "}
-                        {Number(
-                            materialSelecionado.valor_medio
-                        ).toFixed(2)}
-                    </p>
-                </div>
-            )}
-        </section>
-    </div>
-)}
+                                    <p>
+                                        Valor médio: R${" "}
+                                        {Number(
+                                            materialSelecionado.valor_medio
+                                        ).toFixed(2)}
+                                    </p>
+                                </div>
+                            )}
+                        </section>
+                    </div>
+                )}
             </section>
         </main>
     );

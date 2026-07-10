@@ -20,7 +20,7 @@ export default function Dashboard() {
   const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, carregando } = dadosDashboard()
 
   if (carregando) {
-    return <p className={style.carregando}>Carregando dados de dashboard...</p>
+    return <p className={style.carregando}>Carregando dados do dashboard...</p>
   }
 
   // const totalProdutos = produtos.length
