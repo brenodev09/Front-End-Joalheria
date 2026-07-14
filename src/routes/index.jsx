@@ -5,7 +5,7 @@ import RotasPrivadas from "./rotasPrivadas.jsx";
 
 // PAGINAS DO ADMIN
 import AdminLayout from "../Layouts/AdminLayout.jsx";
-import Inicial from "../pages/Admin/inicial.jsx"
+import Inicial from "../pages/inicial.jsx"
 import Dashboard from "../pages/Admin/dashboard.jsx"
 import Categorias from "../pages/Admin/Categorias.jsx"
 import Produtos from "../pages/Admin/ProdutosAdmin.jsx"

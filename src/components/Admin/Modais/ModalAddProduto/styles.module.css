@@ -379,6 +379,37 @@
   color: #c9a962;
 }
 
+.cardDestaque {
+  width: 100%;
+  background: #171717;
+  border: 1px solid #242424;
+  border-radius: 4px;
+
+  padding: .6rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.informacoesDestaque {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tituloDestaque {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.descricaoDestaque {
+  color: #9d9d9d;
+  font-size: 13px;
+}
+
+
 /* =========================
    SWITCH
 ========================= */

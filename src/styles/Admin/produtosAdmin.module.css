@@ -1,12 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap");
 
+.carregando{
+  display: flex;
+  justify-content: center;
+  padding-top: 20rem;
+  align-items: center;
+  font-size: 1.1rem;
+  opacity: 85%;
+}
+
 .adminProductsPage {
   min-height: 100vh;
   padding: 36px 34px 58px;
-  background:
+  /* background:
     radial-gradient(circle at 78% 8%, rgba(210, 173, 98, 0.08), transparent 32%),
     radial-gradient(circle at 35% 45%, rgba(255, 255, 255, 0.035), transparent 28%),
-    #0b0b0b;
+    #0b0b0b; */
   color: #f3f3f3;
   font-family: "Inter", sans-serif;
 }
@@ -368,6 +377,15 @@
 .critical {
   color: #ff2438;
   background: rgba(255, 36, 56, 0.12);
+}
+
+.badgeDestaque {
+    background: rgba(201, 168, 91, 0.15);
+    color: #C9A85B;
+    border-radius: 999px;
+    padding: 6px 8px;
+    font-size: 0.77rem;
+    font-weight: 800;
 }
 
 .actions {

@@ -191,6 +191,7 @@ height: 100vh;
   display: flex;
   flex-direction: column;
   width: 27rem;
+  max-height: 19rem;
 }
 
 .imagemProduto {

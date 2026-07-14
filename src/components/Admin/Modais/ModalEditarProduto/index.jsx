@@ -23,6 +23,7 @@ export default function ModalEditarProduto({
     useState("");
 
   const [ativo, setAtivo] = useState(true);
+  const [destaque, setDestaque] = useState(false)
 
   const [imagem, setImagem] = useState(null);
   const [imagemPreview, setImagemPreview] =
@@ -71,6 +72,7 @@ export default function ModalEditarProduto({
       );
 
       setAtivo(Boolean(produto.ativo));
+      setDestaque(Boolean(produto.destaque))
 
       setImagem(null);
 
@@ -146,13 +148,18 @@ export default function ModalEditarProduto({
       formData.append("nome", nome);
       formData.append("descricao", descricao);
       formData.append("ativo", ativo);
+      formData.append("destaque", destaque)
+      formData.append("preco", preco);
+      formData.append("estoque", estoque);
+      formData.append("estoque_minimo", estoqueMinimo);
+      formData.append("categoria_id", categoriaId);
+      formData.append("material_id", materialId);
 
       if (imagem) {
         formData.append("imagem", imagem);
       }
 
-      const resposta = await api.put(`/categorias/${categoria.id}`, formData);
-
+      const resposta = await api.put(`/produtos/${produto.id}`, formData);
       aoSalvar?.(resposta.data);
       fecharModal();
     } catch (erro) {
@@ -540,6 +547,28 @@ export default function ModalEditarProduto({
                     style.slider
                   }
                 ></span>
+              </label>
+            </div>
+            <div className={style.cardDestaque}>
+              <div className={style.informacoesDestaque}>
+                <span className={style.tituloDestaque}>
+                  Produto em destaque
+                </span>
+
+                <span className={style.descricaoDestaque}>
+                  {destaque
+                    ? "Visível na seção destaques da loja"
+                    : "Não visível na seção de destaques da loja - Oculto para clientes"}
+                </span>
+              </div>
+
+              <label className={style.switch}>
+                <input
+                  type="checkbox"
+                  checked={destaque}
+                  onChange={(event) => setDestaque(event.target.checked)}
+                />
+                <span className={style.slider}></span>
               </label>
             </div>
           </div>

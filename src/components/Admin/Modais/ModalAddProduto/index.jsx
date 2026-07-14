@@ -20,6 +20,7 @@ export default function ModalAddProduto({
         useState("");
 
     const [ativo, setAtivo] = useState(true);
+    const [destaque, setDestaque] = useState(false)
 
     const [imagem, setImagem] = useState(null);
     const [imagemPreview, setImagemPreview] =
@@ -98,6 +99,8 @@ export default function ModalAddProduto({
     const margemEstimada =
         Number(preco || 0) -
         custoMaterial;
+
+
     function capturarImagem(event) {
         const arquivo = event.target.files[0];
 
@@ -161,6 +164,7 @@ export default function ModalAddProduto({
                 "ativo",
                 ativo ? "true" : "false"
             );
+            formData.append("destaque", destaque)
 
             if (imagem) {
                 formData.append("imagem", imagem);
@@ -606,6 +610,29 @@ export default function ModalAddProduto({
                                     ></span>
                                 </label>
                             </div>
+
+                            <div className={style.cardDestaque}>
+                                <div className={style.informacoesDestaque}>
+                                    <span className={style.tituloDestaque}>
+                                        Produto em destaque
+                                    </span>
+
+                                    <span className={style.descricaoDestaque}>
+                                        {destaque
+                                            ? "Visível na seção destaques da loja"
+                                            : "Não visível na seção de destaques da loja - Oculto para clientes"}
+                                    </span>
+                                </div>
+
+                                <label className={style.switch}>
+                                    <input
+                                        type="checkbox"
+                                        checked={destaque}
+                                        onChange={(event) => setDestaque(event.target.checked)}
+                                    />
+                                    <span className={style.slider}></span>
+                                </label>
+                            </div>
                         </section>
                     </div>
                 )}
@@ -657,21 +684,7 @@ export default function ModalAddProduto({
                                 </p>
                             )}
 
-                            <div className={style.botoesAcao}>
-                                <button
-                                    className={`btnPadrao ${style.btnCancelar}`}
-                                    onClick={() => setEtapa(1)}
-                                >
-                                    VOLTAR
-                                </button>
 
-                                <button
-                                    className={style.btnSalvar}
-                                    onClick={salvarProduto}
-                                >
-                                    SALVAR PRODUTO
-                                </button>
-                            </div>
                         </aside>
 
                         <section className={style.containerFormulario}>
@@ -733,6 +746,22 @@ export default function ModalAddProduto({
                                     </p>
                                 </div>
                             )}
+
+                            <div className={style.botoesAcao}>
+                                <button
+                                    className={`btnPadrao ${style.btnCancelar}`}
+                                    onClick={() => setEtapa(1)}
+                                >
+                                    VOLTAR
+                                </button>
+
+                                <button
+                                    className={style.btnSalvar}
+                                    onClick={salvarProduto}
+                                >
+                                    SALVAR PRODUTO
+                                </button>
+                            </div>
                         </section>
                     </div>
                 )}

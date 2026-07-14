@@ -40,14 +40,14 @@ export default function Produtos() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalExcluirAberto, setModalExcluirAberto] =
-  useState(false);
+    useState(false);
 
 
   const [abrirModalEditar, setAbrirModalEditar] = useState(false);
-const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
 
   const [search, setSearch] = useState("");
-   const [abrirModal, setAbrirModal] = useState(false);
+  const [abrirModal, setAbrirModal] = useState(false);
   const [category, setCategory] = useState("");
   const [material, setMaterial] = useState("");
   const [status, setStatus] = useState("");
@@ -59,31 +59,31 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   }, []);
 
   function abrirEditarProduto(produto) {
-  setProdutoSelecionado(produto);
-  setAbrirModalEditar(true);
-}
+    setProdutoSelecionado(produto);
+    setAbrirModalEditar(true);
+  }
 
 
   async function excluirProduto() {
-  try {
-    await api.delete(
-      `/produtos/${produtoSelecionado.id}`
-    );
+    try {
+      await api.delete(
+        `/produtos/${produtoSelecionado.id}`
+      );
 
-    setProducts((produtos) =>
-      produtos.filter(
-        (produto) =>
-          produto.id !== produtoSelecionado.id
-      )
-    );
+      setProducts((produtos) =>
+        produtos.filter(
+          (produto) =>
+            produto.id !== produtoSelecionado.id
+        )
+      );
 
-    setModalExcluirAberto(false);
-    setProdutoSelecionado(null);
+      setModalExcluirAberto(false);
+      setProdutoSelecionado(null);
 
-  } catch (error) {
-    console.error(error);
+    } catch (error) {
+      console.error(error);
+    }
   }
-}
   async function buscarProdutos() {
     try {
       const response = await api.get("/produtos");
@@ -144,7 +144,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
     return {
       totalProducts,
       lowStockProducts,
-      totalValue, 
+      totalValue,
       activeProducts,
     };
   }, [products]);
@@ -164,7 +164,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   if (loading) {
     return (
       <main className={styles.adminProductsPage}>
-        <h2>Carregando produtos...</h2>
+        <p className={styles.carregando}>Carregando produtos...</p>
       </main>
     )
   }
@@ -186,18 +186,18 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
               <p>Gerencie suas peças, coleções, estoques e valores.</p>
             </div>
 
-           <button
-  className={`${styles.btnPadrao} ${styles.addProductBtn}`}
-  onClick={() => setAbrirModal(true)}
->
-  <img
-    width="20"
-    height="20"
-    src="https://img.icons8.com/ios-filled/23/plus-math.png"
-    alt="plus-math"
-  />
-  <p>ADICIONAR PRODUTO</p>
-</button>
+            <button
+              className={`${styles.btnPadrao} ${styles.addProductBtn}`}
+              onClick={() => setAbrirModal(true)}
+            >
+              <img
+                width="20"
+                height="20"
+                src="https://img.icons8.com/ios-filled/23/plus-math.png"
+                alt="plus-math"
+              />
+              <p>ADICIONAR PRODUTO</p>
+            </button>
           </header>
 
           <section className={styles.productsMetrics}>
@@ -278,7 +278,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
             >
               Limpar
             </button>
-            
+
           </section>
 
           <section className={styles.productsTableCard}>
@@ -292,6 +292,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
                   <th>Preço</th>
                   <th>Estoque</th>
                   <th>Status</th>
+                  <th>Destaque</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -307,7 +308,7 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
                     <td>
                       <div className={styles.productCell}>
                         <ProductThumb
-                          image={   
+                          image={
                             product.imagem
                               ? `http://localhost:3000${product.imagem}`
                               : null
@@ -343,26 +344,37 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
                       />
                     </td>
                     <td>
+                      {product.destaque  ? (
+                        <span className={styles.badgeDestaque}>
+                          ⭐ Destaque
+                        </span>
+                      ) : (
+                        <span className={styles.badgeNormal}>
+                          Normal
+                        </span>
+                      )}
+                    </td>
+                    <td>
                       <div className={styles.actions}>
-                        
 
-                       <button
-  title="Editar"
-  onClick={() => abrirEditarProduto(product)}
->
-  <Pencil size={15} />
-</button>
 
                         <button
-  title="Excluir"
-  className={styles.delete}
-  onClick={() => {
-    setProdutoSelecionado(product);
-    setModalExcluirAberto(true);
-  }}
->
-  <Trash2 size={15} />
-</button>
+                          title="Editar"
+                          onClick={() => abrirEditarProduto(product)}
+                        >
+                          <Pencil size={15} />
+                        </button>
+
+                        <button
+                          title="Excluir"
+                          className={styles.delete}
+                          onClick={() => {
+                            setProdutoSelecionado(product);
+                            setModalExcluirAberto(true);
+                          }}
+                        >
+                          <Trash2 size={15} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -378,34 +390,34 @@ const [produtoSelecionado, setProdutoSelecionado] = useState(null);
 
 
       </div>
-<ModalAddProduto
-  isOpen={abrirModal}
-  fecharModal={() => {
-    setAbrirModal(false);
-    buscarProdutos();
-  }}
-/>
-<ModalDeletarProduto
-  aberto={modalExcluirAberto}
-  produto={produtoSelecionado}
-  aoFechar={() => {
-    setModalExcluirAberto(false);
-    setProdutoSelecionado(null);
-  }}
-  aoConfirmar={excluirProduto}
-/>
-<ModalEditarProduto
-  isOpen={abrirModalEditar}
-  fecharModal={() => {
-    setAbrirModalEditar(false);
-    setProdutoSelecionado(null);
-  }}
-  produto={produtoSelecionado}
-  aoSalvar={() => {
-    buscarProdutos();
-    setAbrirModalEditar(false);
-  }}
-/>
+      <ModalAddProduto
+        isOpen={abrirModal}
+        fecharModal={() => {
+          setAbrirModal(false);
+          buscarProdutos();
+        }}
+      />
+      <ModalDeletarProduto
+        aberto={modalExcluirAberto}
+        produto={produtoSelecionado}
+        aoFechar={() => {
+          setModalExcluirAberto(false);
+          setProdutoSelecionado(null);
+        }}
+        aoConfirmar={excluirProduto}
+      />
+      <ModalEditarProduto
+        isOpen={abrirModalEditar}
+        fecharModal={() => {
+          setAbrirModalEditar(false);
+          setProdutoSelecionado(null);
+        }}
+        produto={produtoSelecionado}
+        aoSalvar={() => {
+          buscarProdutos();
+          setAbrirModalEditar(false);
+        }}
+      />
 
     </main>
   );
