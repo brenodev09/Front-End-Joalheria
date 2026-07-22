@@ -10,6 +10,7 @@ import colar from "../img/Destaques/colar.png"
 import modelo from "../img/Destaques/modelo.png"
 
 import { useAuth } from "../context/authContext"
+import { useNavigate } from "react-router-dom";
 import { api } from "../services/api"
 import { useState, useRef, useEffect } from "react";
 
@@ -35,6 +36,7 @@ export default function inicial() {
 
   const { usuario, estaLogado } = useAuth()
   const [destaques, setDestaques] = useState([])
+  const navegar = useNavigate()
 
   const videoRef = useRef(null);
   const heroCamadaRef = useRef(null);
@@ -358,7 +360,7 @@ export default function inicial() {
                       <span className={style.precoValor}>R$ {produtoDestaque.preco}</span>
                     </p>
                   </div>
-                  <button className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
+                  <button onClick={() => navegar("/produto")} className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
                 </div>
               </div>
 

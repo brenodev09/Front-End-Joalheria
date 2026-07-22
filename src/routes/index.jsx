@@ -18,6 +18,10 @@ import Cadastro from "../pages/cadastro.jsx"
 import Login from "../pages/login.jsx"
 
 
+// paginas comum
+import PagProduto from "../pages/ProdutoJoalheria.jsx"
+
+
 export default function Rotas() {
     return (
         <>
@@ -25,6 +29,7 @@ export default function Rotas() {
                 <Routes>
 
                     <Route path="/" element={<Inicial />} />
+                    <Route path="/produto" element = {<PagProduto/>}/>
 
                     <Route element={<RotasPrivadas />}>
                         <Route path="/admin" element={<AdminLayout />} >

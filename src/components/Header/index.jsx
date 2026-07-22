@@ -15,7 +15,10 @@ export default function Header() {
     return (
         <>
             <header>
-                <img className={style.logo} src={logo} alt="logo loja" />
+                <a href="/">
+                    <img className={style.logo} src={logo} alt="logo loja" />
+
+                </a>
 
 
                 {usuario?.tipo === "admin" ? (
@@ -44,7 +47,7 @@ export default function Header() {
                 ) : usuario?.tipo === "admin" ? (
                     <div className={style.acoesUser}>
                         <button onClick={() => setOpenSideBarUser(true)}>
-                            <img  width="24" height="24" src="https://img.icons8.com/material-sharp/24/ffffff/user.png" alt="user" />
+                            <img width="24" height="24" src="https://img.icons8.com/material-sharp/24/ffffff/user.png" alt="user" />
                         </button>
                     </div>
 
