@@ -1,7 +1,9 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { api } from "../services/api"
 import {
   RotateCw,
   ZoomIn,
@@ -137,11 +139,29 @@ function calcularPosicaoRadial(indice, total) {
   }
 }
 
+
+
 /* ------------------------------------------------------------------ */
 /* Página                                                              */
 /* ------------------------------------------------------------------ */
 
 export default function ProdutoJoalheria() {
+
+
+  const [produto, setProduto] = useState(null)
+  const { id } = useParams()
+
+  useEffect(() => {
+    async function produtoSelecionado() {
+      const resposta = await api.get(`/produtos/${id}`)
+
+      setProduto(resposta.data)
+    }
+
+    produtoSelecionado()
+  }, [id])
+
+
   /* ---- estado: galeria ---- */
   const [indiceAtivo, setIndiceAtivo] = useState(0)
   const [modo360, setModo360] = useState(false)
@@ -155,6 +175,7 @@ export default function ProdutoJoalheria() {
   const [favorito, setFavorito] = useState(false)
   const [guiaAberto, setGuiaAberto] = useState(false)
   const [adicionado, setAdicionado] = useState(false)
+  const [erroTamanho, setErroTamanho] = useState(false)
 
   /* ---- refs: galeria ---- */
   const galeriaRef = useRef(null)
@@ -324,7 +345,12 @@ export default function ProdutoJoalheria() {
 
   function adicionarSacola() {
     if (!tamanhoAtivo) {
+      setErroTamanho(true)
       gsap.fromTo(`.${style.gradeTamanhos}`, { x: -4 }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.3)' })
+      setTimeout(() => {
+        setErroTamanho(false);
+      }, 400); // mesmo tempo da animação
+
       return
     }
     setAdicionado(true)
@@ -332,12 +358,18 @@ export default function ProdutoJoalheria() {
     setTimeout(() => setAdicionado(false), 2600)
   }
 
+  if (!produto) {
+    return <div>Carregando...</div> 
+  }
+
+  const precoParceladoo = produto.preco / 12
+
   /* ------------------------------------------------------------------ */
 
   return (
     <main className={style.containerPagina}>
 
-      <Header/>
+      <Header />
       {/* ============================ HERO ============================ */}
       <section className={style.secaoHero}>
         {/* <div className={style.marcaTopo}>
@@ -406,15 +438,14 @@ export default function ProdutoJoalheria() {
           <div className={style.informacoesProduto} ref={infoRef}>
             <p className={`${style.colecao} ${style.animarEntrada}`}>{PRODUTO.colecao}</p>
 
-            <h1 className={`${style.nomeProduto} ${style.animarEntrada}`}>{PRODUTO.nome}</h1>
+            <h1 className={`${style.nomeProduto} ${style.animarEntrada}`}>{produto.nome}</h1>
 
-            <p className={`${style.descricaoCurta} ${style.animarEntrada}`}>{PRODUTO.descricaoCurta}</p>
+            <p className={`${style.descricaoCurta} ${style.animarEntrada}`}>{produto.descricao}</p>
 
             <div className={`${style.blocoPreco} ${style.animarEntrada}`}>
-              <span className={style.precoAtual}>{formatarPreco(PRODUTO.precoAtual)}</span>
+              <span className={style.precoAtual}>{formatarPreco(produto.preco)}</span>
               <span className={style.parcelamento}>
-                ou {PRODUTO.precoParcelado.vezes}x de {formatarPreco(PRODUTO.precoParcelado.valor)} sem
-                juros
+                ou 12x de {formatarPreco(precoParceladoo)} sem juros
               </span>
             </div>
 
@@ -430,9 +461,8 @@ export default function ProdutoJoalheria() {
                   <button
                     key={material.id}
                     type="button"
-                    className={`${style.amostraMaterial} ${
-                      material.id === materialAtivo ? style.amostraMaterialAtiva : ''
-                    }`}
+                    className={`${style.amostraMaterial} ${material.id === materialAtivo ? style.amostraMaterialAtiva : ''
+                      }`}
                     style={{ backgroundColor: material.cor }}
                     onClick={() => setMaterialAtivo(material.id)}
                     aria-label={material.nome}
@@ -457,7 +487,7 @@ export default function ProdutoJoalheria() {
                 </p>
               )}
 
-              <div className={style.gradeTamanhos}>
+              <div className={`${style.gradeTamanhos} ${erroTamanho ? style.erroTamanho : ""}`}>
                 {PRODUTO.tamanhos.map((tamanho) => (
                   <button
                     key={tamanho}
@@ -484,7 +514,12 @@ export default function ProdutoJoalheria() {
 
               <p className={style.estoque}>
                 <span className={style.pontoEstoque} />
-                Apenas {PRODUTO.estoque} unidades disponíveis
+                {produto.estoque <= 300 ? (
+                  <span className={style.estoque}> Apenas {produto.estoque} unidades disponíveis</span>
+
+                ) : (
+                  <span className={style.estoque}> {produto.estoque} unidades disponíveis</span>
+                )}
               </p>
             </div>
 
@@ -660,7 +695,7 @@ export default function ProdutoJoalheria() {
         </div>
       </section>
 
-      
+
     </main>
   )
 }

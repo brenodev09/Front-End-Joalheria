@@ -432,6 +432,27 @@ a {
   color: var(--dourado-claro);
 }
 
+.erroTamanho button {
+  border-color: #ff3b3b;
+  color: #ff3b3b;
+}
+
+.erroTamanho {
+  animation: piscarErro 0.5s ease;
+}
+
+@keyframes piscarErro {
+  0% {
+    filter: drop-shadow(0 0 0px #ff3b3b);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px #ff3b3b);
+  }
+  100% {
+    filter: drop-shadow(0 0 0px #ff3b3b);
+  }
+}
+
 .linhaAcoes {
   display: flex;
   align-items: center;

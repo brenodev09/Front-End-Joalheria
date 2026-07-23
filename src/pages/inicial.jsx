@@ -172,6 +172,10 @@ export default function inicial() {
     carregarProdDestaques()
   }, [])
 
+
+console.log(destaques);
+console.log(typeof destaques);
+
   return (
 
 
@@ -360,60 +364,14 @@ export default function inicial() {
                       <span className={style.precoValor}>R$ {produtoDestaque.preco}</span>
                     </p>
                   </div>
-                  <button onClick={() => navegar("/produto")} className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
+                  <button onClick={() => navegar(`/produto/${produtoDestaque.id}`)} className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
                 </div>
               </div>
 
             ))}
 
 
-            {/* <div className={style.cardProduto}>
-              <div className={style.imagemProduto}>
-                <img src={colar} alt="Relógio Luxury Gold" />
-              </div>
-              <div className={style.infoProduto}>
-                <div className={style.textoProduto}>
-                  <h3 className={style.tituloProduto}>Relógio Luxury Gold</h3>
-                  <p className={style.precoProduto}>
-                    <span className={style.precoLabel}>a partir de </span>
-                    <span className={style.precoValor}>R$ 2099.00</span>
-                  </p>
-                </div>
-                <button className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
-              </div>
-            </div>
-
-            <div className={style.cardProduto}>
-              <div className={style.imagemProduto}>
-                <img src={relogio} alt="Relógio Luxury Gold" />
-              </div>
-              <div className={style.infoProduto}>
-                <div className={style.textoProduto}>
-                  <h3 className={style.tituloProduto}>Relógio Luxury Gold</h3>
-                  <p className={style.precoProduto}>
-                    <span className={style.precoLabel}>a partir de </span>
-                    <span className={style.precoValor}>R$ 2099.00</span>
-                  </p>
-                </div>
-                <button className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
-              </div>
-            </div>
-
-            <div className={style.cardProduto}>
-              <div className={style.imagemProduto}>
-                <img src={colar} alt="Relógio Luxury Gold" />
-              </div>
-              <div className={style.infoProduto}>
-                <div className={style.textoProduto}>
-                  <h3 className={style.tituloProduto}>Relógio Luxury Gold</h3>
-                  <p className={style.precoProduto}>
-                    <span className={style.precoLabel}>a partir de </span>
-                    <span className={style.precoValor}>R$ 2099.00</span>
-                  </p>
-                </div>
-                <button className={`btnPadrao ${style.btnVerProduto}`}>Ver produto</button>
-              </div>
-            </div> */}
+         
 
           </section>
 

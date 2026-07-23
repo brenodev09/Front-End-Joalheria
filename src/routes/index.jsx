@@ -29,7 +29,7 @@ export default function Rotas() {
                 <Routes>
 
                     <Route path="/" element={<Inicial />} />
-                    <Route path="/produto" element = {<PagProduto/>}/>
+                    <Route path="/produto/:id" element = {<PagProduto/>}/>
 
                     <Route element={<RotasPrivadas />}>
                         <Route path="/admin" element={<AdminLayout />} >
