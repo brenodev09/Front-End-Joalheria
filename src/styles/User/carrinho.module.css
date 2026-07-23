@@ -1,0 +1,940 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap");
+
+/* ==========================================================================
+   Variáveis de identidade visual
+   ========================================================================== */
+
+.pagina {
+  --preto: #0a0a0a;
+  --preto-secundario: #111111;
+  --dourado: #d4af37;
+  --dourado-suave: #c8a45d;
+  --branco-quente: #f5f5f5;
+  --branco-quente-opaco: rgba(245, 245, 245, 0.6);
+  --linha-sutil: rgba(212, 175, 55, 0.18);
+
+  background-color: var(--preto);
+  color: var(--branco-quente);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pagina * {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Cabeçalho da marca
+   ========================================================================== */
+
+.cabecalho {
+  border-bottom: 1px solid var(--linha-sutil);
+  padding: 40px 24px 32px;
+  background: linear-gradient(180deg, var(--preto-secundario) 0%, var(--preto) 100%);
+}
+
+
+
+
+/* ==========================================================================
+   Stepper / Barra de etapas
+   ========================================================================== */
+
+.stepper {
+  position: relative;
+  width: 94%;
+  max-width: 1500px;
+  margin: 4px auto 0;
+  padding: 0 32px 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stepperLinhaBase {
+  position: absolute;
+  top: 27px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 1px;
+  background-color: rgba(245, 245, 245, 0.14);
+}
+
+.linhaProgresso {
+  height: 100%;
+  width: 0%;
+  background-color: var(--dourado);
+  transition: width 0.6s ease;
+}
+
+.etapa {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: "Jost", sans-serif;
+}
+
+.etapaCirculo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 245, 245, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 21px;
+  color: var(--branco-quente-opaco);
+  background-color: var(--preto);
+  transition: all 0.3s ease;
+}
+
+.etapaTexto {
+  font-size: 12.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.45);
+  transition: color 0.3s ease;
+}
+
+.etapaAtiva .etapaCirculo {
+  border-color: var(--dourado);
+  color: var(--dourado);
+  box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.1);
+}
+
+.etapaAtiva .etapaTexto {
+  color: var(--dourado);
+}
+
+.etapaConcluida .etapaCirculo {
+  border-color: var(--dourado-suave);
+  background-color: var(--dourado-suave);
+  color: var(--preto);
+}
+
+.etapaConcluida .etapaTexto {
+  color: rgba(245, 245, 245, 0.65);
+}
+
+.etapa:disabled {
+  cursor: default;
+}
+
+/* ==========================================================================
+   Conteúdo principal
+   ========================================================================== */
+
+.conteudoPrincipal {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+}
+
+.titulo {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 46px;
+  text-align: center;
+  margin: 0 0 56px;
+  color: var(--branco-quente);
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+/* ==========================================================================
+   Barra de benefícios
+   ========================================================================== */
+
+.beneficios {
+  list-style: none;
+  margin: 0 0 48px;
+  padding: 22px 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--linha-sutil);
+  border-bottom: 1px solid var(--linha-sutil);
+}
+
+.beneficioItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.75);
+}
+
+.beneficioIcone {
+  color: var(--dourado);
+  font-size: 8px;
+}
+
+/* ==========================================================================
+   Lista de produtos
+   ========================================================================== */
+
+.conteudoEtapa {
+  width: 100%;
+}
+
+.carrinhoVazio {
+  padding: 48px 0;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 245, 0.5);
+}
+
+.listaProdutos {
+  display: flex;
+  flex-direction: column;
+}
+
+.produtoItem {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 28px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--linha-sutil);
+}
+
+.produtoItem:first-child {
+  padding-top: 0;
+}
+
+.produtoImagemWrapper {
+  width: 140px;
+  height: 140px;
+  overflow: hidden;
+  background-color: var(--preto-secundario);
+  border: 1px solid var(--linha-sutil);
+}
+
+.produtoImagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.02);
+}
+
+.produtoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.produtoCabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.produtoNome {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--branco-quente);
+}
+
+.botaoRemover {
+  background: none;
+  border: none;
+  color: rgba(245, 245, 245, 0.4);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.25s ease, border-color 0.25s ease;
+  white-space: nowrap;
+}
+
+.botaoRemover:hover {
+  color: var(--dourado-suave);
+  border-color: var(--dourado-suave);
+}
+
+.produtoDescricao {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(245, 245, 245, 0.62);
+  margin: 0;
+}
+
+.produtoAtributos {
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: rgba(245, 245, 245, 0.5);
+  margin: 0;
+}
+
+.produtoAtributos strong {
+  color: rgba(245, 245, 245, 0.82);
+  font-weight: 500;
+}
+
+.produtoRodape {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quantidadeControle {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(245, 245, 245, 0.2);
+}
+
+.quantidadeBotao {
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  color: var(--branco-quente);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.quantidadeBotao:hover {
+  background-color: var(--dourado);
+  color: var(--preto);
+}
+
+.quantidadeValor {
+  width: 34px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--branco-quente);
+}
+
+.produtoPrecos {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.precoOriginal {
+  font-size: 13px;
+  color: rgba(245, 245, 245, 0.35);
+  text-decoration: line-through;
+}
+
+.precoAtual {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dourado);
+}
+
+/* ==========================================================================
+   Formulários das etapas de Entrega e Pagamento
+   ========================================================================== */
+
+.formularioEtapa {
+  display: flex;
+  flex-direction: column;
+}
+
+.formularioTitulo {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0 0 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--linha-sutil);
+}
+
+.formularioEtapa .formularioTitulo:not(:first-child) {
+  margin-top: 40px;
+}
+
+.formularioGrade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 24px;
+  margin-bottom: 8px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.55);
+}
+
+.campoLargo {
+  grid-column: 1 / -1;
+}
+
+.campo input {
+  background-color: var(--preto-secundario);
+  border: 1px solid rgba(245, 245, 245, 0.2);
+  padding: 13px 14px;
+  color: var(--branco-quente);
+  font-family: "Jost", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  transition: border-color 0.25s ease;
+}
+
+.campo input::placeholder {
+  color: rgba(245, 245, 245, 0.3);
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: var(--dourado);
+}
+
+.campoErro input {
+  border-color: #c0564f;
+}
+
+.campoErro span {
+  color: #c0564f;
+}
+
+.mensagemErro {
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: #c0564f;
+  background-color: rgba(192, 86, 79, 0.1);
+  border: 1px solid rgba(192, 86, 79, 0.35);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+/* Opções de entrega */
+
+.opcoesEntrega {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.opcaoEntregaCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid rgba(245, 245, 245, 0.2);
+  background-color: var(--preto-secundario);
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+}
+
+.opcaoEntregaCard input[type="radio"] {
+  accent-color: var(--dourado);
+  width: 16px;
+  height: 16px;
+}
+
+.opcaoEntregaSelecionada {
+  border-color: var(--dourado);
+}
+
+.opcaoEntregaInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.opcaoEntregaNome {
+  font-size: 14px;
+  color: var(--branco-quente);
+  letter-spacing: 0.02em;
+}
+
+.opcaoEntregaPrazo {
+  font-size: 11.5px;
+  color: rgba(245, 245, 245, 0.45);
+}
+
+.opcaoEntregaPreco {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 17px;
+  color: var(--dourado);
+}
+
+/* Abas de pagamento */
+
+.abasPagamento {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.abaPagamento {
+  flex: 1;
+  padding: 13px;
+  background: none;
+  border: 1px solid rgba(245, 245, 245, 0.2);
+  color: rgba(245, 245, 245, 0.6);
+  font-family: "Jost", sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.abaPagamentoAtiva {
+  border-color: var(--dourado);
+  color: var(--dourado);
+  background-color: rgba(212, 175, 55, 0.08);
+}
+
+.mensagemPagamentoAlternativo {
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(245, 245, 245, 0.6);
+  padding: 20px;
+  border: 1px dashed rgba(245, 245, 245, 0.2);
+  margin-bottom: 8px;
+}
+
+/* Revisão do pedido (etapa de pagamento) */
+
+.revisaoLista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.revisaoItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--linha-sutil);
+}
+
+.revisaoImagem {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border: 1px solid var(--linha-sutil);
+}
+
+.revisaoInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.revisaoNome {
+  font-size: 13.5px;
+  color: var(--branco-quente);
+}
+
+.revisaoQuantidade {
+  font-size: 11px;
+  color: rgba(245, 245, 245, 0.45);
+}
+
+.revisaoPreco {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 17px;
+  color: var(--dourado-suave);
+}
+
+/* Botão de voltar dentro das etapas */
+
+.botaoVoltar {
+  align-self: flex-start;
+  margin-top: 32px;
+  background: none;
+  border: none;
+  color: rgba(245, 245, 245, 0.55);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.botaoVoltar:hover {
+  color: var(--dourado);
+  border-color: var(--dourado);
+}
+
+/* ==========================================================================
+   Confirmação de pedido
+   ========================================================================== */
+
+.confirmacaoWrapper {
+  max-width: 560px;
+  margin: 64px auto 120px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.confirmacaoIcone {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1px solid var(--dourado);
+  color: var(--dourado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.confirmacaoTexto {
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(245, 245, 245, 0.65);
+}
+
+.confirmacaoTotal {
+  margin-top: 12px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.55);
+}
+
+.confirmacaoTotal strong {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 20px;
+  color: var(--dourado);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ==========================================================================
+   Resumo do pedido
+   ========================================================================== */
+
+.colunaDireita {
+  position: relative;
+}
+
+.resumoPedido {
+  position: sticky;
+  top: 32px;
+  background-color: var(--preto-secundario);
+  border: 1px solid var(--linha-sutil);
+  padding: 36px 32px;
+}
+
+.resumoTitulo {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--linha-sutil);
+}
+
+.resumoLinha {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(245, 245, 245, 0.68);
+  padding: 10px 0;
+  letter-spacing: 0.02em;
+}
+
+.resumoFreteGratis {
+  color: var(--dourado-suave);
+}
+
+.cupomWrapper {
+  display: flex;
+  margin: 20px 0 4px;
+  border: 1px solid rgba(245, 245, 245, 0.2);
+}
+
+.cupomInput {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 12px 14px;
+  color: var(--branco-quente);
+  font-family: "Jost", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.cupomInput::placeholder {
+  color: rgba(245, 245, 245, 0.35);
+}
+
+.cupomInput:focus {
+  outline: none;
+}
+
+.cupomBotao {
+  background: none;
+  border: none;
+  border-left: 1px solid rgba(245, 245, 245, 0.2);
+  padding: 0 18px;
+  color: var(--dourado);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.cupomBotao:hover {
+  background-color: var(--dourado);
+  color: var(--preto);
+}
+
+.resumoDivisor {
+  height: 1px;
+  background-color: var(--linha-sutil);
+  margin: 24px 0;
+}
+
+.resumoTotalLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--branco-quente);
+}
+
+.resumoTotalValor {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 30px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--dourado);
+}
+
+.botaoContinuar {
+  width: 100%;
+  margin-top: 28px;
+  padding: 16px;
+  background-color: var(--dourado);
+  border: 1px solid var(--dourado);
+  color: var(--preto);
+  font-family: "Jost", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.botaoContinuar:hover {
+  background-color: transparent;
+  color: var(--dourado);
+}
+
+.botaoContinuar:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.botaoContinuar:disabled:hover {
+  background-color: var(--dourado);
+  color: var(--preto);
+}
+
+.resumoSeguranca {
+  margin-top: 18px;
+  font-size: 10.5px;
+  text-align: center;
+  color: rgba(245, 245, 245, 0.35);
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Produtos recomendados
+   ========================================================================== */
+
+.secaoRecomendados {
+  margin-top: 120px;
+}
+
+.recomendadoTitulo {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 34px;
+  text-align: center;
+  margin: 0 0 48px;
+}
+
+.recomendadoGrade {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+.recomendadoCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 18px 28px;
+  border: 1px solid var(--linha-sutil);
+  background-color: var(--preto-secundario);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.recomendadoCard:hover {
+  border-color: var(--dourado);
+  transform: translateY(-4px);
+}
+
+.recomendadoImagemWrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background-color: var(--preto);
+}
+
+.recomendadoImagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.02);
+  transition: transform 0.5s ease;
+}
+
+.recomendadoCard:hover .recomendadoImagem {
+  transform: scale(1.06);
+}
+
+.recomendadoNome {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: var(--branco-quente);
+}
+
+.recomendadoPreco {
+  font-size: 13px;
+  color: var(--dourado-suave);
+  margin: 0 0 18px;
+}
+
+.recomendadoBotao {
+  width: 100%;
+  padding: 11px;
+  background: none;
+  border: 1px solid rgba(245, 245, 245, 0.25);
+  color: var(--branco-quente);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.recomendadoBotao:hover {
+  background-color: var(--dourado);
+  border-color: var(--dourado);
+  color: var(--preto);
+}
+
+/* ==========================================================================
+   Responsividade
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: 1fr;
+  }
+
+  .resumoPedido {
+    position: static;
+  }
+
+  .beneficios {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 16px;
+  }
+
+  .recomendadoGrade {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .titulo {
+    font-size: 34px;
+  }
+
+  .produtoItem {
+    grid-template-columns: 100px 1fr;
+    gap: 18px;
+  }
+
+  .produtoImagemWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .stepper {
+    padding: 0 12px 40px;
+  }
+
+  .etapaCirculo {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .etapaTexto {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+  }
+
+  .stepperLinhaBase {
+    top: 20px;
+  }
+
+  .formularioGrade {
+    grid-template-columns: 1fr;
+  }
+
+  .recomendadoGrade {
+    grid-template-columns: 1fr;
+  }
+}

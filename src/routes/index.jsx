@@ -18,8 +18,9 @@ import Cadastro from "../pages/cadastro.jsx"
 import Login from "../pages/login.jsx"
 
 
-// paginas comum
+// paginas comum/cliente
 import PagProduto from "../pages/ProdutoJoalheria.jsx"
+import Carrinho from "../pages/User/carrinho.jsx"
 
 
 export default function Rotas() {
@@ -30,6 +31,7 @@ export default function Rotas() {
 
                     <Route path="/" element={<Inicial />} />
                     <Route path="/produto/:id" element = {<PagProduto/>}/>
+                    <Route path="/carrinho" element={<Carrinho/>}/>
 
                     <Route element={<RotasPrivadas />}>
                         <Route path="/admin" element={<AdminLayout />} >

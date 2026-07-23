@@ -38,7 +38,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const PRODUTO = {
   nome: 'Anel Solitário Constelação',
-  colecao: 'Coleção Constelação',
+  // colecao: 'Coleção Constelação',
   descricaoCurta:
     'Um único diamante natural lapidado à mão, suspenso em ouro 18K. Peça exclusiva, numerada e certificada — feita para durar gerações.',
   precoAtual: 48900,

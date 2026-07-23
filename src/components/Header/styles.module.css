@@ -143,9 +143,14 @@ nav {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+
+    .acoesLogado{
+        display: flex;
+        align-items: center;
+    }
     
 
-    button{
+    .btnAcao{
         background: none;
         border: none;
         cursor: pointer;
