@@ -135,7 +135,46 @@ nav {
 
 
 
+.btnAcao {
+    position: relative;
+}
 
+.badgeCarrinho {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #d4af37;
+    color: #111;
+
+    font-size: .72rem;
+    font-weight: 700;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 2px solid #111;
+
+    animation: aparecerBadge .25s ease;
+}
+
+@keyframes aparecerBadge {
+    from {
+        transform: scale(.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 
 
 .acoesUser{

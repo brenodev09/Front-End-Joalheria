@@ -10,6 +10,7 @@
 // import ProdutosAdmin from "./pages/Admin/ProdutosAdmin";
 import Rotas from "./routes/index.jsx"
 
+import SideBarCarrinho from "./components/SideBarCarrinho"
 
 
 import "./styles/cssGlobal.css"
@@ -19,7 +20,7 @@ function App() {
     <>
      
       <Rotas/> 
-      
+       <SideBarCarrinho/>
        
       {/* <Cadastro/> */}
      {/* <Produtos/> */}

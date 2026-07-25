@@ -1,5 +1,7 @@
-import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 
+import SideBarCarrinho from "../components/SideBarCarrinho";
+import { useCarrinho } from "../context/carrinhoContext";
 import RotasPublicas from "./rotasPublicas.jsx";
 import RotasPrivadas from "./rotasPrivadas.jsx";
 
@@ -24,33 +26,93 @@ import Carrinho from "../pages/User/carrinho.jsx"
 
 
 export default function Rotas() {
+
+    const { sidebarAberta } = useCarrinho();
+
     return (
+
         <>
-            <BrowserRouter>
-                <Routes>
 
-                    <Route path="/" element={<Inicial />} />
-                    <Route path="/produto/:id" element = {<PagProduto/>}/>
-                    <Route path="/carrinho" element={<Carrinho/>}/>
+            <Routes>
 
-                    <Route element={<RotasPrivadas />}>
-                        <Route path="/admin" element={<AdminLayout />} >
-                            <Route path="dashboard" element={<Dashboard />} />
-                            <Route path="categorias" element={<Categorias />} />
-                            <Route path="produtos" element={<Produtos />} />
-                            <Route path="materiais" element={<Materiais />} />
-                            <Route path="conta" element={<InfoConta />} />
-                        </Route>
+                <Route path="/" element={<Inicial />} />
+
+                <Route
+                    path="/produto/:id"
+                    element={<PagProduto />}
+                />
+
+                <Route
+                    path="/carrinho"
+                    element={<Carrinho />}
+                />
+
+
+
+                <Route element={<RotasPrivadas />}>
+
+                    <Route
+                        path="/admin"
+                        element={<AdminLayout />}
+                    >
+
+                        <Route
+                            path="dashboard"
+                            element={<Dashboard />}
+                        />
+
+                        <Route
+                            path="categorias"
+                            element={<Categorias />}
+                        />
+
+                        <Route
+                            path="produtos"
+                            element={<Produtos />}
+                        />
+
+                        <Route
+                            path="materiais"
+                            element={<Materiais />}
+                        />
+
+                        <Route
+                            path="conta"
+                            element={<InfoConta />}
+                        />
+
                     </Route>
 
-                    <Route element={<RotasPublicas />}>
-                        <Route path="/Cadastrar" element={<Cadastro />}></Route>
-                        <Route path="/Login" element={<Login />}></Route>
-                    </Route>
+                </Route>
 
-                </Routes>
-            </BrowserRouter>
+
+
+                <Route element={<RotasPublicas />}>
+
+                    <Route
+                        path="/Cadastrar"
+                        element={<Cadastro />}
+                    />
+
+                    <Route
+                        path="/Login"
+                        element={<Login />}
+                    />
+
+                </Route>
+
+
+            </Routes>
+
+
+
+            {
+                sidebarAberta && <SideBarCarrinho />
+            }
+
 
         </>
-    )
+
+    );
+
 }
