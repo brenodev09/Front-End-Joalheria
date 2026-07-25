@@ -20,7 +20,7 @@ import { useCarrinho } from "../../context/carrinhoContext";
 
 export default function SideBarCarrinho() {
 
-const navigate = useNavigate();
+    const navigate = useNavigate();
     const sidebarRef = useRef(null);
     const overlayRef = useRef(null);
 
@@ -39,38 +39,23 @@ const navigate = useNavigate();
 
 
 
-
     useEffect(() => {
 
+        if (!sidebarAberta) return;
 
         gsap.fromTo(
             overlayRef.current,
-            {
-                opacity: 0
-            },
-            {
-                opacity: 1,
-                duration: .4,
-                ease: "power2.out"
-            }
+            { opacity: 0 },
+            { opacity: 1, duration: .4, ease: "power2.out" }
         );
-
 
         gsap.fromTo(
             sidebarRef.current,
-            {
-                x: "100%"
-            },
-            {
-                x: 0,
-                duration: .6,
-                ease: "power4.out"
-            }
+            { x: "100%" },
+            { x: 0, duration: .6, ease: "power4.out" }
         );
 
-
-    }, []);
-
+    }, [sidebarAberta]);
 
 
 
@@ -88,17 +73,17 @@ const navigate = useNavigate();
 
 
 
-    
 
 
 
-    if(!sidebarAberta){
-    return null;
-}
+
+    if (!sidebarAberta) {
+        return null;
+    }
 
 
-return (
-<>
+    return (
+        <>
 
 
             {/* OVERLAY */}
@@ -128,11 +113,11 @@ return (
                     </h2>
 
 
-                   <button
-    className={styles.closeButton}
-    aria-label="Fechar carrinho"
-    onClick={fecharSidebar}
->
+                    <button
+                        className={styles.closeButton}
+                        aria-label="Fechar carrinho"
+                        onClick={fecharSidebar}
+                    >
                         <X size={22} />
                     </button>
 
@@ -144,7 +129,7 @@ return (
 
 
                 {/* BENEFÍCIOS */}
-
+                {/* 
                 <section className={styles.beneficios}>
 
 
@@ -231,7 +216,7 @@ return (
 
 
 
-                </section>
+                </section> */}
 
 
 
@@ -244,7 +229,7 @@ return (
 
 
                     {
- itens.map(item => (
+                        itens.map(item => (
 
 
                             <article
@@ -254,16 +239,16 @@ return (
 
 
 
-                               <img
-    src={
-        item.imagem?.startsWith("http")
-        ?
-        item.imagem
-        :
-        `http://localhost:3000${item.imagem}`
-    }
-    alt={item.nome}
-/>
+                                <img
+                                    src={
+                                        item.imagem?.startsWith("http")
+                                            ?
+                                            item.imagem
+                                            :
+                                            `http://localhost:3000${item.imagem}`
+                                    }
+                                    alt={item.nome}
+                                />
 
 
 
@@ -281,13 +266,13 @@ return (
 
 
                                     <span className={styles.preco}>
-                                       {
- formatarPreco(
-    item.preco ||
-    item.produto_preco ||
-    0
- )
-}
+                                        {
+                                            formatarPreco(
+                                                item.preco ||
+                                                item.produto_preco ||
+                                                0
+                                            )
+                                        }
                                     </span>
 
 
@@ -295,16 +280,16 @@ return (
                                     <div className={styles.controle}>
 
 
-                                      <button
-    onClick={() =>
-        atualizarQuantidade(
-            item.id,
-            item.quantidade - 1
-        )
-    }
->
-    <Minus size={14}/>
-</button>
+                                        <button
+                                            onClick={() =>
+                                                atualizarQuantidade(
+                                                    item.id,
+                                                    item.quantidade - 1
+                                                )
+                                            }
+                                        >
+                                            <Minus size={14} />
+                                        </button>
 
 
                                         <span>
@@ -312,25 +297,25 @@ return (
                                         </span>
 
 
-                                       <button
-    onClick={() =>
-        atualizarQuantidade(
-            item.id,
-            item.quantidade + 1
-        )
-    }
->
-    <Plus size={14}/>
-</button>
+                                        <button
+                                            onClick={() =>
+                                                atualizarQuantidade(
+                                                    item.id,
+                                                    item.quantidade + 1
+                                                )
+                                            }
+                                        >
+                                            <Plus size={14} />
+                                        </button>
 
 
 
                                         <button
-    className={styles.delete}
-    onClick={() =>
-        removerProduto(item.id)
-    }
->
+                                            className={styles.delete}
+                                            onClick={() =>
+                                                removerProduto(item.id)
+                                            }
+                                        >
                                             <Trash2 size={16} />
                                         </button>
 
@@ -415,7 +400,7 @@ return (
 
                 {/* SEGURANÇA */}
 
-                <div className={styles.seguro}>
+                {/* <div className={styles.seguro}>
 
 
                     <LockKeyhole size={18} />
@@ -436,7 +421,7 @@ return (
                     </div>
 
 
-                </div>
+                </div> */}
 
 
 
@@ -448,30 +433,30 @@ return (
                 <footer className={styles.footer}>
 
 
-                   <button
-    className={styles.finalizar}
-    onClick={() => {
-        fecharSidebar();
-        navigate("/carrinho");
-    }}
->
-    <ShoppingBag size={18} />
+                    <button
+                        className={styles.finalizar}
+                        onClick={() => {
+                            fecharSidebar();
+                            navigate("/carrinho");
+                        }}
+                    >
+                        <ShoppingBag size={18} />
 
-    Finalizar Compra
+                        Finalizar Compra
 
-</button>
+                    </button>
 
 
 
-                   <button
-    className={styles.continuar}
-    onClick={fecharSidebar}
->
-    Continuar Comprando
-</button>
+                    {/* <button
+                        className={styles.continuar}
+                        onClick={fecharSidebar}
+                    >
+                        Continuar Comprando
+                    </button> */}
 
-                       
-                       
+
+
 
 
 
@@ -486,6 +471,6 @@ return (
 
     );
 
-    
+
 
 }
