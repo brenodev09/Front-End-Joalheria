@@ -4,6 +4,8 @@ import { useGSAP } from "@gsap/react";
 import estilos from "../../styles/User/carrinho.module.css";
 import Header from "../../components/Header";
 import { useCarrinho } from "../../context/carrinhoContext";
+import { api } from "../../services/api"
+// import { use } from "react";
 
 gsap.registerPlugin(useGSAP);
 
@@ -266,6 +268,44 @@ export default function Carrinho() {
     setPedidoConfirmado(true);
   }
 
+
+
+  // função de apliicar o cupom
+
+  const [cupom, setCupom] = useState("")
+  const [desconto, setDesconto] = useState(0)
+  const [cupomAplicado, setCupomAplicado] = useState(null)
+  const [erroCupom, setErroCupom] = useState("")
+  const totalComDesconto = Math.max(subtotal - desconto, 0)
+
+
+  async function aplicarCupom() {
+
+    setErroCupom("");
+
+    try {
+
+      const resposta = await api.post("/cupons/validar-cupom", {
+        codigo: cupom,
+       subTotal:subtotal
+      })
+
+      console.log("Resposta:", resposta.data);
+
+      setDesconto(resposta.data.desconto)
+      setCupomAplicado(resposta.data.codigo)
+
+    } catch (error) {
+      const mensagemErro = error.response?.data?.erro || "Erro ao validar o cupom"
+      setErroCupom(mensagemErro);
+
+
+      setTimeout(() => {
+         setErroCupom("")
+      }, 3000);
+    }
+  }
+
   return (
     <div className={estilos.pagina} ref={containerRef}>
       <Header />
@@ -292,9 +332,8 @@ export default function Carrinho() {
               key={etapa.numero}
               type="button"
               onClick={() => irParaEtapa(etapa.numero)}
-              className={`${estilos.etapa} ${ativa ? estilos.etapaAtiva : ""} ${
-                concluida ? estilos.etapaConcluida : ""
-              }`}
+              className={`${estilos.etapa} ${ativa ? estilos.etapaAtiva : ""} ${concluida ? estilos.etapaConcluida : ""
+                }`}
               style={{ cursor: clicavel ? "pointer" : "default" }}
               disabled={!clicavel}
             >
@@ -339,7 +378,7 @@ export default function Carrinho() {
             )}
 
             <div className={estilos.confirmacaoTotal}>
-              Total pago: <strong>{formatarPreco(totalPedido)}</strong>
+              Total pago: <strong>{formatarPreco(cupomAplicado ? totalComDesconto : total)}</strong>
             </div>
           </div>
         ) : (
@@ -437,7 +476,7 @@ export default function Carrinho() {
                                     <span className={estilos.precoAtual}>
                                       {formatarPreco(
                                         Number(produto.preco) *
-                                          Number(produto.quantidade)
+                                        Number(produto.quantidade)
                                       )}
                                     </span>
                                   </div>
@@ -493,11 +532,10 @@ export default function Carrinho() {
                         {opcoesEntrega.map((opcao) => (
                           <label
                             key={opcao.id}
-                            className={`${estilos.opcaoEntregaCard} ${
-                              entregaSelecionada === opcao.id
-                                ? estilos.opcaoEntregaSelecionada
-                                : ""
-                            }`}
+                            className={`${estilos.opcaoEntregaCard} ${entregaSelecionada === opcao.id
+                              ? estilos.opcaoEntregaSelecionada
+                              : ""
+                              }`}
                           >
                             <input
                               type="radio"
@@ -572,11 +610,10 @@ export default function Carrinho() {
                           <button
                             key={aba.id}
                             type="button"
-                            className={`${estilos.abaPagamento} ${
-                              formaPagamento === aba.id
-                                ? estilos.abaPagamentoAtiva
-                                : ""
-                            }`}
+                            className={`${estilos.abaPagamento} ${formaPagamento === aba.id
+                              ? estilos.abaPagamentoAtiva
+                              : ""
+                              }`}
                             onClick={() => {
                               setFormaPagamento(aba.id);
                               setTentouFinalizarPagamento(false);
@@ -649,11 +686,10 @@ export default function Carrinho() {
                           </p>
                           <div className={estilos.formularioGrade}>
                             <label
-                              className={`${estilos.campo} ${estilos.campoLargo} ${
-                                tentouFinalizarPagamento && !emailValido
-                                  ? estilos.campoErro
-                                  : ""
-                              }`}
+                              className={`${estilos.campo} ${estilos.campoLargo} ${tentouFinalizarPagamento && !emailValido
+                                ? estilos.campoErro
+                                : ""
+                                }`}
                             >
                               <span>E-mail para envio do QR Code</span>
                               <input
@@ -683,11 +719,10 @@ export default function Carrinho() {
                           </p>
                           <div className={estilos.formularioGrade}>
                             <label
-                              className={`${estilos.campo} ${estilos.campoLargo} ${
-                                tentouFinalizarPagamento && !emailValido
-                                  ? estilos.campoErro
-                                  : ""
-                              }`}
+                              className={`${estilos.campo} ${estilos.campoLargo} ${tentouFinalizarPagamento && !emailValido
+                                ? estilos.campoErro
+                                : ""
+                                }`}
                             >
                               <span>E-mail para envio do Boleto</span>
                               <input
@@ -776,16 +811,24 @@ export default function Carrinho() {
                   </div>
 
                   {etapaAtual === 1 && (
-                    <div className={estilos.cupomWrapper}>
-                      <input
-                        type="text"
-                        placeholder="Código do cupom"
-                        className={estilos.cupomInput}
-                      />
-                      <button type="button" className={estilos.cupomBotao}>
-                        Aplicar
-                      </button>
-                    </div>
+                    <>
+
+                      <div className={estilos.cupomWrapper}>
+                        <input
+                          type="text"
+                          placeholder="Código do cupom"
+                          className={estilos.cupomInput}
+                          value={cupom}
+                          onChange={(event) => setCupom(event.target.value)}
+                        />
+                        <button type="button" onClick={aplicarCupom} className={estilos.cupomBotao}>
+                          Aplicar
+                        </button>
+                      </div>
+
+                      {erroCupom && <p> {erroCupom} </p>}
+
+                    </>
                   )}
 
                   <div className={estilos.resumoDivisor} />
@@ -793,7 +836,7 @@ export default function Carrinho() {
                   <div className={estilos.resumoTotalLinha}>
                     <span>Total</span>
                     <span className={estilos.resumoTotalValor}>
-                      {formatarPreco(totalPedido)}
+                      {formatarPreco(totalComDesconto)}
                     </span>
                   </div>
 
@@ -806,8 +849,8 @@ export default function Carrinho() {
                     {etapaAtual === 1
                       ? "Continuar para Entrega"
                       : etapaAtual === 2
-                      ? "Continuar para Pagamento"
-                      : "Finalizar Compra"}
+                        ? "Continuar para Pagamento"
+                        : "Finalizar Compra"}
                   </button>
 
                   <p className={estilos.resumoSeguranca}>
