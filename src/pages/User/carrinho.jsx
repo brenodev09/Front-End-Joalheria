@@ -17,7 +17,7 @@ gsap.registerPlugin(useGSAP);
 export default function Carrinho() {
   const containerRef = useRef(null);
 
-  const { itens, atualizarQuantidade, removerProduto, subtotal, total } =
+  const { itens, atualizarQuantidade, removerProduto, subtotal, total, carregarCarrinho } =
     useCarrinho();
 
   const produtos = itens;
@@ -59,8 +59,8 @@ export default function Carrinho() {
   ];
 
   const opcoesEntrega = [
-    { id: "padrao", nome: "Entrega Padrão", prazo: "5 a 7 dias úteis", preco: 0 },
-    { id: "expressa", nome: "Entrega Expressa", prazo: "2 a 3 dias úteis", preco: 150 },
+    { id: "padrão", nome: "Entrega Padrão", prazo: "5 a 7 dias úteis", preco: 0 },
+    { id: "expressa", nome: "Entrega Expressa", prazo: "2 a 3 dias úteis", preco: 30 },
     { id: "retirada", nome: "Retirada em Boutique", prazo: "Disponível em 24h", preco: 0 },
   ];
 
@@ -242,7 +242,70 @@ export default function Carrinho() {
     }
   };
 
-  function aoClicarBotaoPrincipal() {
+
+
+
+
+  // função de apliicar o cupom
+
+  const [cupom, setCupom] = useState("")
+  const [desconto, setDesconto] = useState(0)
+  const [cupomAplicado, setCupomAplicado] = useState(null)
+  const [erroCupom, setErroCupom] = useState("")
+  const totalComDesconto = Math.max(subtotal - desconto, 0)
+
+
+  async function aplicarCupom() {
+
+    setErroCupom("");
+
+    try {
+
+      const resposta = await api.post("/cupons/validar-cupom", {
+        codigo: cupom,
+        subTotal: subtotal
+      })
+
+      console.log("Resposta:", resposta.data);
+
+      setDesconto(resposta.data.desconto)
+      setCupomAplicado(resposta.data.codigo)
+
+    } catch (error) {
+      const mensagemErro = error.response?.data?.erro || "Erro ao validar o cupom"
+      setErroCupom(mensagemErro);
+
+
+      setTimeout(() => {
+        setErroCupom("")
+      }, 3000);
+    }
+  }
+
+
+  // função de finalizar a compra
+
+  async function finalizarCompra() {
+    try {
+      const token = localStorage.getItem("token")
+      const resposta = await api.post("/pedidos", {
+        formaPagamento, tipoEntrega: entregaSelecionada, codigo: cupomAplicado
+      }, {
+        headers: {Authorization: `Bearer ${token}`}
+})
+
+      console.log(resposta.data)
+
+      await carregarCarrinho()
+      setPedidoConfirmado(true)
+    } catch (error) {
+      console.error(error)
+
+
+    }
+  }
+
+ async  function aoClicarBotaoPrincipal() {
     if (produtos.length === 0) return;
 
     if (etapaAtual === 1) {
@@ -265,44 +328,17 @@ export default function Carrinho() {
       return;
     }
 
-    setPedidoConfirmado(true);
-  }
-
-
-
-  // função de apliicar o cupom
-
-  const [cupom, setCupom] = useState("")
-  const [desconto, setDesconto] = useState(0)
-  const [cupomAplicado, setCupomAplicado] = useState(null)
-  const [erroCupom, setErroCupom] = useState("")
-  const totalComDesconto = Math.max(subtotal - desconto, 0)
-
-
-  async function aplicarCupom() {
-
-    setErroCupom("");
 
     try {
 
-      const resposta = await api.post("/cupons/validar-cupom", {
-        codigo: cupom,
-       subTotal:subtotal
-      })
+      await finalizarCompra();
 
-      console.log("Resposta:", resposta.data);
-
-      setDesconto(resposta.data.desconto)
-      setCupomAplicado(resposta.data.codigo)
+      setPedidoConfirmado(true);
 
     } catch (error) {
-      const mensagemErro = error.response?.data?.erro || "Erro ao validar o cupom"
-      setErroCupom(mensagemErro);
 
+      console.error(error);
 
-      setTimeout(() => {
-         setErroCupom("")
-      }, 3000);
     }
   }
 
