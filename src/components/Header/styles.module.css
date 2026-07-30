@@ -183,6 +183,11 @@ nav {
     justify-content: center;
     flex-direction: column;
 
+    button{
+        background: none;
+        border: none;
+    }
+
     .acoesLogado{
         display: flex;
         align-items: center;

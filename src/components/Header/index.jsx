@@ -28,10 +28,10 @@ export default function Header() {
 
                 {usuario?.tipo === "admin" ? (
                     <nav>
-                        <a className={style.link} href="">INÍCIO</a>
-                        <a className={style.link} href="">PRODUTOS</a>
-                        <a className={style.link} href="/admin">DASHBOARD</a>
-                        <a className={style.link} href="/admin">CATEGORIAS</a>
+                        <a className={style.link} href="/">INÍCIO</a>
+                        <a className={style.link} href="/admin/produtos">PRODUTOS</a>
+                        <a className={style.link} href="/admin/dashboard">DASHBOARD</a>
+                        <a className={style.link} href="/admin/categorias">CATEGORIAS</a>
                     </nav>
 
                 ) : (
