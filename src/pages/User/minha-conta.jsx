@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import styles from "../../styles/User/minha-conta.module.css";
+import semFoto from "../../img/semFotoImg.png";
 import {
     usuario,
     resumo,
@@ -10,6 +11,9 @@ import {
     favoritosRecentes,
     timelineAtividades,
 } from "./mockData";
+import { api } from "../../services/api"
+import { useAuth } from "../../context/authContext"
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -232,12 +236,134 @@ export default function MinhaConta() {
         { scope: containerRef }
     );
 
+    const { usuario, atualizarUsuario } = useAuth()
+    const [nome, setNome] = useState("")
+    const [email, setEmail] = useState("")
+    const [senha, setSenha] = useState("")
+    const [editando, setEditando] = useState(false)
+    const [mostrarNotificacao, setMostrarNotificacao] = useState(false)
+    const [mostrarSenha, setMostrarSenha] = useState(false)
+    const [erro, setErro] = useState("")
+
+
+    function editarPerfil() {
+        setEditando(true)
+
+        setNome(usuario?.nome || "")
+        setEmail(usuario?.email || "")
+    }
+
+    function cancelarEdicao() {
+        setEditando(false)
+        setNome("")
+        setEmail("")
+        setSenha("")
+
+        if (erro) {
+            setErro("")
+        }
+    }
+
+    async function salvarAlteracoes(event) {
+        event.preventDefault()
+
+        if (!nome || !email) {
+            setErro("Por favor, preencha todos os campos")
+
+            setTimeout(() => {
+                setErro("")
+            }, 3500)
+            return
+        }
+
+
+        try {
+            const dados = {
+                nome: nome,
+                email: email,
+                senha: senha
+            }
+
+            const resposta = await api.put(`/usuarios/${usuario?.id}`, dados)
+
+            atualizarUsuario({
+                ...usuario,
+                ...resposta.data
+            })
+
+            setMostrarNotificacao(true)
+            setTimeout(() => {
+                setMostrarNotificacao(false)
+            }, 3000);
+
+            setEditando(false)
+            setNome("")
+            setEmail("")
+        } catch (erro) {
+            console.log("STATUS:", erro.response?.status)
+            console.log("DADOS:", erro.response?.data)
+
+            console.error(erro)
+            setErro("Erro ao editar o usuario")
+        }
+    }
+
+
+    const inputFotoRef = useRef(null)
+
+    // funcao de enviar a imagem para o back
+
+    async function enviarFoto(event) {
+        const arquivo = event.target.files[0]
+
+        if (!arquivo) return
+
+        try {
+            const formData = new FormData()
+
+            formData.append("foto", arquivo)
+
+            const resposta = await api.put(
+                `/usuarios/${usuario.id}/foto`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            )
+
+            atualizarUsuario({
+                foto_perfil: resposta.data.foto_perfil
+            });
+
+            console.log(resposta.data)
+
+        } catch (erro) {
+            console.error(erro)
+        }
+    }
+
+
+    const dataCriacao = usuario?.criado_em
+        ? new Date(usuario.criado_em).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }) : ""
+
+
+
     return (
         <div className={styles.page} ref={containerRef}>
             {/* ---------------------------------- Hero ---------------------------------- */}
             <section className={`${styles.hero} gsap-hero`}>
                 <div className={styles.avatarWrap}>
-                    <div className={styles.avatar}>{usuario.iniciais}</div>
+                    <div className={styles.avatar}>
+                        <img className={styles.perfilAvatar} 
+                        src={usuario?.foto_perfil ? `http://localhost:3000${usuario?.foto_perfil}` : semFoto} 
+                        alt={`foto de perfil do ${usuario?.nome}`} />
+                    </div>
                     <span className={styles.avatarStatus} />
                 </div>
 
@@ -265,7 +391,7 @@ export default function MinhaConta() {
                         <div className={styles.perfilMetaItem}>
                             {/* substitua por ícone da sua lib */}
                             <span className={styles.perfilMetaIconePlaceholder} />
-                            <span>Conta criada em { }</span>
+                            <span>Conta criada em {dataCriacao}</span>
                         </div>
                         <span className={styles.perfilMetaSeparador} />
 
@@ -277,7 +403,7 @@ export default function MinhaConta() {
                 </div>
 
                 <div className={styles.perfilAcoes}>
-                    <button className={styles.btnEditarPerfil}>
+                    <button onClick={editarPerfil} className={styles.btnEditarPerfil}>
                         <img
                             width="16"
                             height="16"
@@ -286,17 +412,20 @@ export default function MinhaConta() {
                         />
                         <p>EDITAR PERFIL </p>
                     </button>
-                    <button className={`btnPadrao ${styles.btnTrocarFoto}`} >
+                    <button className={`btnPadrao ${styles.btnTrocarFoto}`} onClick={() => inputFotoRef.current.click()} >
                         {/* substitua por ícone da sua lib */}
                         Alterar foto
                     </button>
 
                     <input
                         type="file"
+                        className={`${styles.input} ${editando ? styles.campoEditando : ""}`}
                         accept="image/*"
-                        //   ref={inputFotoRef}
+                        ref={inputFotoRef}
                         style={{ display: "none" }}
-                    //   onChange={enviarFoto}
+                        onChange={enviarFoto}
+                        readOnly={!editando}
+
                     />
                 </div>
             </section>
@@ -316,15 +445,15 @@ export default function MinhaConta() {
             <section className={`${styles.section} gsap-fade-up`}>
                 <div className={styles.sectionHead}>
                     <div className={styles.secaoTituloLinha} />
-                        <p className={styles.secaoTituloTexto}>Informações da Conta</p>
+                    <p className={styles.secaoTituloTexto}>Informações da Conta</p>
                     <div className={styles.secaoTituloOrnamento} />
                     <div className={styles.acoesForm}>
 
                         <div className={styles.btnsAcoes}>
-                            <button className={`btnPadrao ${styles.btnCancelar}`}>
+                            <button onClick={cancelarEdicao} className={`btnPadrao ${styles.btnCancelar}`}>
                                 Cancelar alterações
                             </button>
-                            <button className={styles.btnEditarPerfil}>
+                            <button onClick={salvarAlteracoes} className={styles.btnEditarPerfil}>
                                 <img
                                     width="22"
                                     height="22"
@@ -335,7 +464,7 @@ export default function MinhaConta() {
                             </button>
                         </div>
 
-                        {/* {erro && <p className={styles.erro}>{erro}</p>} */}
+                        {erro && <p className={styles.erro}>{erro}</p>}
                     </div>
 
                 </div>
@@ -346,9 +475,12 @@ export default function MinhaConta() {
                         <div className={styles.inputWrap}>
                             <span className={styles.inputIcon}>{Icon.user}</span>
                             <input
-                                className={styles.input}
+                                className={`${styles.input} ${editando ? styles.campoEditando : ""}`}
                                 type="text"
+                                onChange={(event) => setNome(event.target.value)}
                                 defaultValue={usuario.nome}
+                                readOnly={!editando}
+
                             />
                         </div>
                     </div>
@@ -358,14 +490,17 @@ export default function MinhaConta() {
                         <div className={styles.inputWrap}>
                             <span className={styles.inputIcon}>{Icon.mail}</span>
                             <input
-                                className={styles.input}
+                                className={`${styles.input} ${editando ? styles.campoEditando : ""}`}
                                 type="email"
+                                onChange={(event) => setEmail(event.target.value)}
                                 defaultValue={usuario.email}
+                                readOnly={!editando}
+
                             />
                         </div>
                     </div>
 
-                    <div className={`${styles.field} gsap-input`}>
+                    {/* <div className={`${styles.field} gsap-input`}>
                         <label className={styles.fieldLabel}>Telefone</label>
                         <div className={styles.inputWrap}>
                             <span className={styles.inputIcon}>{Icon.phone}</span>
@@ -375,9 +510,9 @@ export default function MinhaConta() {
                                 defaultValue={usuario.telefone}
                             />
                         </div>
-                    </div>
+                    </div> */}
 
-                    <div className={`${styles.field} gsap-input`}>
+                    {/* <div className={`${styles.field} gsap-input`}>
                         <label className={styles.fieldLabel}>Data de nascimento</label>
                         <div className={styles.inputWrap}>
                             <span className={styles.inputIcon}>{Icon.cake}</span>
@@ -387,7 +522,7 @@ export default function MinhaConta() {
                                 defaultValue={formatarData(usuario.nascimento)}
                             />
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className={`${styles.field} ${styles.fieldFull} gsap-input`}>
                         <label className={styles.fieldLabel}>Senha</label>
@@ -396,7 +531,10 @@ export default function MinhaConta() {
                             <input
                                 className={styles.input}
                                 type={senhaVisivel ? "text" : "password"}
-                                defaultValue="azory-senha-segura"
+                                defaultValue="*********"
+                                onChange={(event) => setSenha(event.target.value)}
+                                readOnly={!editando}
+
                             />
                             <button
                                 type="button"
