@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom"
 import { useCarrinho } from "../../context/carrinhoContext";
 
 
+
 export default function Header() {
 
     const { usuario, estaLogado } = useAuth()
@@ -27,19 +28,77 @@ export default function Header() {
 
 
                 {usuario?.tipo === "admin" ? (
-                    <nav>
-                        <a className={style.link} href="/">INÍCIO</a>
-                        <a className={style.link} href="/admin/produtos">PRODUTOS</a>
-                        <a className={style.link} href="/admin/dashboard">DASHBOARD</a>
-                        <a className={style.link} href="/admin/categorias">CATEGORIAS</a>
-                    </nav>
+                  <nav>
+
+    <NavLink
+        to="/"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        INÍCIO
+    </NavLink>
+
+    <NavLink
+        to="/admin/produtos"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        PRODUTOS
+    </NavLink>
+
+    <NavLink
+        to="/admin/dashboard"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        DASHBOARD
+    </NavLink>
+
+    <NavLink
+        to="/admin/categorias"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        CATEGORIAS
+    </NavLink>
+
+</nav>
 
                 ) : (
                     <nav>
-                        <a className={style.link} href="/">INÍCIO</a>
-                        <a className={style.link} href="">PRODUTOS</a>
-                        <a className={style.link} href="">COLEÇÕES</a>
-                    </nav>
+
+    <NavLink
+        to="/"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        INÍCIO
+    </NavLink>
+
+    <NavLink
+        to="/catalogo"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        PRODUTOS
+    </NavLink>
+
+    <NavLink
+        to="/colecoes"
+        className={({ isActive }) =>
+            `${style.link} ${isActive ? style.active : ""}`
+        }
+    >
+        COLEÇÕES
+    </NavLink>
+
+</nav>
                 )}
 
 

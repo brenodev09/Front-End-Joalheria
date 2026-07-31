@@ -1,0 +1,220 @@
+/* ==========================================================
+   PAGINAÇÃO
+========================================================== */
+
+.pagination{
+
+    width:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    gap:14px;
+
+    margin-top:70px;
+    margin-bottom:40px;
+
+}
+
+/* ==========================================================
+   BOTÕES
+========================================================== */
+
+.page,
+.active,
+.arrow{
+
+    width:48px;
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:#131313;
+
+    color:#cfcfcf;
+
+    font-size:.95rem;
+
+    font-weight:600;
+
+    transition:
+        background .35s,
+        border-color .35s,
+        color .35s,
+        transform .35s,
+        box-shadow .35s;
+
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.page:hover,
+.arrow:hover{
+
+    transform:translateY(-3px);
+
+    color:#ffffff;
+
+    border-color:rgba(199,162,91,.35);
+
+    background:rgba(199,162,91,.08);
+
+    box-shadow:
+
+        0 12px 25px rgba(0,0,0,.35),
+
+        0 0 18px rgba(199,162,91,.10);
+
+}
+
+/* ==========================================================
+   ATIVO
+========================================================== */
+
+.active{
+
+    color:#ffffff;
+
+    border-color:#c7a25b;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #c7a25b,
+            #9d7835
+        );
+
+    box-shadow:
+
+        0 15px 35px rgba(199,162,91,.28);
+
+}
+
+/* ==========================================================
+   SETAS
+========================================================== */
+
+.arrow svg{
+
+    transition:
+        transform .35s;
+
+}
+
+.arrow:hover svg{
+
+    transform:scale(1.1);
+
+}
+
+/* ==========================================================
+   DESABILITADO
+========================================================== */
+
+.arrow:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.35;
+
+    transform:none;
+
+    box-shadow:none;
+
+    border-color:rgba(255,255,255,.05);
+
+}
+
+/* ==========================================================
+   ANIMAÇÃO DE ENTRADA
+========================================================== */
+
+.page,
+.active,
+.arrow{
+
+    animation:fadePagination .5s ease;
+
+}
+
+@keyframes fadePagination{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(12px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================================
+   RESPONSIVO
+========================================================== */
+
+@media(max-width:768px){
+
+    .pagination{
+
+        gap:10px;
+
+        margin-top:50px;
+
+    }
+
+    .page,
+    .active,
+    .arrow{
+
+        width:42px;
+        height:42px;
+
+        font-size:.9rem;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    .pagination{
+
+        gap:8px;
+
+        flex-wrap:wrap;
+
+    }
+
+    .page,
+    .active,
+    .arrow{
+
+        width:38px;
+        height:38px;
+
+        font-size:.85rem;
+
+    }
+
+}

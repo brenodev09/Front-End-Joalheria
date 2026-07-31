@@ -21,6 +21,7 @@ import Login from "../pages/login.jsx";
 import Inicial from "../pages/inicial.jsx";
 import PagProduto from "../pages/ProdutoJoalheria.jsx";
 import Carrinho from "../pages/User/carrinho.jsx";
+import Catalogo from "../pages/User/Catalogo";
 
 export default function Rotas() {
     const { sidebarAberta } = useCarrinho();
@@ -31,6 +32,10 @@ export default function Rotas() {
                 <Route path="/" element={<Inicial />} />
                 <Route path="/produto/:id" element={<PagProduto />} />
                 <Route path="/carrinho" element={<Carrinho />} />
+                <Route 
+                        path="/catalogo" 
+                        element={<Catalogo />} 
+                    />
 
                 <Route element={<RotasPrivadas />}>
                     <Route path="/admin" element={<AdminLayout />}>

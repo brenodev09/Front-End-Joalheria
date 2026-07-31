@@ -16,6 +16,38 @@ header {
 }
 
 
+.active {
+
+    color: #c7a25b;
+
+    position: relative;
+
+}
+
+.active::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -8px;
+
+    width: 100%;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(
+        90deg,
+        #c7a25b,
+        #e6c37a
+    );
+
+}
+
 .logo{
     width:9rem;
     /* z-index: 10000; */

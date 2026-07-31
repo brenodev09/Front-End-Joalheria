@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import estilos from "../../styles/User/carrinho.module.css";
-import Header from "../../components/Header";
+  import Header from "../../components/Header";
 import { useCarrinho } from "../../context/carrinhoContext";
 import { api } from "../../services/api"
 // import { use } from "react";

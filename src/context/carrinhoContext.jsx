@@ -74,49 +74,70 @@ export function CarrinhoProvider({ children }) {
     quantidade = 1,
     variacaoId = null,
     produtoInfo = null
-  ) {
+) {
+
+    console.log("DADOS ENVIO CARRINHO:", {
+        produtoId,
+        quantidade,
+        variacaoId,
+        produtoInfo,
+        token: pegarToken()
+    });
+
+
     try {
-      const token = pegarToken();
 
-      if (!token) {
-        throw new Error("Usuário precisa estar logado");
-      }
+        const token = pegarToken();
 
-      const resposta = await api.post(
-        "/carrinho",
-        {
-          produto_id: produtoId,
-          quantidade,
-          variacao_id: variacaoId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        if (!token) {
+            throw new Error("Usuário precisa estar logado");
         }
-      );
 
-      console.log("ADICIONADO:", resposta.data);
 
-      await carregarCarrinho();
+        const resposta = await api.post(
+            "/carrinho",
+            {
+                produto_id: produtoId,
+                quantidade,
+                variacao_id: variacaoId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
-      if (produtoInfo) {
-        setProdutoAdicionado(produtoInfo);
-      }
 
-      abrirSidebar();
+        console.log("RESPOSTA BACKEND:", resposta.data);
 
-      return resposta.data;
+
+        await carregarCarrinho();
+
+
+        if (produtoInfo) {
+            setProdutoAdicionado(produtoInfo);
+        }
+
+
+        abrirSidebar();
+
+
+        return resposta.data;
+
+
     } catch (error) {
-      console.error(
-        "Erro ao adicionar",
-        error.response?.data || error
-      );
 
-      throw error;
+        console.error(
+            "ERRO CARRINHO:",
+            error.response?.data || error
+        );
+
+        throw error;
+
     }
-  }
 
+}
   /*
   ==========================================
       ALTERAR QUANTIDADE

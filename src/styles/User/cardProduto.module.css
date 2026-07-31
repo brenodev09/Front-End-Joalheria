@@ -1,0 +1,740 @@
+/* =========================================================
+   CARD
+========================================================= */
+
+.card{
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+
+    width:100%;
+
+    overflow:hidden;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #121212,
+            #0b0b0b
+        );
+
+    border:1px solid rgba(255,255,255,.06);
+
+    transition:
+        transform .45s cubic-bezier(.22,1,.36,1),
+        border-color .35s,
+        box-shadow .45s;
+
+    cursor:pointer;
+
+}
+
+
+
+/* =========================================================
+   TAMANHOS
+========================================================= */
+
+.compact{
+
+    min-height:520px;
+
+}
+
+.expanded{
+
+    min-height:700px;
+
+}
+
+/* =========================================================
+   IMAGEM
+========================================================= */
+
+.imageContainer{
+
+    position:relative;
+
+    width:100%;
+
+    aspect-ratio:1;
+
+    overflow:hidden;
+
+    background:#161616;
+
+}
+
+.image{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:
+        transform .7s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    linear-gradient(
+
+        to top,
+
+        rgba(0,0,0,.55),
+
+        transparent 55%
+
+    );
+
+}
+
+/* =========================================================
+   BADGE
+========================================================= */
+
+.badge{
+
+    position:absolute;
+
+    top:18px;
+    left:18px;
+
+    padding:8px 16px;
+
+    border-radius:50px;
+
+    font-size:.75rem;
+
+    font-weight:600;
+
+    letter-spacing:2px;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #c7a25b,
+
+            #9b7733
+
+        );
+
+    box-shadow:
+
+        0 10px 25px rgba(199,162,91,.25);
+
+}
+
+/* =========================================================
+   FAVORITO
+========================================================= */
+
+.favorite{
+
+    position:absolute;
+
+    top:16px;
+    right:16px;
+
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    color:white;
+
+    backdrop-filter:blur(10px);
+
+    background:
+
+        rgba(255,255,255,.08);
+
+    transition:
+        background .3s,
+        transform .3s;
+
+}
+
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-start;
+
+    padding:24px;
+
+}
+
+/* =========================================================
+   NOME
+========================================================= */
+
+.nome{
+
+    color:white;
+
+    font-size:1.35rem;
+
+    font-family:"Cormorant Garamond",serif;
+
+    font-weight:600;
+
+    line-height:1.2;
+
+    margin-bottom:10px;
+
+}
+
+/* =========================================================
+   MATERIAL
+========================================================= */
+
+.info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#9c9c9c;
+
+    font-size:.92rem;
+
+    letter-spacing:.5px;
+
+}
+
+.info span{
+
+    color:#c7a25b;
+
+} 
+
+/* =========================================================
+   AVALIAÇÕES
+========================================================= */
+
+.rating{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:18px;
+
+}
+
+.stars{
+
+    display:flex;
+    align-items:center;
+
+    gap:3px;
+
+}
+
+.rating span{
+
+    color:#8f8f8f;
+
+    font-size:.85rem;
+
+    font-weight:500;
+
+}
+
+/* =========================================================
+   PREÇO
+========================================================= */
+
+.priceArea{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:6px;
+
+    margin-top:22px;
+
+}
+
+.oldPrice{
+
+    color:#686868;
+
+    font-size:.95rem;
+
+    text-decoration:line-through;
+
+    letter-spacing:.5px;
+
+}
+
+.price{
+
+    font-size:2rem;
+
+    font-family:"Cormorant Garamond", serif;
+
+    font-weight:700;
+
+    color:#e5c77f;
+
+    letter-spacing:.5px;
+
+    transition:
+        color .35s,
+        transform .35s;
+
+}
+
+
+
+/* =========================================================
+   BOTÃO
+========================================================= */
+
+.button{
+
+    position:relative;
+
+    margin-top:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    width:100%;
+
+    height:54px;
+
+    border:none;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    cursor:pointer;
+
+    color:#ffffff;
+
+    font-weight:600;
+
+    font-size:.95rem;
+
+    letter-spacing:.5px;
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #c7a25b,
+        #9d7835
+    );
+
+    transition:
+        transform .35s,
+        box-shadow .35s;
+
+}
+
+.button svg{
+
+    transition:transform .35s;
+
+}
+
+.button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 15px 35px rgba(199,162,91,.30);
+
+}
+
+.button:hover svg{
+
+    transform:translateX(3px);
+
+}
+
+.button::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    transform:translateX(-120%) skewX(-20deg);
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        transparent,
+
+        rgba(255,255,255,.35),
+
+        transparent
+
+    );
+
+    transition:.7s;
+
+}
+
+.button:hover::before{
+
+    transform:translateX(150%) skewX(-20deg);
+
+}
+
+/* =========================================================
+   LINHA DOURADA
+========================================================= */
+
+.card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:100%;
+    height:2px;
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        transparent,
+
+        #c7a25b,
+
+        transparent
+
+    );
+
+    transition:.7s;
+
+}
+
+
+
+/* =========================================================
+   BRILHO INTERNO
+========================================================= */
+
+.card::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:0;
+
+    background:
+
+    radial-gradient(
+
+        circle at top,
+
+        rgba(199,162,91,.10),
+
+        transparent 60%
+
+    );
+
+    transition:opacity .5s;
+
+}
+
+
+/* =========================================================
+   ANIMAÇÃO DA IMAGEM
+========================================================= */
+
+.imageContainer::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:0;
+
+    background:
+
+    linear-gradient(
+
+        180deg,
+
+        transparent,
+
+        rgba(199,162,91,.08)
+
+    );
+
+    transition:.4s;
+
+}
+
+
+
+/* =========================================================
+   HOVER DO CONTEÚDO
+========================================================= */
+
+
+
+/* =========================================================
+   TRANSIÇÕES
+========================================================= */
+
+.nome,
+.info,
+.price,
+.oldPrice,
+.favorite,
+.badge{
+
+    transition:all .35s cubic-bezier(.22,1,.36,1);
+
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width:1200px){
+
+    .compact{
+
+        min-height:500px;
+
+    }
+
+    .expanded{
+
+        min-height:650px;
+
+    }
+
+}
+
+@media (max-width:992px){
+
+    .content{
+
+        padding:20px;
+
+    }
+
+    .nome{
+
+        font-size:1.25rem;
+
+    }
+
+    .price{
+
+        font-size:1.7rem;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .compact,
+    .expanded{
+
+        min-height:auto;
+
+    }
+
+    .card{
+
+        border-radius:18px;
+
+    }
+
+    .content{
+
+        padding:18px;
+
+    }
+
+    .button{
+
+        height:50px;
+
+        font-size:.9rem;
+
+    }
+
+}
+
+@media (max-width:480px){
+
+    .favorite{
+
+        width:38px;
+        height:38px;
+
+    }
+
+    .badge{
+
+        font-size:.7rem;
+
+        padding:6px 12px;
+
+    }
+
+    .nome{
+
+        font-size:1.15rem;
+
+    }
+
+    .price{
+
+        font-size:1.55rem;
+
+    }
+
+}
+
+/* ===========================================
+   EFEITO 3D
+=========================================== */
+
+.card{
+
+    transform-style: preserve-3d;
+
+    will-change: transform;
+
+}
+
+/* Glow acompanha o mouse */
+
+.card::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:0;
+
+    transition:opacity .3s;
+
+    background:
+
+        radial-gradient(
+
+            280px circle at var(--mouse-x) var(--mouse-y),
+
+            rgba(199,162,91,.18),
+
+            transparent 65%
+
+        );
+
+}
+
+
+/* Profundidade */
+
+.imageContainer{
+
+    transform:translateZ(35px);
+
+}
+
+.content{
+
+    transform:translateZ(25px);
+
+}
+
+.button{
+
+    transform:translateZ(45px);
+
+}
+
+.card{
+
+    transition:
+
+        width .45s,
+
+        height .45s,
+
+        transform .35s,
+
+        box-shadow .35s;
+
+}

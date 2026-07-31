@@ -1,0 +1,460 @@
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+    position: sticky;
+    top: 110px;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    padding: 28px;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(180deg,
+            rgba(18,18,18,.96),
+            rgba(10,10,10,.96));
+
+    border: 1px solid rgba(199,162,91,.12);
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:8px;
+
+}
+
+.header h3{
+
+    color:#fff;
+
+    font-size:1.25rem;
+
+    font-weight:600;
+
+    letter-spacing:.5px;
+
+}
+
+/* =====================================================
+   LIMPAR
+===================================================== */
+
+.reset{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    background:none;
+
+    border:none;
+
+    color:#b89345;
+
+    cursor:pointer;
+
+    font-size:.9rem;
+
+    transition:
+    color .3s,
+    transform .25s;
+
+}
+
+.reset:hover{
+
+    color:#d9b66b;
+
+    transform:translateY(-2px);
+
+}
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.section{
+
+    border-top:1px solid rgba(255,255,255,.05);
+
+    padding-top:18px;
+
+}
+
+.section:first-of-type{
+
+    border-top:none;
+
+    padding-top:0;
+
+}
+
+/* =====================================================
+   BOTÃO HEADER
+===================================================== */
+
+.sectionHeader{
+
+    width:100%;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:12px 14px;
+
+    background:transparent;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    color:#fff;
+
+    font-size:1rem;
+
+    font-weight:500;
+
+    transition:
+    background .35s,
+    border-color .35s,
+    color .35s;
+
+}
+
+.sectionHeader:hover{
+
+    background:rgba(199,162,91,.08);
+
+    color:#d6b36b;
+
+}
+
+/* =====================================================
+   BODY
+===================================================== */
+
+.body{
+
+    overflow:hidden;
+
+}
+
+/* =====================================================
+   LISTA
+===================================================== */
+
+.list{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:12px;
+
+    margin-top:18px;
+
+    max-height:270px;
+
+    overflow-y:auto;
+
+    padding-right:6px;
+
+}
+
+/* =====================================================
+   SCROLL
+===================================================== */
+
+.list::-webkit-scrollbar{
+
+    width:5px;
+
+}
+
+.list::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.list::-webkit-scrollbar-thumb{
+
+    background:#7f6230;
+
+    border-radius:20px;
+
+}
+
+.list::-webkit-scrollbar-thumb:hover{
+
+    background:#b89345;
+
+}
+
+/* =====================================================
+   CHECKBOX
+===================================================== */
+
+.checkbox{
+
+    width:100%;
+
+    display:flex;
+    align-items:center;
+
+    gap:14px;
+
+    padding:10px 12px;
+
+    background:transparent;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    color:#bfbfbf;
+
+    transition:
+    background .3s,
+    transform .25s,
+    color .3s;
+
+}
+
+.checkbox:hover{
+
+    background:rgba(199,162,91,.06);
+
+    color:#fff;
+
+    transform:translateX(3px);
+
+}
+
+/* =====================================================
+   QUADRADO
+===================================================== */
+
+.square{
+
+    width:22px;
+    height:22px;
+
+    border-radius:7px;
+
+    border:1px solid rgba(199,162,91,.35);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+
+    transition:
+    background .3s,
+    border-color .3s,
+    transform .3s;
+
+    flex-shrink:0;
+
+}
+
+.checked{
+
+    background:linear-gradient(
+        135deg,
+        #d3ae63,
+        #9d7835
+    );
+
+    border-color:#c7a25b;
+
+    box-shadow:
+        0 0 18px rgba(199,162,91,.22);
+
+}
+
+.checkbox span{
+
+    font-size:.95rem;
+
+}
+
+/* =====================================================
+   SKELETON
+===================================================== */
+
+.skeletonList{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:16px;
+
+    margin-top:18px;
+
+}
+
+.skeleton{
+
+    width:100%;
+
+    height:18px;
+
+    border-radius:999px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #191919 20%,
+        #262626 50%,
+        #191919 80%
+    );
+
+    background-size:250% 100%;
+
+    animation:shimmer 1.5s infinite linear;
+
+}
+
+@keyframes shimmer{
+
+    from{
+
+        background-position:200% 0;
+
+    }
+
+    to{
+
+        background-position:-200% 0;
+
+    }
+
+}
+
+/* =====================================================
+   PREÇO
+===================================================== */
+
+.priceCard{
+
+    margin-top:18px;
+
+    height:85px;
+
+    border-radius:16px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#7d7d7d;
+
+    font-size:.95rem;
+
+    border:1px dashed rgba(199,162,91,.25);
+
+    background:rgba(255,255,255,.015);
+
+    transition:.35s;
+
+}
+
+.priceCard:hover{
+
+    border-color:#b89345;
+
+    color:#c7a25b;
+
+}
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
+@media(max-width:1200px){
+
+.sidebar{
+
+    position:relative;
+
+    top:0;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.sidebar{
+
+    padding:22px;
+
+}
+
+.header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:14px;
+
+}
+
+.sectionHeader{
+
+    padding:10px 12px;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.sidebar{
+
+    border-radius:18px;
+
+}
+
+.checkbox{
+
+    padding:8px;
+
+}
+
+.square{
+
+    width:20px;
+    height:20px;
+
+}
+
+}

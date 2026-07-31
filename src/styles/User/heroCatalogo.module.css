@@ -1,0 +1,127 @@
+.hero{
+
+    position:relative;
+
+    width:100%;
+    height:480px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+
+    background:
+    radial-gradient(circle at top,#b8923d20 0%,transparent 45%),
+    linear-gradient(180deg,#0a0a0a 0%,#050505 100%);
+
+}
+
+.overlay{
+
+    position:absolute;
+    inset:0;
+
+    background:
+
+    linear-gradient(
+    rgba(0,0,0,.2),
+    rgba(0,0,0,.75));
+
+}
+
+.content{
+
+    position:relative;
+
+    z-index:2;
+
+    width:min(900px,90%);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    text-align:center;
+
+}
+
+.badge{
+
+    padding:8px 18px;
+
+    border:1px solid rgba(199,162,91,.35);
+
+    border-radius:999px;
+
+    color:#c7a25b;
+
+    letter-spacing:3px;
+
+    font-size:.8rem;
+
+    text-transform:uppercase;
+
+    backdrop-filter:blur(10px);
+
+}
+
+.title{
+
+    margin-top:25px;
+
+    font-size:4rem;
+
+    color:white;
+
+    font-family:"Cormorant Garamond",serif;
+
+    font-weight:600;
+
+    line-height:1.1;
+
+}
+
+.description{
+
+    margin-top:24px;
+
+    max-width:700px;
+
+    color:#bbbbbb;
+
+    font-size:1.08rem;
+
+    line-height:1.9;
+
+}
+
+.button{
+
+    margin-top:45px;
+
+    padding:16px 38px;
+
+    border:none;
+
+    border-radius:50px;
+
+    cursor:pointer;
+
+    background:linear-gradient(135deg,#c7a25b,#9d7a34);
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.35s;
+
+}
+
+.button:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 12px 30px rgba(199,162,91,.25);
+
+}
