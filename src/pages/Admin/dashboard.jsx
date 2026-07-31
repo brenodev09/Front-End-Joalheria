@@ -1,4 +1,4 @@
-import style from "../../styles/Admin/dashboard.module.css";
+  import style from "../../styles/Admin/dashboard.module.css";
 import SideBar from "../../components/Admin/SideBar";
 import HeaderAdmin from "../../components/Admin/Header";
 import { useAuth } from "../../context/authContext"
