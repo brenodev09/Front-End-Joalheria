@@ -218,12 +218,12 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                             <ItemMenu
                                 icone={<IcoConta />}
                                 rotulo="Minha Conta"
-                                onClick={() => navegar_e_fechar("/conta")}
+                                onClick={() => navegar_e_fechar("/minha-conta/conta")}
                             />
                             <ItemMenu
                                 icone={<IcoPedidos />}
                                 rotulo="Meus Pedidos"
-                                onClick={() => navegar_e_fechar("/pedidos")}
+                                onClick={() => navegar_e_fechar("/minha-conta/pedidos")}
                             />
                             <ItemMenu
                                 icone={<IcoFavoritos />}
