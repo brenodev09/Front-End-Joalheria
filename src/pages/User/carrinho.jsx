@@ -60,7 +60,7 @@ export default function Carrinho() {
 
   const opcoesEntrega = [
     { id: "padrão", nome: "Entrega Padrão", prazo: "5 a 7 dias úteis", preco: 0 },
-    { id: "expressa", nome: "Entrega Expressa", prazo: "2 a 3 dias úteis", preco: 30 },
+    { id: "expressa", nome: "Entrega Expressa", prazo: "2 a 3 dias úteis", preco: 25 },
     { id: "retirada", nome: "Retirada em Boutique", prazo: "Disponível em 24h", preco: 0 },
   ];
 
@@ -284,6 +284,9 @@ export default function Carrinho() {
 
 
   // função de finalizar a compra
+  const [valorPedidoFinalizado, setValorPedidoFinalizado] = useState(0)
+  const [codigoPedido, setCodigoPedido] = useState(0)
+  const totalFinalCarrinho = Math.max(subtotal - desconto) + valorEntrega
 
   async function finalizarCompra() {
     try {
@@ -296,6 +299,8 @@ export default function Carrinho() {
 
       console.log(resposta.data)
 
+      setCodigoPedido(resposta.data.pedidoId)
+      setValorPedidoFinalizado(resposta.data.total)
       await carregarCarrinho()
       setPedidoConfirmado(true)
     } catch (error) {
@@ -392,7 +397,7 @@ export default function Carrinho() {
             {formaPagamento === "cartao" && (
               <p className={estilos.confirmacaoTexto}>
                 Obrigado por escolher a Maison Aurélie. Seu pedido{" "}
-                <strong>#MA-28471</strong> está sendo preparado com todo o
+                <strong>#AZ-{codigoPedido}</strong> está sendo preparado com todo o
                 cuidado de nossos artesãos.
               </p>
             )}
@@ -400,7 +405,7 @@ export default function Carrinho() {
             {formaPagamento === "pix" && (
               <p className={estilos.confirmacaoTexto}>
                 Obrigado por escolher a Maison Aurélie. Seu pedido{" "}
-                <strong>#MA-28471</strong> foi registrado e o QR Code Pix foi
+                <strong>#AZ-{codigoPedido}</strong> foi registrado e o QR Code Pix foi
                 enviado para o e-mail <strong>{emailPagamento}</strong>.
               </p>
             )}
@@ -408,15 +413,15 @@ export default function Carrinho() {
             {formaPagamento === "boleto" && (
               <p className={estilos.confirmacaoTexto}>
                 Obrigado por escolher a Maison Aurélie. Seu pedido{" "}
-                <strong>#MA-28471</strong> foi registrado e o boleto foi
+                <strong>#AZ-{codigoPedido}</strong> foi registrado e o boleto foi
                 enviado para o e-mail <strong>{emailPagamento}</strong>.
               </p>
             )}
 
-            <div className={estilos.confirmacaoTotal}>
-              Total pago: <strong>{formatarPreco(cupomAplicado ? totalComDesconto : total)}</strong>
+              <div className={estilos.confirmacaoTotal}>
+                Total pago: <strong>{formatarPreco(valorPedidoFinalizado)}</strong>
+              </div>
             </div>
-          </div>
         ) : (
           <>
             <h1 className={estilos.titulo}>
@@ -872,7 +877,7 @@ export default function Carrinho() {
                   <div className={estilos.resumoTotalLinha}>
                     <span>Total</span>
                     <span className={estilos.resumoTotalValor}>
-                      {formatarPreco(totalComDesconto)}
+                      {formatarPreco(totalFinalCarrinho)}
                     </span>
                   </div>
 
