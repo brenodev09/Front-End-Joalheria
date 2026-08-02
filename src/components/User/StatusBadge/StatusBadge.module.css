@@ -1,0 +1,58 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--azory-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: var(--azory-radius-sm);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badgeProcessando {
+  color: var(--azory-processing);
+  background: var(--azory-processing-soft);
+  border-color: rgba(138, 148, 176, 0.3);
+}
+.dotProcessando {
+  background: var(--azory-processing);
+}
+
+.badgeTransporte {
+  color: var(--azory-gold-light);
+  background: var(--azory-transit-soft);
+  border-color: rgba(201, 162, 75, 0.35);
+}
+.dotTransporte {
+  background: var(--azory-gold);
+  box-shadow: 0 0 6px rgba(201, 162, 75, 0.7);
+}
+
+.badgeEntregue {
+  color: var(--azory-success);
+  background: var(--azory-success-soft);
+  border-color: rgba(127, 176, 143, 0.32);
+}
+.dotEntregue {
+  background: var(--azory-success);
+}
+
+.badgeCancelado {
+  color: var(--azory-danger);
+  background: var(--azory-danger-soft);
+  border-color: rgba(181, 96, 90, 0.32);
+}
+.dotCancelado {
+  background: var(--azory-danger);
+}

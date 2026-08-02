@@ -1,0 +1,260 @@
+.card {
+  background: var(--azory-surface);
+  border: 1px solid var(--azory-hairline);
+  border-radius: var(--azory-radius-md);
+  transition: border-color 0.4s var(--azory-ease), box-shadow 0.4s var(--azory-ease), transform 0.4s var(--azory-ease);
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--azory-gold-dim);
+  box-shadow: var(--azory-shadow-md);
+  transform: translateY(-2px);
+}
+
+.cardAberto {
+  border-color: var(--azory-gold-dim);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--azory-hairline);
+}
+
+.identificacao {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.numeroPedido {
+  font-family: var(--azory-font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--azory-gold-light);
+}
+
+.dataCompra {
+  font-family: var(--azory-font-body);
+  font-size: 12px;
+  color: var(--azory-text-faint);
+}
+
+.corpo {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 28px;
+  padding: 22px 24px;
+}
+
+/* Miniaturas */
+.miniaturas {
+  display: flex;
+}
+
+.miniatura {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--azory-radius-sm);
+  border: 1px solid var(--azory-hairline-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.miniatura:first-child {
+  margin-left: 0;
+}
+
+.miniatura svg {
+  width: 17px;
+  height: 17px;
+}
+
+.tom-a { color: var(--azory-gold-light); background: linear-gradient(150deg, #2a2416, #171512); }
+.tom-b { color: var(--azory-ivory); background: linear-gradient(150deg, #26221d, #16140f); }
+.tom-c { color: var(--azory-gold); background: linear-gradient(150deg, #2c2013, #17120c); }
+.tom-d { color: var(--azory-text); background: linear-gradient(150deg, #201f24, #131217); }
+.tom-e { color: var(--azory-gold-light); background: linear-gradient(150deg, #262117, #151310); }
+
+/* Centro: quantidade + progresso */
+.infoCentral {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.qtdItens {
+  font-family: var(--azory-font-body);
+  font-size: 12px;
+  color: var(--azory-text-muted);
+}
+
+/* Progresso */
+.progresso {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.trilho {
+  position: relative;
+  height: 2px;
+  background: var(--azory-hairline-strong);
+  border-radius: 2px;
+}
+
+.trilhoFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--azory-gold-dim), var(--azory-gold));
+  border-radius: 2px;
+}
+
+.marcador {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.gema {
+  display: block;
+  width: 9px;
+  height: 9px;
+  background: var(--azory-gold-light);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 3px var(--azory-surface), 0 0 8px rgba(201, 162, 75, 0.8);
+}
+
+.etapas {
+  display: flex;
+  justify-content: space-between;
+}
+
+.etapaLabel {
+  font-family: var(--azory-font-body);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--azory-text-faint);
+  white-space: nowrap;
+}
+
+.etapaAtiva {
+  color: var(--azory-gold-light);
+}
+
+.progressoCancelado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 220px;
+}
+
+.linhaRompida {
+  flex-shrink: 0;
+  width: 28px;
+  height: 1px;
+  background-image: repeating-linear-gradient(90deg, var(--azory-danger) 0 4px, transparent 4px 8px);
+}
+
+.textoCancelado {
+  font-family: var(--azory-font-body);
+  font-size: 11.5px;
+  color: var(--azory-danger);
+}
+
+/* Valor */
+.valorBloco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.valorLabel {
+  font-family: var(--azory-font-body);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--azory-text-faint);
+}
+
+.valorTotal {
+  font-family: var(--azory-font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--azory-ivory);
+}
+
+/* Botão detalhes */
+.botaoDetalhes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--azory-hairline-strong);
+  color: var(--azory-gold-light);
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 11px 16px;
+  border-radius: var(--azory-radius-sm);
+  cursor: pointer;
+  transition: border-color 0.25s var(--azory-ease), background 0.25s var(--azory-ease);
+  white-space: nowrap;
+}
+
+.botaoDetalhes:hover {
+  border-color: var(--azory-gold);
+  background: var(--azory-gold-soft);
+}
+
+.seta {
+  width: 13px;
+  height: 13px;
+}
+
+/* Painel expansível */
+.painel {
+  border-top: 1px solid var(--azory-hairline);
+  background: var(--azory-surface-2);
+}
+
+@media (max-width: 980px) {
+  .corpo {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .valorBloco {
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .botaoDetalhes {
+    justify-content: center;
+  }
+  .progresso,
+  .progressoCancelado {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .cabecalho {
+    padding: 16px 18px;
+  }
+  .corpo {
+    padding: 18px;
+  }
+}

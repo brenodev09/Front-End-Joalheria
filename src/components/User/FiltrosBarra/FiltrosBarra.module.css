@@ -1,0 +1,104 @@
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 6px;
+  border-bottom: 1px solid var(--azory-hairline);
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tab {
+  position: relative;
+  background: none;
+  border: none;
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--azory-text-muted);
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: color 0.25s var(--azory-ease);
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 1px;
+  background: var(--azory-gold);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s var(--azory-ease);
+}
+
+.tab:hover {
+  color: var(--azory-text);
+}
+
+.tabAtiva {
+  color: var(--azory-gold-light);
+}
+
+.tabAtiva::after {
+  transform: scaleX(1);
+}
+
+.busca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--azory-surface);
+  border: 1px solid var(--azory-hairline);
+  border-radius: var(--azory-radius-sm);
+  padding: 10px 14px;
+  min-width: 300px;
+  transition: border-color 0.25s var(--azory-ease);
+}
+
+.busca:focus-within {
+  border-color: var(--azory-gold-dim);
+}
+
+.buscaIcon {
+  width: 15px;
+  height: 15px;
+  color: var(--azory-text-muted);
+  flex-shrink: 0;
+}
+
+.buscaInput {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--azory-text);
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  width: 100%;
+}
+
+.buscaInput::placeholder {
+  color: var(--azory-text-faint);
+}
+
+@media (max-width: 720px) {
+  .barra {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tabs {
+    overflow-x: auto;
+  }
+  .busca {
+    min-width: 0;
+  }
+}

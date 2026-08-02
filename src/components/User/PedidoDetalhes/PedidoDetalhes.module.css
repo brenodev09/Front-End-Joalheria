@@ -1,0 +1,241 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 28px 26px 30px;
+}
+
+.acompanhamento {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--azory-hairline);
+}
+
+.colunas {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 36px;
+}
+
+/* Barra de progresso — estilo "fio de ouro" com marcador em formato de gema */
+.progresso {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trilho {
+  position: relative;
+  height: 2px;
+  background: var(--azory-hairline-strong);
+  border-radius: 2px;
+}
+
+.trilhoFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--azory-gold-dim), var(--azory-gold));
+  border-radius: 2px;
+}
+
+.marcador {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.gema {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: var(--azory-gold-light);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 4px var(--azory-surface-2), 0 0 10px rgba(201, 162, 75, 0.8);
+}
+
+.etapas {
+  display: flex;
+  justify-content: space-between;
+}
+
+.etapaLabel {
+  font-family: var(--azory-font-body);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--azory-text-faint);
+  white-space: nowrap;
+}
+
+.etapaAtiva {
+  color: var(--azory-gold-light);
+}
+
+.progressoCancelado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.linhaRompida {
+  flex-shrink: 0;
+  width: 32px;
+  height: 1px;
+  background-image: repeating-linear-gradient(90deg, var(--azory-danger) 0 4px, transparent 4px 8px);
+}
+
+.textoCancelado {
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  color: var(--azory-danger);
+}
+
+.coluna {
+  min-width: 0;
+}
+
+.tituloColuna {
+  font-family: var(--azory-font-body);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--azory-gold-light);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--azory-hairline);
+}
+
+.listaItens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thumb {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--azory-radius-sm);
+  border: 1px solid var(--azory-hairline-strong);
+}
+
+.thumbFallback {
+  width: 15px;
+  height: 15px;
+}
+
+.thumbImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tom-a { color: var(--azory-gold-light); background: linear-gradient(150deg, #2a2416, #171512); }
+.tom-b { color: var(--azory-ivory); background: linear-gradient(150deg, #26221d, #16140f); }
+.tom-c { color: var(--azory-gold); background: linear-gradient(150deg, #2c2013, #17120c); }
+.tom-d { color: var(--azory-text); background: linear-gradient(150deg, #201f24, #131217); }
+.tom-e { color: var(--azory-gold-light); background: linear-gradient(150deg, #262117, #151310); }
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.itemNome {
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  color: var(--azory-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemQtd {
+  font-family: var(--azory-font-body);
+  font-size: 11px;
+  color: var(--azory-text-faint);
+}
+
+.itemPreco {
+  font-family: var(--azory-font-mono);
+  font-size: 12px;
+  color: var(--azory-text-muted);
+  flex-shrink: 0;
+}
+
+.blocoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.linhaForte {
+  margin: 0;
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--azory-text);
+}
+
+.linha {
+  margin: 0;
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  color: var(--azory-text-muted);
+  line-height: 1.5;
+}
+
+.codigo {
+  margin: 0;
+  font-family: var(--azory-font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  color: var(--azory-gold-light);
+}
+
+.resumoLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  color: var(--azory-text-muted);
+  padding: 4px 0;
+}
+
+.totalDestaque {
+  font-family: var(--azory-font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--azory-gold-light);
+}
+
+@media (max-width: 860px) {
+  .wrap {
+    padding: 24px 20px 26px;
+  }
+  .colunas {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+}

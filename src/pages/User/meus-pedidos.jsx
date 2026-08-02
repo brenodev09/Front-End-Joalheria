@@ -1,161 +1,419 @@
-import { useState, useEffect } from "react";
-import styles from "../../styles/User/meus-pedidos.module.css";
-import { api } from "../../services/api"
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import styles from '../../styles/User/meus-pedidos.module.css';
+import ResumoCards from '../../components/User/ResumoCards/ResumoCards';
+import FiltrosBarra from '../../components/User/FiltrosBarra/FiltrosBarra';
+import StatusBadge from '../../components/User/StatusBadge/StatusBadge';
+import PedidoDetalhes from '../../components/User/PedidoDetalhes/PedidoDetalhes';
+import { STATUS } from '../../pages/User/mockPedidos';
+import {api} from '../../services/api'; // ajuste o caminho conforme a estrutura real do seu projeto
 
+gsap.registerPlugin(useGSAP);
 
-const pedidosMock = [
-    {
-        id: "AZ-5482",
-        data: "31 Jul 2026",
-        status: "Em Transporte",
-        total: "R$ 1.890,00",
-        itens: [
-            "Colar Aurora Premium",
-            "Anel Imperial Gold"
-        ]
+const FILTRO_PARA_STATUS = {
+  todos: null,
+  andamento: [STATUS.PROCESSANDO, STATUS.TRANSPORTE],
+  entregues: [STATUS.ENTREGUE],
+  cancelados: [STATUS.CANCELADO],
+};
+
+// Tons cíclicos usados só para variar a cor das miniaturas — puramente visual,
+// então preenchemos aqui caso a API não mande esse campo.
+const TONS = ['a', 'b', 'c', 'd', 'e'];
+
+// A tabela `pedidos` usa status_pedido (pendente/pago/enviado/entregue/cancelado),
+// diferente dos status que a UI conhece — aqui é o "tradutor" entre os dois.
+const STATUS_DB_PARA_UI = {
+  pendente: STATUS.PROCESSANDO,
+  pago: STATUS.PROCESSANDO,
+  enviado: STATUS.TRANSPORTE,
+  entregue: STATUS.ENTREGUE,
+  cancelado: STATUS.CANCELADO,
+};
+
+// Em que ponto da timeline (Confirmado/Preparando/Enviado/Entregue) cada
+// status_pedido do banco corresponde.
+const ETAPA_POR_STATUS_DB = {
+  pendente: 1,
+  pago: 2,
+  enviado: 3,
+  entregue: 4,
+  cancelado: 0,
+};
+
+const LABEL_PAGAMENTO = {
+  cartao: 'Cartão de crédito',
+  pix: 'Pix',
+  boleto: 'Boleto',
+};
+
+const LABEL_TIPO_ENTREGA = {
+  'padrão': 'Entrega padrão',
+  expressa: 'Entrega expressa',
+  retirada: 'Retirada na loja',
+};
+
+// URL base do backend. Configure VITE_API_URL no seu arquivo .env do
+// frontend (ex: VITE_API_URL=http://localhost:3000) usando a MESMA porta
+// definida na variável PORT do .env do backend. Sem essa variável, cai em
+// localhost:3000 como padrão.
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
+// A coluna `imagem` já vem com o caminho (ex: "/uploads/colar.jpg"), então só
+// prefixamos com o host do backend — igual ao padrão já usado no restante do
+// projeto (ex: página de detalhe do produto).
+function montarUrlImagem(imagem) {
+  if (!imagem) return null;
+  if (imagem.startsWith('http://') || imagem.startsWith('https://')) return imagem;
+  const caminho = imagem.startsWith('/') ? imagem : `/${imagem}`;
+  return `${API_BASE_URL}${caminho}`;
+}
+
+const formatarMoeda = (valor) =>
+  Number(valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+const formatarData = (data) => {
+  if (!data) return '';
+  return new Date(data).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+};
+
+// Converte a linha de `pedidos` (+ itens vindos do join no backend) no formato
+// que os componentes da página esperam. Campos que ainda não existem no banco
+// (endereço, rastreio, transportadora) ficam com fallback em vez de quebrar a tela.
+function normalizarPedido(pedidoApi) {
+  const itensBrutos = pedidoApi.itens ?? [];
+
+  return {
+    id: pedidoApi.id,
+    numero: `AZY-${String(pedidoApi.id).padStart(6, '0')}`,
+    status: STATUS_DB_PARA_UI[pedidoApi.status_pedido] ?? STATUS.PROCESSANDO,
+    etapaAtual: ETAPA_POR_STATUS_DB[pedidoApi.status_pedido] ?? 1,
+    dataCompra: formatarData(pedidoApi.criado_em),
+    valorTotal: formatarMoeda(pedidoApi.total),
+    itens: itensBrutos.map((item, index) => ({
+      id: item.produto_id,
+      nome: item.nome,
+      imagem: montarUrlImagem(item.imagem),
+      preco: formatarMoeda(item.preco_unitario),
+      qtd: item.quantidade,
+      tom: TONS[index % TONS.length],
+    })),
+    // Ainda não existe cadastro de endereço no banco — usamos o que já temos
+    // (tipo e prazo de entrega) até essa tabela/coluna existir.
+    entrega: {
+      tipoLabel: LABEL_TIPO_ENTREGA[pedidoApi.tipo_entrega] ?? 'Entrega',
+      prazo: pedidoApi.prazo_entrega ?? null,
     },
-    {
-        id: "AZ-5410",
-        data: "24 Jul 2026",
-        status: "Entregue",
-        total: "R$ 690,00",
-        itens: [
-            "Pulseira Elegance"
-        ]
+    pagamento: {
+      metodo: LABEL_PAGAMENTO[pedidoApi.forma_pagamento] ?? pedidoApi.forma_pagamento ?? 'Não informado',
+      bandeira: null,
+      final: null,
+      parcelas: null,
     },
-    {
-        id: "AZ-5321",
-        data: "18 Jul 2026",
-        status: "Processando",
-        total: "R$ 2.450,00",
-        itens: [
-            "Anel Diamond",
-            "Colar Royal",
-            "Brinco Essence"
-        ]
-    }
-];
+    // Rastreio e transportadora ainda não existem no banco.
+    rastreio: null,
+    transportadora: null,
+  };
+}
 
 export default function MeusPedidos() {
-    const [pedidoAberto, setPedidoAberto] = useState(null);
-    const [pedidos, setPedidos] = useState([])
-    const [carregando, setCarregando] = useState(true)
+  const [filtroAtivo, setFiltroAtivo] = useState('todos');
+  const [busca, setBusca] = useState('');
+  const [pedidoAberto, setPedidoAberto] = useState(null);
+  const [pedidos, setPedidos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
 
-    useEffect(() => {
-        async function carregarPedidos() {
-            try {
+  const containerRef = useRef(null);
+  const headerRef = useRef(null);
+  const resumoRef = useRef(null);
+  const filtrosRef = useRef(null);
+  const listaRef = useRef(null);
 
-                setCarregando(true)
-                const resposta = await api.get("/pedidos/meus-pedidos")
+  // Mapas de refs por pedido.id — substituem os refs "locais" que existiam
+  // quando cada card era um componente próprio.
+  const painelRefs = useRef({});
+  const conteudoRefs = useRef({});
+  const setaRefs = useRef({});
+  const pedidoAbertoAnteriorRef = useRef(null);
 
-                console.log(resposta.data)
+  useEffect(() => {
+    async function carregarPedidos() {
+      try {
+        setCarregando(true);
+        const resposta = await api.get('/pedidos/meus-pedidos');
+        setPedidos(resposta.data.map(normalizarPedido));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregarPedidos();
+  }, []);
 
+  const resumo = useMemo(() => {
+    return {
+      total: pedidos.length,
+      entregues: pedidos.filter((p) => p.status === STATUS.ENTREGUE).length,
+      transporte: pedidos.filter((p) => p.status === STATUS.TRANSPORTE).length,
+      cancelados: pedidos.filter((p) => p.status === STATUS.CANCELADO).length,
+    };
+  }, [pedidos]);
 
-                setPedidos(resposta.data)
+  const pedidosFiltrados = useMemo(() => {
+    const statusPermitidos = FILTRO_PARA_STATUS[filtroAtivo];
+    const termo = busca.trim().toLowerCase();
 
-            } catch (error) {
-                console.error(error)
-            } finally{
-                setCarregando(false)
-            }
+    return pedidos.filter((pedido) => {
+      const passaStatus = !statusPermitidos || statusPermitidos.includes(pedido.status);
+      if (!passaStatus) return false;
+
+      if (!termo) return true;
+      const numeroBate = pedido.numero.toLowerCase().includes(termo);
+      const itemBate = pedido.itens.some((item) => item.nome.toLowerCase().includes(termo));
+      return numeroBate || itemBate;
+    });
+  }, [pedidos, filtroAtivo, busca]);
+
+  // Entrada da página: fade + slide up em cascata do cabeçalho, resumo e filtros.
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      tl.fromTo(headerRef.current, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 })
+        .fromTo(
+          resumoRef.current.querySelectorAll('[data-resumo-card]'),
+          { y: 18, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
+          '-=0.35'
+        )
+        .fromTo(filtrosRef.current, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.3');
+    },
+    { scope: containerRef }
+  );
+
+  // Stagger dos cards de pedido — dispara no 1º carregamento vindo da API
+  // e também sempre que o filtro/busca muda o conjunto exibido.
+  useGSAP(
+    () => {
+      const cards = listaRef.current?.querySelectorAll('[data-pedido-card]');
+      if (!cards || !cards.length) return;
+      gsap.fromTo(
+        cards,
+        { y: 22, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out' }
+      );
+    },
+    { scope: listaRef, dependencies: [pedidosFiltrados] }
+  );
+
+  // Abre/fecha o painel de detalhes do pedido selecionado.
+  // Como pedidoAberto guarda um único id, o comportamento é de acordeão:
+  // ao abrir um novo pedido, o anterior é fechado automaticamente.
+  useGSAP(
+    () => {
+      const idAnterior = pedidoAbertoAnteriorRef.current;
+      const idAtual = pedidoAberto;
+
+      if (idAnterior && idAnterior !== idAtual) {
+        const painelAntigo = painelRefs.current[idAnterior];
+        const setaAntiga = setaRefs.current[idAnterior];
+        if (painelAntigo) {
+          gsap.to(painelAntigo, {
+            height: 0,
+            opacity: 0,
+            duration: 0.4,
+            ease: 'power2.inOut',
+            onComplete: () => gsap.set(painelAntigo, { display: 'none' }),
+          });
         }
+        if (setaAntiga) {
+          gsap.to(setaAntiga, { rotate: 0, duration: 0.4, ease: 'power2.inOut' });
+        }
+      }
 
-        carregarPedidos()
-    }, [])
+      if (idAtual) {
+        const painel = painelRefs.current[idAtual];
+        const conteudo = conteudoRefs.current[idAtual];
+        const seta = setaRefs.current[idAtual];
 
-    return (
-        <div className={styles.container}>
-            <header className={styles.header}>
-                <h1>Meus Pedidos</h1>
-                <p>Acompanhe suas compras e entregas.</p>
-            </header>
+        if (painel && conteudo) {
+          gsap.killTweensOf(painel);
+          gsap.set(painel, { display: 'block' });
+          const altura = conteudo.getBoundingClientRect().height;
+          gsap.fromTo(
+            painel,
+            { height: 0, opacity: 0 },
+            { height: altura, opacity: 1, duration: 0.55, ease: 'power3.out' }
+          );
+          gsap.fromTo(
+            conteudo,
+            { y: -8, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.08 }
+          );
+        }
+        if (seta) gsap.to(seta, { rotate: 180, duration: 0.4, ease: 'power2.inOut' });
+      }
 
-            <section className={styles.stats}>
-                <div className={styles.statCard}>
-                    <span>12</span>
-                    <p>Pedidos</p>
-                </div>
+      pedidoAbertoAnteriorRef.current = idAtual;
+    },
+    { dependencies: [pedidoAberto], scope: containerRef }
+  );
 
-                <div className={styles.statCard}>
-                    <span>9</span>
-                    <p>Entregues</p>
-                </div>
+  return (
+    <div className={styles.pagina} ref={containerRef}>
+      <div className={styles.container}>
+        <header className={styles.header} ref={headerRef}>
+          {/* <span className={styles.eyebrow}>AZORY · Central da conta</span> */}
+          <h1 className={styles.titulo}>Meus Pedidos</h1>
+          <p className={styles.descricao}>
+            Acompanhe o preparo, o envio e a entrega de cada peça adquirida na AZORY.
+          </p>
+        </header>
 
-                <div className={styles.statCard}>
-                    <span>2</span>
-                    <p>Em Transporte</p>
-                </div>
-
-                <div className={styles.statCard}>
-                    <span>1</span>
-                    <p>Processando</p>
-                </div>
-            </section>
-
-            <section className={styles.listaPedidos}>
-                {pedidos.map((pedido) => (
-                    <div key={pedido.id} className={styles.cardPedido}>
-                        <div className={styles.topoPedido}>
-                            <div>
-                                <h3>Pedido #{pedido.id}</h3>
-                                <span>{pedido.data}</span>
-                            </div>
-
-                            <div className={styles.infoDireita}>
-                                {/* <span
-                                    className={`${styles.status} ${styles[pedido.status.replace(/\s/g, "")]
-                                        }`}
-                                >
-                                    {pedido.status}
-                                </span> */}
-
-                                <strong>{pedido.total}</strong>
-                            </div>
-                        </div>
-
-                        <div className={styles.produtos}>
-                            {pedido.itens?.map((item, index) => (
-                                <div key={index} className={styles.produto}>
-                                    {item}
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className={styles.footerPedido}>
-                            <button
-                                onClick={() =>
-                                    setPedidoAberto(
-                                        pedidoAberto === pedido.id ? null : pedido.id
-                                    )
-                                }
-                            >
-                                {pedidoAberto === pedido.id
-                                    ? "Ocultar Detalhes"
-                                    : "Ver Detalhes"}
-                            </button>
-                        </div>
-
-                        {pedidoAberto === pedido.id && (
-                            <div className={styles.detalhes}>
-                                <div>
-                                    <h4>Endereço</h4>
-                                    <p>Rua Exemplo, 123 - São Paulo</p>
-                                </div>
-
-                                <div>
-                                    <h4>Pagamento</h4>
-                                    <p>Cartão de Crédito</p>
-                                </div>
-
-                                <div>
-                                    <h4>Rastreamento</h4>
-                                    <p>BR123456789</p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </section>
+        <div ref={resumoRef}>
+          <ResumoCards resumo={resumo} className={styles.secao} />
         </div>
-    );
+
+        <div ref={filtrosRef}>
+          <FiltrosBarra
+            filtroAtivo={filtroAtivo}
+            onFiltroChange={setFiltroAtivo}
+            busca={busca}
+            onBuscaChange={setBusca}
+            className={styles.secao}
+          />
+        </div>
+
+        <section className={styles.lista} ref={listaRef}>
+          {carregando ? (
+            <div className={styles.carregando}>
+              <span className={styles.carregandoIcone}>◇</span>
+              <p className={styles.carregandoTexto}>Carregando seus pedidos…</p>
+            </div>
+          ) : pedidosFiltrados.length > 0 ? (
+            pedidosFiltrados.map((pedido) => {
+              const aberto = pedidoAberto === pedido.id;
+              const qtdItens = pedido.itens.length;
+              const multiplasPecas = qtdItens > 1;
+              // Mostra até 3 linhas (imagem + nome). Se houver mais peças que isso,
+              // a 3ª linha vira um resumo "+N peças" em vez de mais uma imagem.
+              const limiteVisivel = 3;
+              const mostrarResumo = qtdItens > limiteVisivel;
+              const itensVisiveis = mostrarResumo
+                ? pedido.itens.slice(0, limiteVisivel - 1)
+                : pedido.itens;
+              const itensRestantes = qtdItens - itensVisiveis.length;
+
+              return (
+                // Card do pedido — antes era o componente PedidoCard, agora vive
+                // direto aqui dentro do .map().
+                <article
+                  key={pedido.id}
+                  className={`${styles.card} ${aberto ? styles.cardAberto : ''}`}
+                  data-pedido-card
+                >
+                  <div className={styles.cabecalho}>
+                    <div className={styles.identificacao}>
+                      <span className={styles.numeroPedido}>{pedido.numero}</span>
+                      <span className={styles.dataCompra}>Comprado em {pedido.dataCompra}</span>
+                    </div>
+                    <StatusBadge status={pedido.status} />
+                  </div>
+
+                  <div className={styles.corpo}>
+                    <div className={styles.miniaturasGrupo}>
+                      {itensVisiveis.map((item) => (
+                        <div key={item.id} className={styles.itemLinha}>
+                          <span
+                            className={`${styles.miniatura} ${styles[`tom-${item.tom}`]} ${
+                              !multiplasPecas ? styles.miniaturaUnica : ''
+                            }`}
+                          >
+                            {/* Ícone de fallback — some por trás da foto real quando ela carrega */}
+                            <svg viewBox="0 0 24 24" fill="none" className={styles.miniaturaFallback}>
+                              <path d="M12 3 4 9l8 12 8-12-8-6Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
+                              <path d="M4 9h16M9 9l3 12 3-12" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
+                            </svg>
+                            {item.imagem && (
+                              <img
+                                src={item.imagem}
+                                alt={item.nome}
+                                className={styles.miniaturaImg}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            )}
+                          </span>
+                          <span className={styles.itemNomeCard}>{item.nome}</span>
+                        </div>
+                      ))}
+
+                      {mostrarResumo && (
+                        <div className={styles.itemLinha}>
+                          <span className={styles.maisTexto}>
+                            + {itensRestantes} {itensRestantes === 1 ? 'peça' : 'peças'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={styles.acoes}>
+                      <div className={styles.valorBloco}>
+                        <span className={styles.valorLabel}>
+                          Total ({qtdItens} {qtdItens === 1 ? 'peça' : 'peças'})
+                        </span>
+                        <span className={styles.valorTotal}>{pedido.valorTotal}</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={` ${styles.botaoDetalhes} btnPadrao `}
+                        onClick={() => setPedidoAberto(aberto ? null : pedido.id)}
+                        aria-expanded={aberto}
+                      >
+                        Ver detalhes
+                        <svg
+                          ref={(el) => (setaRefs.current[pedido.id] = el)}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className={styles.seta}
+                        >
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div
+                    className={styles.painel}
+                    ref={(el) => (painelRefs.current[pedido.id] = el)}
+                    style={{ display: 'none', height: 0, overflow: 'hidden' }}
+                  >
+                    <div ref={(el) => (conteudoRefs.current[pedido.id] = el)}>
+                      <PedidoDetalhes pedido={pedido} />
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          ) : (
+            <div className={styles.vazio}>
+              <span className={styles.vazioIcone}>◇</span>
+              <p className={styles.vazioTitulo}>Nenhum pedido encontrado</p>
+              <p className={styles.vazioTexto}>
+                Ajuste os filtros ou o termo de busca para encontrar o que procura.
+              </p>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
 }

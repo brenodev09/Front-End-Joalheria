@@ -1,174 +1,434 @@
+
+
+/*
+  AZORY — Design Tokens
+  Importe este arquivo UMA VEZ no entrypoint da aplicação (main.jsx / App.jsx).
+  Ex: import './styles/azory-tokens.css';
+
+  Paleta: preto quente de joalheria + dourado antigo (não é ouro "néon"),
+  tipografia serifada de vitrine (display) + sans utilitária (corpo/dados).
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Superfícies */
+  --azory-black: #0a0a0b;
+  --azory-bg: #0d0d0f;
+  --azory-surface: #141416;
+  --azory-surface-2: #1b1b1e;
+  --azory-surface-3: #232326;
+  --azory-hairline: #2a2a2d;
+  --azory-hairline-strong: #3a3a3e;
+
+  /* Dourado */
+  --azory-gold: #c9a24b;
+  --azory-gold-light: #e8d9a8;
+  --azory-gold-dim: #7a6631;
+  --azory-gold-soft: rgba(201, 162, 75, 0.12);
+  --azory-gold-soft-strong: rgba(201, 162, 75, 0.22);
+
+  /* Texto */
+  --azory-ivory: #f2ede2;
+  --azory-text: #e9e4d8;
+  --azory-text-muted: #9c9690;
+  --azory-text-faint: #6b6660;
+
+  /* Estados */
+  --azory-success: #7fb08f;
+  --azory-success-soft: rgba(127, 176, 143, 0.14);
+  --azory-transit: #c9a24b;
+  --azory-transit-soft: rgba(201, 162, 75, 0.14);
+  --azory-danger: #b5605a;
+  --azory-danger-soft: rgba(181, 96, 90, 0.14);
+  --azory-processing: #8a94b0;
+  --azory-processing-soft: rgba(138, 148, 176, 0.14);
+
+  /* Tipografia */
+  --azory-font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  /* --azory-font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif; */
+  /* --azory-font-mono: 'JetBrains Mono', ui-monospace, monospace; */
+
+  /* Forma */
+  --azory-radius-sm: 2px;
+  --azory-radius-md: 4px;
+  --azory-radius-lg: 6px;
+
+  /* Sombra */
+  --azory-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --azory-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --azory-shadow-gold: 0 0 0 1px rgba(201, 162, 75, 0.35), 0 12px 32px rgba(0, 0, 0, 0.5);
+
+  /* Transições */
+  --azory-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+.pagina {
+  min-height: 100vh;
+  padding: 0px 32px 100px;
+}
+
 .container {
-  width: 100%;
-  color: #fff;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
 }
 
 .header {
-  margin-bottom: 2rem;
-}
-
-.header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: .5rem;
-}
-
-.header p {
-  color: #9f9f9f;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.statCard {
-  background: #111;
-  border: 1px solid rgba(212, 175, 55, .15);
-  padding: 1.5rem;
-  transition: .3s;
-}
-
-.statCard:hover {
-  border-color: rgba(212, 175, 55, .4);
-}
-
-.statCard span {
-  display: block;
-  font-size: 1.8rem;
-  color: #d4af37;
-  font-weight: 600;
-}
-
-.statCard p {
-  margin-top: .4rem;
-  color: #a0a0a0;
-}
-
-.listaPedidos {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 10px;
+  padding-bottom: 8px;
 }
 
-.cardPedido {
-  background: #111;
-  border: 1px solid rgba(212, 175, 55, .15);
-  padding: 1.5rem;
+.eyebrow {
+  font-family: var(--azory-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--azory-gold);
 }
 
-.topoPedido {
+.titulo {
+  font-family: var(--azory-font-display);
+  font-weight: 600;
+  font-size: 46px;
+  line-height: 1.05;
+  color: var(--azory-ivory);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.descricao {
+  font-family: var(--azory-font-body);
+  font-size: 14.5px;
+  color: var(--azory-text-muted);
+  /* max-width: 520px; */
+  margin: 0;
+}
+
+.secao {
+  /* alvo de composição para eventuais ajustes de espaçamento entre seções */
+}
+
+.lista {
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 90px 20px;
+  border: 1px solid var(--azory-hairline);
+  border-radius: var(--azory-radius-md);
+  background: var(--azory-surface);
+}
+
+.vazioIcone {
+  color: var(--azory-gold-dim);
+  font-size: 26px;
+}
+
+.vazioTitulo {
+  font-family: var(--azory-font-display);
+  font-size: 20px;
+  color: var(--azory-ivory);
+  margin: 0;
+}
+
+.vazioTexto {
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  color: var(--azory-text-muted);
+  margin: 0;
+}
+
+.carregando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 90px 20px;
+  border: 1px solid var(--azory-hairline);
+  border-radius: var(--azory-radius-md);
+  background: var(--azory-surface);
+}
+
+.carregandoIcone {
+  color: var(--azory-gold-dim);
+  font-size: 22px;
+  animation: azoryPulso 1.4s ease-in-out infinite;
+}
+
+.carregandoTexto {
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  color: var(--azory-text-muted);
+  margin: 0;
+}
+
+@keyframes azoryPulso {
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   Card do pedido (antigo componente PedidoCard, agora integrado à página)
+   ========================================================================== */
+
+.card {
+  background:#141414;
+  border: 1.2px solid rgba(201, 168, 76, 0.21);
+  border-radius: var(--azory-radius-md);
+  transition: border-color 0.4s var(--azory-ease), box-shadow 0.4s var(--azory-ease), transform 0.4s var(--azory-ease);
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--azory-gold-dim);
+  box-shadow: var(--azory-shadow-md);
+  transform: translateY(-2px);
+}
+
+.cardAberto {
+  border-color: var(--azory-gold-dim);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--azory-hairline);
 }
 
-.topoPedido h3 {
-  margin-bottom: .3rem;
-}
-
-.topoPedido span {
-  color: #999;
-  font-size: .9rem;
-}
-
-.infoDireita {
+.identificacao {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.status {
-  padding: .45rem .8rem;
-  font-size: .8rem;
-  letter-spacing: .05em;
+.numeroPedido {
+  font-family: var(--azory-font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--azory-gold-light);
 }
 
-.EmTransporte {
-  background: rgba(212, 175, 55, .15);
-  color: #d4af37;
+.dataCompra {
+  font-family: var(--azory-font-body);
+  font-size: 12px;
+  color: var(--azory-text-faint);
 }
 
-.Entregue {
-  background: rgba(39, 174, 96, .15);
-  color: #27ae60;
-}
-
-.Processando {
-  background: rgba(52, 152, 219, .15);
-  color: #3498db;
-}
-
-.produtos {
+.corpo {
   display: flex;
-  gap: .8rem;
-  margin: 1.5rem 0;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: 24px;
+  padding: 24px;
 }
 
-.produto {
-  background: #1a1a1a;
-  padding: .8rem 1rem;
-  border: 1px solid rgba(255,255,255,.05);
-}
-
-.footerPedido {
+/* Miniaturas: cada peça vira uma linha com foto do produto + nome.
+   1 peça = imagem única e maior. 2+ peças = uma linha embaixo da outra. */
+.miniaturasGrupo {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.footerPedido button {
-  background: transparent;
-  color: #d4af37;
-  border: 1px solid rgba(212, 175, 55, .3);
-  padding: .8rem 1.2rem;
+.itemLinha {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.miniatura {
+  position: relative;
+  width: 75px;
+  height:75px;
+  flex-shrink: 0;
+  border-radius: var(--azory-radius-sm);
+  border: 1px solid var(--azory-hairline-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Ícone de fallback — fica atrás da foto; só aparece se a imagem não carregar */
+.miniaturaFallback {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+}
+
+.miniaturaImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.miniaturaUnica {
+  width: 105px;
+  height: 105px;
+}
+
+.miniaturaUnica .miniaturaFallback {
+  width: 28px;
+  height: 28px;
+}
+
+.itemNomeCard {
+  font-family: var(--azory-font-body);
+  font-size: 14px;
+  color: var(--azory-text);
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.maisTexto {
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--azory-gold-light);
+  padding-left: 74px; /* alinha com o texto das linhas com miniatura (60px + gap) */
+}
+
+.tom-a { color: var(--azory-gold-light); background: linear-gradient(150deg, #2a2416, #171512); }
+.tom-b { color: var(--azory-ivory); background: linear-gradient(150deg, #26221d, #16140f); }
+.tom-c { color: var(--azory-gold); background: linear-gradient(150deg, #2c2013, #17120c); }
+.tom-d { color: var(--azory-text); background: linear-gradient(150deg, #201f24, #131217); }
+.tom-e { color: var(--azory-gold-light); background: linear-gradient(150deg, #262117, #151310); }
+
+/* Valor + botão, agrupados à direita */
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.valorBloco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.valorLabel {
+  font-family: var(--azory-font-body);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--azory-text-faint);
+}
+
+.valorTotal {
+  font-family: var(--azory-font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--azory-ivory);
+}
+
+.botaoDetalhes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  font-size: 10px;
+  /* width: 11.5rem; */
+  font-weight: 600;
+  /* letter-spacing: 0.03em; */
+  padding: 12px 11px;
+  border-radius: var(--azory-radius-sm);
   cursor: pointer;
-  transition: .3s;
+  transition: border-color 0.25s var(--azory-ease), background 0.25s var(--azory-ease);
+  white-space: nowrap;
 }
 
-.footerPedido button:hover {
-  background: rgba(212,175,55,.1);
+/* .botaoDetalhes:hover {
+  border-color: var(--azory-gold);
+  background: var(--azory-gold-soft);
+} */
+
+.seta {
+  width: 13px;
+  height: 13px;
 }
 
-.detalhes {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255,255,255,.08);
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+/* Painel expansível de detalhes */
+.painel {
+  border-top: 1px solid var(--azory-hairline);
+  background: var(--azory-surface-2);
 }
 
-.detalhes h4 {
-  color: #d4af37;
-  margin-bottom: .5rem;
-}
-
-.detalhes p {
-  color: #cfcfcf;
-}
-
-@media (max-width: 900px) {
-  .stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .detalhes {
-    grid-template-columns: 1fr;
-  }
-
-  .topoPedido {
+@media (max-width: 980px) {
+  .corpo {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+  }
+  .acoes {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
   }
 }
 
-@media (max-width: 600px) {
-  .stats {
-    grid-template-columns: 1fr;
+@media (max-width: 720px) {
+  .pagina {
+    padding: 44px 18px 70px;
+  }
+  .titulo {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 560px) {
+  .cabecalho {
+    padding: 16px 18px;
+  }
+  .corpo {
+    padding: 18px;
+  }
+  .miniatura {
+    width: 52px;
+    height: 52px;
+  }
+  .miniaturaUnica {
+    width: 68px;
+    height: 68px;
+  }
+  .acoes {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .valorBloco {
+    align-items: flex-start;
+  }
+  .botaoDetalhes {
+    width: 100%;
+    justify-content: center;
   }
 }
