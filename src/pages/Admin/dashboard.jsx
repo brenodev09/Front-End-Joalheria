@@ -17,7 +17,9 @@ import {
 export default function Dashboard() {
 
   const { usuario } = useAuth()
-  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, carregando } = dadosDashboard()
+  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, carregando } = dadosDashboard()
+
+  console.log(vendas)
 
   if (carregando) {
     return <p className={style.carregando}>Carregando dados do dashboard...</p>
@@ -83,7 +85,7 @@ export default function Dashboard() {
                   alt="real"
                 />
               </div>
-              <span className={style.cardRotulo}>RECEITA MENSAL</span>
+              <span className={style.cardRotulo}>VALOR DO ESTOQUE</span>
             </div>
             <h1 className={style.cardValor}>R$ {Number(metricas.valorEstoque || 0).toLocaleString("pt-BR")}</h1>
             <p className={style.cardDescricao}>produtos ativos em estoque</p>
@@ -101,7 +103,7 @@ export default function Dashboard() {
               </div>
               <span className={style.cardRotulo}>VENDAS HOJE</span>
             </div>
-            <h1 className={style.cardValor}>18</h1>
+            <h1 className={style.cardValor}>{vendas.vendasHoje}</h1>
             <p className={style.cardDescricao}>vendas através do site</p>
           </div>
 
@@ -115,10 +117,10 @@ export default function Dashboard() {
                   alt="total-sales-1"
                 />{" "}
               </div>
-              <span className={style.cardRotulo}>PRODUTOS ATIVOS</span>
+              <span className={style.cardRotulo}>VENDAS MENSAL</span>
             </div>
-            <h1 className={style.cardValor}>243</h1>
-            <p className={style.cardDescricao}>produtos ativos em estoque</p>
+            <h1 className={style.cardValor}>{vendas.vendasMensal}</h1>
+            <p className={style.cardDescricao}>vendas desse mês atráves do site</p>
           </div>
         </section>
 

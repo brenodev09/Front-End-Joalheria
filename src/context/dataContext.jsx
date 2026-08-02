@@ -7,6 +7,7 @@ export default function useDashboard() {
     const [estoqueCategorias, setEstoqueCategorias] = useState([])
     const [alertasEstoque, setAlertasEstoque] = useState([])
     const [produtosRecentes, setProdutosRecentes] = useState([])
+    const [vendas, setVendas] = useState({})
     const [carregando, setCarregando] = useState(true)
 
     useEffect(() => {
@@ -19,22 +20,24 @@ export default function useDashboard() {
                     metricas,
                     estoqueCategorias,
                     alertas,
-                    produtosRecentes
+                    produtosRecentes,
+                    vendas
                 ] = await Promise.all([
                     api.get("/dashboard/metricas"),
                     api.get("/dashboard/estoque-categorias"),
                     api.get("/dashboard/alertas-estoque"),
-                    api.get("/dashboard/produtos-recentes")
+                    api.get("/dashboard/produtos-recentes"),
+                    api.get("/dashboard/resumo-vendas")
                 ])
 
                 setMetricas(metricas.data)
                 setEstoqueCategorias(estoqueCategorias.data)
                 setAlertasEstoque(alertas.data)
                 setProdutosRecentes(produtosRecentes.data)
-
+                setVendas(vendas.data)
             } catch (error) {
 
-    console.error("Erro dashboard:", error.response?.data || error)
+                console.error("Erro dashboard:", error.response?.data || error)
 
             } finally {
 
@@ -53,6 +56,7 @@ export default function useDashboard() {
         estoqueCategorias,
         alertasEstoque,
         produtosRecentes,
+        vendas,
         carregando
     }
 
