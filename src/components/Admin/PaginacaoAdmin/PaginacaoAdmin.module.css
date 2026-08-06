@@ -1,0 +1,78 @@
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 6px 4px;
+}
+
+.contagem {
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  color: var(--azory-text-faint);
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.botaoNav,
+.botaoPagina {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 4px;
+  background: var(--azory-surface);
+  border: 1px solid var(--azory-hairline);
+  border-radius: 8px;
+  color: var(--azory-text-muted);
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.25s var(--azory-ease), color 0.25s var(--azory-ease), background 0.25s var(--azory-ease), transform 0.15s var(--azory-ease);
+}
+
+.botaoNav svg {
+  width: 14px;
+  height: 14px;
+}
+
+.botaoNav:hover:not(:disabled),
+.botaoPagina:hover {
+  border-color: var(--azory-gold-dim);
+  color: var(--azory-gold-light);
+}
+
+.botaoNav:active:not(:disabled),
+.botaoPagina:active {
+  transform: scale(0.94);
+}
+
+.botaoNav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.botaoPaginaAtiva {
+  background: var(--azory-gold-soft);
+  border-color: var(--azory-gold);
+  color: var(--azory-gold-light);
+}
+
+@media (max-width: 560px) {
+  .paginacao {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .controles {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

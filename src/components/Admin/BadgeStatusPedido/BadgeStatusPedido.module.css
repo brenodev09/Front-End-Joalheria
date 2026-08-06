@@ -1,0 +1,63 @@
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--azory-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.ponto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.selosPendente {
+  color: #9ea6c2;
+  background: rgba(158, 166, 194, 0.12);
+  border-color: rgba(158, 166, 194, 0.3);
+}
+.selosPendente .ponto { background: #9ea6c2; }
+
+.seloPago {
+  color: var(--azory-gold-light);
+  background: var(--azory-transit-soft);
+  border-color: rgba(201, 162, 75, 0.35);
+}
+.seloPago .ponto { background: var(--azory-gold); box-shadow: 0 0 6px rgba(201, 162, 75, 0.7); }
+
+.seloSeparacao {
+  color: #c896e8;
+  background: rgba(200, 150, 232, 0.12);
+  border-color: rgba(200, 150, 232, 0.32);
+}
+.seloSeparacao .ponto { background: #c896e8; }
+
+.seloEnviado {
+  color: #7fb8d9;
+  background: rgba(127, 184, 217, 0.12);
+  border-color: rgba(127, 184, 217, 0.32);
+}
+.seloEnviado .ponto { background: #7fb8d9; }
+
+.seloEntregue {
+  color: var(--azory-success);
+  background: var(--azory-success-soft);
+  border-color: rgba(127, 176, 143, 0.32);
+}
+.seloEntregue .ponto { background: var(--azory-success); }
+
+.seloCancelado {
+  color: var(--azory-danger);
+  background: var(--azory-danger-soft);
+  border-color: rgba(181, 96, 90, 0.32);
+}
+.seloCancelado .ponto { background: var(--azory-danger); }

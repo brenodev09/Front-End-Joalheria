@@ -30,6 +30,14 @@ export default function Sidebar() {
           <span className={styles.textoNav}>Produtos</span>
         </NavLink>
 
+        <NavLink to="/admin/pedidos" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
+          <img 
+          width="28"
+           height="28" 
+          src="https://img.icons8.com/external-sbts2018-outline-sbts2018/58/ffffff/external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018.png" alt="external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018"/>
+          <span className={styles.textoNav}>Pedidos</span>
+        </NavLink>
+
         <NavLink to="/admin/categorias" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
          <img width="30" height="30" src="https://img.icons8.com/ios/50/ffffff/categorize.png" alt="categorize"/>
           <span className={styles.textoNav}>Categorias</span>
