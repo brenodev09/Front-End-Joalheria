@@ -203,6 +203,14 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                                 onClick={() => navegar_e_fechar("/admin/produtos")}
                             />
                             <ItemMenu
+                                icone={<img
+                                    width="20"
+                                    height="20"
+                                    src="https://img.icons8.com/external-sbts2018-outline-sbts2018/58/ffffff/external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018.png" alt="external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018" />}
+                                rotulo="Pedidos"
+                                onClick={() => navegar_e_fechar("/admin/pedidos")}
+                            />
+                            <ItemMenu
                                 icone={<IcoCategorias />}
                                 rotulo="Categorias"
                                 onClick={() => navegar_e_fechar("/admin/categorias")}

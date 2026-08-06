@@ -1,18 +1,60 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from '../../styles/Admin/GestaoPedidos.module.css';
-import CardsMetricas from '../../components/Admin/CardsMetricas/CardsMetricas';
+// import CardsMetricas from '../../components/Admin/CardsMetricas/CardsMetricas';
+
 import BarraFiltros from '../../components/Admin/BarraFiltros/BarraFiltros';
 import TabelaPedidos from '../../components/Admin/TabelaPedidos/TabelaPedidos';
 import ModalDetalhesPedido from '../../components/Admin/ModalDetalhesPedido/ModalDetalhesPedido';
 import PaginacaoAdmin from '../../components/Admin/PaginacaoAdmin/PaginacaoAdmin';
-import { mockPedidosAdmin, STATUS_PEDIDO } from './mockPedidosAdmin';
+import { STATUS_PEDIDO } from './mockPedidosAdmin';
+import { api } from '../../services/api';
 
 const ITENS_POR_PAGINA = 5;
 
-// "Hoje" fictício, usado só pra o filtro de período funcionar de forma
-// consistente com as datas do mock — página 100% visual, sem dados reais.
-const REFERENCIA_HOJE = new Date(2026, 7, 5);
+const ICONES = {
+  pedidosHoje: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <rect x="3.5" y="5" width="17" height="15" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M3.5 9.5h17M8 3v3.2M16 3v3.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  ),
+  faturamento: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M4 17.5 9.5 12l4 3 6-7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15.5 8h4v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  pendentes: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M12 7.5V12l3 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  emEntrega: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M3 7h11v9H3z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M14 10h4l3 3v3h-7v-6Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <circle cx="7.5" cy="18.5" r="1.6" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="17" cy="18.5" r="1.6" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  ),
+  concluidos: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M4 12.5 9.5 18 20 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+};
+
+const variantesLista = {
+  oculto: {},
+  visivel: { transition: { staggerChildren: 0.08 } },
+};
+
+const variantesCard = {
+  oculto: { opacity: 0, y: 18 },
+  visivel: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
 
 function converterDataBr(dataStr) {
   const [dataParte] = dataStr.split(' ');
@@ -20,21 +62,46 @@ function converterDataBr(dataStr) {
   return new Date(ano, mes - 1, dia);
 }
 
-function estaNoPeriodo(dataPedido, periodo) {
+function estaNoPeriodo(dataPedido, periodo, referenciaHoje) {
   if (periodo === 'todos') return true;
-  const diffDias = Math.floor((REFERENCIA_HOJE - converterDataBr(dataPedido)) / (1000 * 60 * 60 * 24));
+  const diffDias = Math.floor((referenciaHoje - converterDataBr(dataPedido)) / (1000 * 60 * 60 * 24));
   if (periodo === 'hoje') return diffDias === 0;
   if (periodo === '7dias') return diffDias >= 0 && diffDias <= 7;
   if (periodo === '30dias') return diffDias >= 0 && diffDias <= 30;
   return true;
 }
 
-function paraNumero(valorFormatado) {
-  return Number(valorFormatado.replace('R$', '').trim().replaceAll('.', '').replace(',', '.'));
+const formatarMoeda = (valor) =>
+  Number(valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+// Data + hora no formato "dd/mm/aaaa hh:mm", que é o que estaNoPeriodo/converterDataBr
+// esperam (eles fazem split(' ') e depois split('/')).
+function formatarDataPedido(dataIso) {
+  const data = new Date(dataIso);
+  const dataParte = data.toLocaleDateString('pt-BR');
+  const horaParte = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return `${dataParte} ${horaParte}`;
 }
 
-const formatarMoeda = (valor) =>
-  valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+// Converte cada linha vinda de GET /pedidos/pedidos-admin (ver pedidos.routes.js)
+// para o formato que a UI (cards de métrica, filtros, tabela) espera.
+// OBS: ajuste STATUS_PEDIDO em mockPedidosAdmin.js caso os valores não sejam
+// exatamente iguais aos do enum status_pedido do banco (pendente/enviado/entregue/cancelado).
+function normalizarPedidoAdmin(pedidoApi) {
+  return {
+    id: pedidoApi.id,
+    numero: `AZY-${String(pedidoApi.id).padStart(6, '0')}`,
+    cliente: {
+      nome: pedidoApi.cliente_nome,
+      email: pedidoApi.cliente_email,
+    },
+    dataPedido: formatarDataPedido(pedidoApi.criado_em),
+    quantidadeItens: Number(pedidoApi.quantidade_itens ?? 0),
+    totalNumero: Number(pedidoApi.total ?? 0),
+    total: formatarMoeda(pedidoApi.total),
+    status: pedidoApi.status_pedido,
+  };
+}
 
 const variantesEntrada = {
   oculto: { opacity: 0, y: 18 },
@@ -48,17 +115,40 @@ export default function GestaoPedidos() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [pedidos, setPedidos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+
+  // Busca a lista de pedidos uma única vez, na página — é aqui (e não dentro
+  // de TabelaPedidos) porque os cards de métrica, os filtros e a busca
+  // precisam da lista inteira, não só da página atual.
+  useEffect(() => {
+    async function carregarPedidos() {
+      try {
+        setCarregando(true);
+        const resposta = await api.get('/pedidos/pedidos-admin');
+        setPedidos(resposta.data.map(normalizarPedidoAdmin));
+      } catch (error) {
+        console.error(error);
+        setPedidos([]);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregarPedidos();
+  }, []);
+
+  const referenciaHoje = useMemo(() => new Date(), []);
 
   const metricas = useMemo(() => {
-    const pedidosHoje = mockPedidosAdmin.filter((p) => estaNoPeriodo(p.dataPedido, 'hoje')).length;
+    const pedidosHoje = pedidos.filter((p) => estaNoPeriodo(p.dataPedido, 'hoje', referenciaHoje)).length;
 
-    const faturamento = mockPedidosAdmin
+    const faturamento = pedidos
       .filter((p) => p.status !== STATUS_PEDIDO.CANCELADO)
-      .reduce((acc, p) => acc + paraNumero(p.total), 0);
+      .reduce((acc, p) => acc + p.totalNumero, 0);
 
-    const pendentes = mockPedidosAdmin.filter((p) => p.status === STATUS_PEDIDO.PENDENTE).length;
-    const emEntrega = mockPedidosAdmin.filter((p) => p.status === STATUS_PEDIDO.ENVIADO).length;
-    const concluidos = mockPedidosAdmin.filter((p) => p.status === STATUS_PEDIDO.ENTREGUE).length;
+    const pendentes = pedidos.filter((p) => p.status === STATUS_PEDIDO.PENDENTE).length;
+    const emEntrega = pedidos.filter((p) => p.status === STATUS_PEDIDO.ENVIADO).length;
+    const concluidos = pedidos.filter((p) => p.status === STATUS_PEDIDO.ENTREGUE).length;
 
     return {
       pedidosHoje,
@@ -67,16 +157,24 @@ export default function GestaoPedidos() {
       emEntrega,
       concluidos,
     };
-  }, []);
+  }, [pedidos, referenciaHoje]);
+
+  const cartoes = [
+    { chave: 'pedidosHoje', rotulo: 'Pedidos Hoje', valor: metricas.pedidosHoje, tom: 'ouro' },
+    { chave: 'faturamento', rotulo: 'Faturamento', valor: metricas.faturamento, tom: 'ivorio' },
+    { chave: 'pendentes', rotulo: 'Pendentes', valor: metricas.pendentes, tom: 'neutro' },
+    { chave: 'emEntrega', rotulo: 'Em Entrega', valor: metricas.emEntrega, tom: 'azul' },
+    { chave: 'concluidos', rotulo: 'Concluídos', valor: metricas.concluidos, tom: 'sucesso' },
+  ];
 
   const pedidosFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
-    return mockPedidosAdmin.filter((pedido) => {
+    return pedidos.filter((pedido) => {
       const passaStatus = statusFiltro === 'todos' || pedido.status === statusFiltro;
       if (!passaStatus) return false;
 
-      const passaPeriodo = estaNoPeriodo(pedido.dataPedido, periodoFiltro);
+      const passaPeriodo = estaNoPeriodo(pedido.dataPedido, periodoFiltro, referenciaHoje);
       if (!passaPeriodo) return false;
 
       if (!termo) return true;
@@ -86,7 +184,7 @@ export default function GestaoPedidos() {
         pedido.cliente.email.toLowerCase().includes(termo)
       );
     });
-  }, [busca, statusFiltro, periodoFiltro]);
+  }, [pedidos, busca, statusFiltro, periodoFiltro, referenciaHoje]);
 
   // Sempre que a busca ou os filtros mudam, volta pra primeira página.
   useEffect(() => {
@@ -125,9 +223,29 @@ export default function GestaoPedidos() {
           </p>
         </motion.header>
 
-        <motion.div variants={variantesEntrada} initial="oculto" animate="visivel">
-          <CardsMetricas metricas={metricas} />
-        </motion.div>
+         <motion.div
+            className={styles.gradeMetricas}
+            variants={variantesLista}
+            initial="oculto"
+            animate="visivel"
+          >
+            {cartoes.map((cartao) => (
+              <motion.div
+                key={cartao.chave}
+                className={styles.cartaoMetrica}
+                variants={variantesCard}
+                whileHover={{ y: -4, transition: { duration: 0.25, ease: 'easeOut' } }}
+              >
+                <div className={`${styles.iconeMetrica} ${styles[`tom-${cartao.tom}`]}`}>
+                  {ICONES[cartao.chave]}
+                </div>
+                <div className={styles.textoMetrica}>
+                  <span className={styles.valorMetrica}>{cartao.valor}</span>
+                  <span className={styles.rotuloMetrica}>{cartao.rotulo}</span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
 
         <BarraFiltros
           busca={busca}
@@ -138,7 +256,7 @@ export default function GestaoPedidos() {
           onPeriodoChange={setPeriodoFiltro}
         />
 
-        <TabelaPedidos pedidos={pedidosDaPagina} onVerDetalhes={abrirDetalhes} />
+        <TabelaPedidos pedidos={pedidosDaPagina} carregando={carregando} onVerDetalhes={abrirDetalhes} />
 
         <PaginacaoAdmin
           paginaAtual={paginaAtual}

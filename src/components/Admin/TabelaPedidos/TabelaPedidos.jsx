@@ -12,7 +12,21 @@ const variantesLinha = {
   visivel: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
 
-export default function TabelaPedidos({ pedidos, onVerDetalhes }) {
+// Agora é um componente 100% de apresentação: quem busca os pedidos na API é a
+// página (GestaoPedidos.jsx), que já cuida de filtro, busca e paginação sobre
+// a lista completa. Aqui só recebemos a "fatia" já pronta pra exibir.
+export default function TabelaPedidos({ pedidos, carregando, onVerDetalhes }) {
+  if (carregando) {
+    return (
+      <div className={styles.envoltorio}>
+        <div className={styles.vazio}>
+          <span className={styles.vazioIcone}>◇</span>
+          <p className={styles.vazioTitulo}>Carregando pedidos…</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.envoltorio}>
       <div className={styles.cabecalhoTabela}>
@@ -48,7 +62,7 @@ export default function TabelaPedidos({ pedidos, onVerDetalhes }) {
               </span>
 
               <span className={styles.colunaItens} data-rotulo="Itens">
-                {pedido.itens.length} {pedido.itens.length === 1 ? 'peça' : 'peças'}
+                {pedido.quantidadeItens} {pedido.quantidadeItens === 1 ? 'peça' : 'peças'}
               </span>
 
               <span className={styles.colunaTotalTxt} data-rotulo="Total">
@@ -66,9 +80,6 @@ export default function TabelaPedidos({ pedidos, onVerDetalhes }) {
                   onClick={() => onVerDetalhes(pedido)}
                 >
                   Ver detalhes
-                  {/* <svg viewBox="0 0 24 24" fill="none" className={styles.iconeSeta}>
-                    <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg> */}
                 </button>
               </span>
             </motion.div>
