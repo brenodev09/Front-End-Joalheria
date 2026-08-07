@@ -103,6 +103,43 @@ function normalizarPedidoAdmin(pedidoApi) {
   };
 }
 
+// Converte a resposta de GET /pedidos/pedidos-admin/:id ({ pedido, itens })
+// pro formato completo que ModalDetalhesPedido.jsx precisa. É um objeto bem
+// mais rico que o da listagem — por isso é buscado só quando o modal abre,
+// e não já na listagem.
+function normalizarDetalhePedido(resposta) {
+  const { pedido, itens } = resposta;
+
+  return {
+    id: pedido.id,
+    numero: `AZY-${String(pedido.id).padStart(6, '0')}`,
+    status: pedido.status_pedido,
+    cliente: {
+      nome: pedido.cliente_nome,
+      email: pedido.cliente_email,
+      // A tabela usuarios/pedidos não tem telefone nem endereço hoje — se
+      // isso for adicionado no banco, é só incluir aqui.
+      telefone: pedido.cliente_telefone ?? '—',
+    },
+    itens: itens.map((item) => ({
+      id: item.produto_id,
+      nome: item.nome,
+      imagem: item.imagem,
+      qtd: item.quantidade,
+      precoUnitario: formatarMoeda(item.preco_unitario),
+      subtotal: formatarMoeda(item.subtotal),
+    })),
+    subtotal: formatarMoeda(pedido.subtotal),
+    desconto: formatarMoeda(pedido.desconto),
+    frete: formatarMoeda(pedido.frete),
+    formaPagamento: pedido.forma_pagamento,
+    total: formatarMoeda(pedido.total),
+    // Não existe uma tabela de eventos/timeline no banco ainda — a lista
+    // fica vazia até isso existir; a seção só mostra o que vier aqui.
+    timeline: [],
+  };
+}
+
 const variantesEntrada = {
   oculto: { opacity: 0, y: 18 },
   visivel: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
@@ -115,6 +152,7 @@ export default function GestaoPedidos() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [carregandoDetalhe, setCarregandoDetalhe] = useState(false);
   const [pedidos, setPedidos] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -198,9 +236,19 @@ export default function GestaoPedidos() {
     return pedidosFiltrados.slice(inicio, inicio + ITENS_POR_PAGINA);
   }, [pedidosFiltrados, paginaAtual]);
 
-  function abrirDetalhes(pedido) {
-    setPedidoSelecionado(pedido);
+  async function abrirDetalhes(pedido) {
     setModalAberto(true);
+    setCarregandoDetalhe(true);
+    try {
+      const resposta = await api.get(`/pedidos/pedidos-admin/${pedido.id}`);
+      setPedidoSelecionado(normalizarDetalhePedido(resposta.data));
+    } catch (error) {
+      console.error(error);
+      setModalAberto(false);
+      setPedidoSelecionado(null);
+    } finally {
+      setCarregandoDetalhe(false);
+    }
   }
 
   function fecharDetalhes() {
@@ -266,7 +314,12 @@ export default function GestaoPedidos() {
         />
       </div>
 
-      <ModalDetalhesPedido pedido={pedidoSelecionado} aberto={modalAberto} onFechar={fecharDetalhes} />
+      <ModalDetalhesPedido
+        pedido={pedidoSelecionado}
+        aberto={modalAberto}
+        carregando={carregandoDetalhe}
+        onFechar={fecharDetalhes}
+      />
     </div>
   );
 }

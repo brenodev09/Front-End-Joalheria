@@ -1,11 +1,27 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import styles from './ModalDetalhesPedido.module.css';
 import BadgeStatusPedido from '../BadgeStatusPedido/BadgeStatusPedido';
+import { img } from 'framer-motion/client';
 
-export default function ModalDetalhesPedido({ pedido, aberto, onFechar }) {
+export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFechar }) {
   return (
     <AnimatePresence>
-      {aberto && pedido && (
+      {aberto && carregando && (
+        <motion.div
+          className={styles.sobreposicao}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={onFechar}
+        >
+          <motion.div className={styles.painel} onClick={(e) => e.stopPropagation()}>
+            <p className={styles.linha}>Carregando pedido…</p>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {aberto && !carregando && pedido && (
         <motion.div
           className={styles.sobreposicao}
           initial={{ opacity: 0 }}
@@ -53,9 +69,9 @@ export default function ModalDetalhesPedido({ pedido, aberto, onFechar }) {
                 <section className={styles.secao}>
                   <h4 className={styles.tituloSecao}>Endereço de entrega</h4>
                   <div className={styles.blocoInfo}>
-                    <p className={styles.linha}>{pedido.endereco.linha1}</p>
-                    <p className={styles.linha}>{pedido.endereco.linha2}</p>
-                    <p className={styles.linha}>CEP {pedido.endereco.cep}</p>
+                    {/* <p className={styles.linha}>{pedido.endereco.linha1}</p> */}
+                    {/* <p className={styles.linha}>{pedido.endereco.linha2}</p> */}
+                    {/* <p className={styles.linha}>CEP {pedido.endereco.cep}</p> */}
                   </div>
                 </section>
 
@@ -63,13 +79,18 @@ export default function ModalDetalhesPedido({ pedido, aberto, onFechar }) {
                 <section className={styles.secao}>
                   <h4 className={styles.tituloSecao}>Produtos</h4>
                   <ul className={styles.listaProdutos}>
-                    {pedido.itens.map((item) => (
+                    {(pedido.itens ?? []).map((item) => (
                       <li key={item.id} className={styles.itemProduto}>
                         <span className={styles.thumbProduto}>
+
                           <svg viewBox="0 0 24 24" fill="none">
                             <path d="M12 3 4 9l8 12 8-12-8-6Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
                             <path d="M4 9h16M9 9l3 12 3-12" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
                           </svg>
+
+                          {item.imagem && (
+                            <img src={`http://localhost:3000${item.imagem}`} alt={`Imagem do produto ${item.nome}`}/>
+                          )}
                         </span>
                         <span className={styles.infoProduto}>
                           <span className={styles.nomeProduto}>{item.nome}</span>
@@ -116,7 +137,7 @@ export default function ModalDetalhesPedido({ pedido, aberto, onFechar }) {
                 <section className={styles.secao}>
                   <h4 className={styles.tituloSecao}>Linha do tempo</h4>
                   <ul className={styles.timeline}>
-                    {pedido.timeline.map((etapa, index) => (
+                    {(pedido.timeline ?? []).map((etapa, index) => (
                       <li
                         key={etapa.etapa}
                         className={`${styles.etapaTimeline} ${etapa.concluido ? styles.etapaConcluida : ''}`}
@@ -128,7 +149,7 @@ export default function ModalDetalhesPedido({ pedido, aberto, onFechar }) {
                             </svg>
                           )}
                         </span>
-                        {index < pedido.timeline.length - 1 && <span className={styles.linhaConectora} />}
+                        {index < (pedido.timeline ?? []).length - 1 && <span className={styles.linhaConectora} />}
                         <span className={styles.textoEtapa}>
                           <span className={styles.nomeEtapa}>{etapa.etapa}</span>
                           <span className={styles.dataEtapa}>{etapa.data ?? 'Aguardando'}</span>
@@ -144,4 +165,4 @@ export default function ModalDetalhesPedido({ pedido, aberto, onFechar }) {
       )}
     </AnimatePresence>
   );
-}
+} 
