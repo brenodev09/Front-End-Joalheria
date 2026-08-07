@@ -10,6 +10,7 @@ import RotasAdmin from "./rotasAdmin.jsx"
 import AdminLayout from "../Layouts/AdminLayout.jsx";
 import Dashboard from "../pages/Admin/dashboard.jsx";
 import Categorias from "../pages/Admin/Categorias.jsx";
+import Colecoes from "../pages/Admin/Colecoes.jsx";
 import Produtos from "../pages/Admin/ProdutosAdmin.jsx";
 import Materiais from "../pages/Admin/Materiais.jsx";
 import InfoConta from "../pages/Admin/infoConta.jsx";
@@ -52,6 +53,7 @@ export default function Rotas() {
                         <Route path="materiais" element={<Materiais />} />
                         <Route path="conta" element={<InfoConta />} />
                         <Route path="pedidos" element={<Pedidos />} />
+                        <Route path="colecoes" element={<Colecoes />} />
                     </Route>
                 </Route>
 

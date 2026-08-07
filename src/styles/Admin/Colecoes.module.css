@@ -1,0 +1,677 @@
+/* ================================================================
+   PÁGINA COLEÇÕES — CSS MODULE
+   Otimizado para caber ao lado de sidebar fixa (~260px)
+================================================================ */
+
+.pagina {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 28px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-sizing: border-box;
+
+  background: #0f0f0f;
+  color: #f5f0e6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ================= CABEÇALHO ================= */
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.titulo {
+  font-size: 26px;
+  font-weight: 600;
+  color: #f5f0e6;
+  margin: 0 0 4px;
+  line-height: 1.1;
+}
+
+.subtitulo {
+  font-size: 13px;
+  color: #8a8578;
+  margin: 0;
+}
+
+.acoesTopo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.campoPesquisa {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 240px;
+  padding: 9px 14px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #8a8578;
+}
+
+.campoPesquisa input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: #f5f0e6;
+  font-size: 13px;
+}
+
+.campoPesquisa input::placeholder {
+  color: #8a8578;
+}
+
+.botaoNovaColecao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #7c5cff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.botaoNovaColecao:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ================= CARTÕES DE RESUMO ================= */
+.cartoesResumo {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.cartaoResumo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.cartaoResumo:hover {
+  border-color: rgba(201, 168, 76, 0.35);
+  transform: translateY(-2px);
+}
+
+.cabecalhoResumo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rotuloResumo {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.numeroResumo {
+  font-size: 30px;
+  font-weight: 600;
+  color: #f5f0e6;
+  line-height: 1;
+}
+
+.descricaoResumo {
+  font-size: 12px;
+  color: #8a8578;
+  margin: 0;
+}
+
+/* ================= CORPO PRINCIPAL ================= */
+.corpoPrincipal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.colunaEsquerda {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* ================= FILTROS ================= */
+.barraFiltros {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filtros {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+
+.botaoFiltro {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #8a8578;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.botaoFiltro:hover {
+  color: #f5f0e6;
+}
+
+.botaoFiltroAtivo,
+.botaoFiltroAtivo:hover {
+  background: #7c5cff;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.infoOrdenacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #8a8578;
+}
+
+/* ================= LISTA DE COLEÇÕES ================= */
+.listaColecoes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listaVazia {
+  padding: 40px;
+  text-align: center;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  color: #8a8578;
+}
+
+/* Card da coleção */
+.cartaoColecao {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 20px;
+
+  padding: 14px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.cartaoColecao:hover {
+  border-color: rgba(201, 168, 76, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Thumbnail */
+.thumbColecao {
+  position: relative;
+  width: 130px;
+  height: 90px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.badgeStatusThumb {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.badgeAtiva {
+  background: #2f6b3a;
+  color: #d6ffd8;
+}
+
+.badgeAgendada {
+  background: #c9a84c;
+  color: #171208;
+}
+
+.badgePermanente {
+  background: #3b7ec9;
+  color: #ffffff;
+}
+
+.badgeEncerrada {
+  background: #7a7a7a;
+  color: #f1f1f1;
+}
+
+/* Conteúdo */
+.conteudoColecao {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.linhaTitulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nomeColecao {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f5f0e6;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tagNova {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  color: #e6c877;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.descricaoColecao {
+  font-size: 13px;
+  color: #8a8578;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metaColecao {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #8a8578;
+  white-space: nowrap;
+}
+
+.pillFaltam {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.15);
+  border: 1px solid rgba(124, 92, 255, 0.3);
+  color: #a692ff;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Métricas */
+.metricasColecao {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  height: 100%;
+}
+
+.metricaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 68px;
+}
+
+.rotuloMetrica {
+  font-size: 11px;
+  color: #8a8578;
+  white-space: nowrap;
+}
+
+.valorMetrica {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5f0e6;
+  white-space: nowrap;
+}
+
+.valorDestaque {
+  color: #4ade80;
+}
+
+.blocoInicioAgendada {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 68px;
+}
+
+.valorInicioAgendada {
+  font-size: 18px;
+  font-weight: 600;
+  color: #c9a84c;
+  white-space: nowrap;
+}
+
+/* Ações */
+.acoesColecao {
+  display: grid;
+  grid-template-columns: repeat(4, 38px);
+  gap: 8px;
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  height: 100%;
+  align-items: center;
+}
+
+.botaoAcao {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #8a8578;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.botaoAcao:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+  color: #e6c877;
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.botaoAcaoExcluir:hover {
+  border-color: rgba(217, 83, 79, 0.5);
+  color: #e28a87;
+  background: rgba(217, 83, 79, 0.1);
+}
+
+/* ================= COLUNA LATERAL ================= */
+.colunaLateral {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blocoLateral {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.cabecalhoBlocoLateral {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tituloBlocoLateral {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f5f0e6;
+  margin: 0;
+}
+
+.seletorPeriodo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #8a8578;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Próximas coleções */
+.listaProximas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.itemProxima {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thumbProxima {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.infoProxima {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nomeProxima {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f5f0e6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dataProxima {
+  font-size: 11px;
+  color: #8a8578;
+}
+
+.badgeDiasProxima {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.15);
+  border: 1px solid rgba(124, 92, 255, 0.3);
+  color: #a692ff;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.botaoVerTodas {
+  padding: 10px;
+  background: #7c5cff;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.25s ease;
+}
+
+.botaoVerTodas:hover {
+  opacity: 0.9;
+}
+
+/* Estatísticas gerais */
+.gridEstatisticas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.estatisticaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rotuloEstatistica {
+  font-size: 11px;
+  color: #8a8578;
+}
+
+.valorEstatistica {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f5f0e6;
+}
+
+.valorEstatisticaDestaque {
+  color: #4ade80;
+}
+
+.botaoRelatorio {
+  padding: 10px;
+  background: #7c5cff;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.botaoRelatorio:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ================= RESPONSIVO ================= */
+
+/* Telas menores: sidebar lateral vira uma coluna cheia embaixo */
+@media (max-width: 1280px) {
+  .corpoPrincipal {
+    grid-template-columns: 1fr;
+  }
+
+  .cartoesResumo {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Empilha o card da coleção quando fica apertado */
+@media (max-width: 1024px) {
+  .cartaoColecao {
+    grid-template-columns: 130px 1fr;
+    row-gap: 14px;
+  }
+
+  .metricasColecao,
+  .acoesColecao {
+    grid-column: 1 / -1;
+    border-left: none;
+    padding-left: 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    height: auto;
+  }
+
+  .acoesColecao {
+    justify-content: start;
+  }
+}
+
+@media (max-width: 720px) {
+  .pagina {
+    padding: 20px 16px 40px;
+  }
+
+  .cartoesResumo {
+    grid-template-columns: 1fr;
+  }
+
+  .cartaoColecao {
+    grid-template-columns: 1fr;
+  }
+
+  .thumbColecao {
+    width: 100%;
+    height: 140px;
+  }
+
+  .cabecalho,
+  .acoesTopo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campoPesquisa {
+    min-width: 0;
+  }
+}
