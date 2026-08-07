@@ -255,6 +255,26 @@ export default function GestaoPedidos() {
     setModalAberto(false);
   }
 
+
+  async function atualizarStatusPedido(novoStatus) {
+    
+    try{
+      
+        await api.put(`/pedidos/pedidos-admin/${pedidoSelecionado.id}/status`, {status:novoStatus})
+
+        setPedidoSelecionado(prev =>  ({
+          ...prev,
+          status:novoStatus
+        }))
+
+        setPedidos (prev => prev.map(p => p.id === pedidoSelecionado.id ? {...p, status:novoStatus}: p ))
+
+    } catch(error){
+      console.error(error)
+    }
+  }
+
+
   return (
     <div className={styles.pagina}>
       <div className={styles.container}>
@@ -319,6 +339,7 @@ export default function GestaoPedidos() {
         aberto={modalAberto}
         carregando={carregandoDetalhe}
         onFechar={fecharDetalhes}
+        atualizarStatus = {atualizarStatusPedido}
       />
     </div>
   );

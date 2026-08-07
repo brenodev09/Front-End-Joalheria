@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import styles from './ModalDetalhesPedido.module.css';
 import BadgeStatusPedido from '../BadgeStatusPedido/BadgeStatusPedido';
-import { img } from 'framer-motion/client';
 
-export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFechar }) {
+export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFechar,atualizarStatus }) {
   return (
     <AnimatePresence>
       {aberto && carregando && (
@@ -106,6 +105,22 @@ export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFech
               </div>
 
               <div className={styles.colunaDireita}>
+                {/* Atualizar status — só visual por enquanto, sem integração */}
+                <section className={styles.secao}>
+                  <h4 className={styles.tituloSecao}>Atualizar status</h4>
+                  <div className={styles.blocoStatusEdit}>
+                    <select className={styles.seletorStatus} defaultValue={pedido?.status} onChange={(event) => atualizarStatus(event.target.value)}>
+                      <option value="pendente">Pendente</option>  
+                      <option value="enviado">Enviado</option>
+                      <option value="entregue">Entregue</option>
+                      <option value="cancelado">Cancelado</option>
+                    </select>
+                    <button type="button" className={styles.botaoSalvarStatus}>
+                      Salvar status
+                    </button>
+                  </div>
+                </section>
+
                 {/* Resumo financeiro */}
                 <section className={styles.secao}>
                   <h4 className={styles.tituloSecao}>Resumo financeiro</h4>
@@ -165,4 +180,4 @@ export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFech
       )}
     </AnimatePresence>
   );
-} 
+}
