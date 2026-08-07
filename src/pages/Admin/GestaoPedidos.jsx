@@ -114,6 +114,7 @@ function normalizarDetalhePedido(resposta) {
     id: pedido.id,
     numero: `AZY-${String(pedido.id).padStart(6, '0')}`,
     status: pedido.status_pedido,
+    tipo_entrega: pedido.tipo_entrega,
     cliente: {
       nome: pedido.cliente_nome,
       email: pedido.cliente_email,

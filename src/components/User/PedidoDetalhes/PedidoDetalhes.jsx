@@ -2,6 +2,8 @@ import styles from './PedidoDetalhes.module.css';
 import ProgressoEntrega from './ProgressoEntrega';
 
 export default function PedidoDetalhes({ pedido }) {
+
+  console.log(pedido.entrega.tipoLabel)
   return (
     <div className={styles.wrap}>
       {/* Timeline de status — antes ficava no card principal, agora vive aqui */}
@@ -58,7 +60,11 @@ export default function PedidoDetalhes({ pedido }) {
             Rastreio
           </h4>
           <div className={styles.blocoInfo}>
-            {pedido.rastreio ? (
+            {pedido.entrega.tipoLabel === "Retirada na loja" ? (
+              <p className={styles.linha}>
+                O código de rastreio não está disponível, pois este pedido será retirado na loja.
+              </p>
+            ) : pedido.rastreio ? (
               <>
                 <p className={styles.codigo}>{pedido.rastreio}</p>
                 <p className={styles.linha}>{pedido.transportadora}</p>
