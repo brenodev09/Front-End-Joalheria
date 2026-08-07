@@ -5,14 +5,17 @@ import { useGSAP } from "@gsap/react";
 import styles from "../../styles/User/minha-conta.module.css";
 import semFoto from "../../img/semFotoImg.png";
 import {
-    usuario,
-    resumo,
+
+    resumoo,
     pedidosRecentes,
     favoritosRecentes,
     timelineAtividades,
 } from "./mockData";
 import { api } from "../../services/api"
 import { useAuth } from "../../context/authContext"
+import { usePedidos } from "../../context/pedidosContext"
+import { useCarrinho } from "../../context/carrinhoContext"
+
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -237,6 +240,8 @@ export default function MinhaConta() {
     );
 
     const { usuario, atualizarUsuario } = useAuth()
+    const { resumo } = usePedidos()
+    const { itens } = useCarrinho()
     const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
@@ -245,6 +250,10 @@ export default function MinhaConta() {
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [erro, setErro] = useState("")
 
+    const quantidadeCarrinho = itens.reduce(
+        (total, item) => total + item.quantidade,
+        0
+    )
 
     function editarPerfil() {
         setEditando(true)
@@ -360,9 +369,9 @@ export default function MinhaConta() {
             <section className={`${styles.hero} gsap-hero`}>
                 <div className={styles.avatarWrap}>
                     <div className={styles.avatar}>
-                        <img className={styles.perfilAvatar} 
-                        src={usuario?.foto_perfil ? `http://localhost:3000${usuario?.foto_perfil}` : semFoto} 
-                        alt={`foto de perfil do ${usuario?.nome}`} />
+                        <img className={styles.perfilAvatar}
+                            src={usuario?.foto_perfil ? `http://localhost:3000${usuario?.foto_perfil}` : semFoto}
+                            alt={`foto de perfil do ${usuario?.nome}`} />
                     </div>
                     <span className={styles.avatarStatus} />
                 </div>
@@ -430,15 +439,40 @@ export default function MinhaConta() {
                 </div>
             </section>
 
-            {/* -------------------------------- Resumo ----------------------------------- */}
+            {/* -------------------------------- Resumo métricos ----------------------------------- */}
             <div className={styles.statsGrid}>
-                {resumo.map((item) => (
-                    <div className={`${styles.statCard} gsap-stat`} key={item.id}>
-                        <div className={styles.statIcon}>{Icon[item.icone]}</div>
-                        <p className={styles.statValue}>{item.valor}</p>
-                        <p className={styles.statLabel}>{item.label}</p>
+
+
+                <div className={`${styles.statCard} gsap-stat`} >
+                    <div className={styles.statIcon}>
+                        <img width="24" height="24" src="https://img.icons8.com/parakeet-line/48/ffffff/activity-history.png" alt="activity-history" />
                     </div>
-                ))}
+                    <p className={styles.statValue}>{resumo.total}</p>
+                    <p className={styles.statLabel}>Pedidos realizados</p>
+                </div>
+
+                <div className={`${styles.statCard} gsap-stat`} >
+                    <div className={styles.statIcon}>
+                        <img width="24" height="24" src="https://img.icons8.com/ios-glyphs/30/ffffff/hearts.png" alt="hearts" />                        </div>
+                    <p className={styles.statValue}>10</p>
+                    <p className={styles.statLabel}>Favoritos</p>
+                </div>
+
+                <div className={`${styles.statCard} gsap-stat`} >
+                    <div className={styles.statIcon}>
+                        <img width="24" height="24" src="https://img.icons8.com/external-anggara-detail-outline-anggara-putra/24/ffffff/external-bag-retail-anggara-detail-outline-anggara-putra-2.png" alt="external-bag-retail-anggara-detail-outline-anggara-putra-2" />
+                    </div>
+                    <p className={styles.statValue}>{quantidadeCarrinho}</p>
+                    <p className={styles.statLabel}>Sacola</p>
+                </div>
+
+                <div className={`${styles.statCard} gsap-stat`} >
+                    <div className={styles.statIcon}>
+                        <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/ffffff/real.png" alt="real" />
+                    </div>
+                    <p className={styles.statValue}>R$ {resumo.totalGasto.toFixed(2)}</p>
+                    <p className={styles.statLabel}>Total gasto</p>
+                </div>
             </div>
 
             {/* ---------------------------- Informações da Conta -------------------------- */}

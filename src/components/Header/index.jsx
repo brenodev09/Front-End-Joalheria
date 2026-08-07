@@ -28,77 +28,77 @@ export default function Header() {
 
 
                 {usuario?.tipo === "admin" ? (
-                  <nav>
+                    <nav>
 
-    <NavLink
-        to="/"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        INÍCIO
-    </NavLink>
+                        <NavLink
+                            to="/"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            INÍCIO
+                        </NavLink>
 
-    <NavLink
-        to="/admin/produtos"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        PRODUTOS
-    </NavLink>
+                        <NavLink
+                            to="/admin/produtos"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            PRODUTOS
+                        </NavLink>
 
-    <NavLink
-        to="/admin/dashboard"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        DASHBOARD
-    </NavLink>
+                        <NavLink
+                            to="/admin/dashboard"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            DASHBOARD
+                        </NavLink>
 
-    <NavLink
-        to="/admin/categorias"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        CATEGORIAS
-    </NavLink>
+                        <NavLink
+                            to="/admin/categorias"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            CATEGORIAS
+                        </NavLink>
 
-</nav>
+                    </nav>
 
                 ) : (
                     <nav>
 
-    <NavLink
-        to="/"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        INÍCIO
-    </NavLink>
+                        <NavLink
+                            to="/"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            INÍCIO
+                        </NavLink>
 
-    <NavLink
-        to="/catalogo"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        PRODUTOS
-    </NavLink>
+                        <NavLink
+                            to="/catalogo"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            PRODUTOS
+                        </NavLink>
 
-    <NavLink
-        to="/colecoes"
-        className={({ isActive }) =>
-            `${style.link} ${isActive ? style.active : ""}`
-        }
-    >
-        COLEÇÕES
-    </NavLink>
+                        <NavLink
+                            to="/colecoes"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            COLEÇÕES
+                        </NavLink>
 
-</nav>
+                    </nav>
                 )}
 
 

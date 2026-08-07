@@ -11,7 +11,7 @@ export const usuario = {
   badge: "Cliente Premium",
 };
 
-export const resumo = [
+export const resumoo = [
   { id: "pedidos", label: "Pedidos realizados", valor: "12", icone: "bag" },
   { id: "favoritos", label: "Favoritos", valor: "8", icone: "heart" },
   { id: "carrinho", label: "Itens no carrinho", valor: "3", icone: "cart" },
