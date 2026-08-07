@@ -1,0 +1,1219 @@
+/* ==========================================================================
+   AZORY — Catálogo editorial (escopo local via CSS Module)
+
+   VERSÃO LIMPA — o que foi corrigido nesta revisão:
+   1) .mosaic estava definido 3 vezes, a última com
+      "grid-template-columns: minmax(460px,.9fr) minmax(820px,1.1fr)" +
+      "margin-left:-100px" — isso sozinho já exige >1280px de largura e
+      empurra o layout inteiro pra fora do .container (72rem = 1152px).
+      Removido. Ficou uma única definição de .mosaic (usada pela tela
+      "Todas" / CategoryMosaic — card destaque + 4 categorias).
+   2) ProductMosaic.jsx (categoria filtrada / anexo 2) estava usando
+      FeaturedProductCard pro primeiro item — a imagem de referência da
+      categoria filtrada NÃO tem destaque, é grade uniforme. Corrigido no
+      componente para usar só .cardsGrid.
+   3) Faltava a classe .mosaicSingle referenciada no JSX. Adicionada.
+   ========================================================================== */
+
+.page {
+  --bg: #0a0908;
+  --surface: #141210;
+  --line: #211f1b;
+  --fg: #f5f0e6;
+  --muted: #8f8b80;
+  --faded: #5a564d;
+  --gold: #c9a962;
+
+  --serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  --sans: "Jost", ui-sans-serif, system-ui, sans-serif;
+
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.page ::selection {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.container {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* Utilitários de rótulo -------------------------------------------------- */
+.label {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 400;
+  display: inline-block;
+}
+
+.labelTight {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 400;
+  display: inline-block;
+}
+
+.serif {
+  font-family: var(--serif);
+}
+
+/* ===================== HERO ============================================= */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.heroBigNumber {
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: var(--serif);
+  font-size: 14rem;
+  line-height: 1;
+  color: rgba(245, 240, 230, 0.035);
+}
+
+.heroInner {
+  position: relative;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 5rem 1.5rem 4rem;
+}
+
+.heroKicker {
+  font-size: 11px;
+  color: var(--gold);
+  margin-bottom: 2rem;
+}
+
+.heroTitle {
+  font-family: var(--serif);
+  font-size: 3rem;
+  line-height: 1.05;
+  color: var(--fg);
+  max-width: 48rem;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.heroTitle em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.heroRule {
+  margin-top: 2.5rem;
+  height: 1px;
+  width: 60px;
+  background: var(--gold);
+}
+
+.heroText {
+  margin-top: 2.5rem;
+  max-width: 36rem;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.heroDropcap {
+  float: left;
+  font-family: var(--serif);
+  color: var(--gold);
+  font-size: 3.75rem;
+  line-height: 0.8;
+  padding-right: 0.75rem;
+  padding-top: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .heroBigNumber {
+    right: -1rem;
+    font-size: 22rem;
+  }
+  .heroInner {
+    padding: 7rem 1.5rem 6rem;
+  }
+  .heroTitle {
+    font-size: 4.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: 6rem;
+  }
+}
+
+/* ===================== TOOLBAR ========================================== */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  .toolbar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.gridArea {
+  padding-bottom: 0.4rem;
+}
+
+/* Search ---------------------------------------------------------------- */
+.search {
+  position: relative;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.searchInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  outline: none;
+  padding: 0.5rem 1.5rem 0.5rem 0;
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: var(--fg);
+  transition: border-color 0.3s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--faded);
+}
+
+.searchInput:focus {
+  border-color: var(--gold);
+}
+
+/* Sort dropdown --------------------------------------------------------- */
+.sortWrap {
+  position: relative;
+}
+
+.sortButton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: var(--fg);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding-block: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.sortButton:hover {
+  color: var(--gold);
+}
+
+.sortButton .sortLabelMuted {
+  color: var(--muted);
+}
+
+.sortButton .sortValue {
+  color: var(--gold);
+}
+
+.sortCaret {
+  color: var(--faded);
+  transition: transform 0.3s ease;
+  font-size: 1rem;
+}
+
+.sortCaretOpen {
+  transform: rotate(180deg);
+}
+
+.sortMenu {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  z-index: 30;
+  padding-block: 0.25rem;
+  list-style: none;
+}
+
+.sortOption {
+  width: 100%;
+  text-align: left;
+  padding: 0.625rem 1rem;
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.sortOption:hover {
+  color: var(--fg);
+}
+
+.sortOptionActive {
+  color: var(--gold);
+}
+
+/* ===================== MOSAIC (destaque + 4 categorias — tela "Todas") == */
+/* Usado pelo CategoryMosaic: 3 colunas iguais — a 1ª (destaque) ocupa
+   2 linhas, as outras 4 (2 colunas x 2 linhas) ficam ao lado. Gap de 2px
+   preenchido pela cor da linha, criando divisórias finas contínuas. */
+.mosaic {
+  
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  align-items: start; /* FIX: era "stretch" — fazia o destaque esticar até
+                          preencher a altura das 2 linhas do grid, que fica
+                          gigante quando as imagens dos cards pequenos são
+                          grandes. Com "start", cada card usa só a altura
+                          que o seu próprio conteúdo pede. */
+}
+
+@media (min-width: 768px) {
+  .mosaic {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .featuredSpan {
+    grid-row: span 2 / span 2;
+  }
+}
+
+/* Um único produto em destaque, sem grade ao lado (fallback). */
+.mosaicSingle {
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+/* ===================== GRADE UNIFORME (categoria filtrada — anexo 2) ==== */
+/* Usada pelo ProductMosaic: todos os produtos no mesmo tamanho, sem
+   destaque. 3 colunas em desktop, 2 em tablet, 1 em mobile. */
+.cardsGrid {
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card padrão ----------------------------------------------------------- */
+.card {
+  display: block;
+  height: 100%;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  height: 100%;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+  /* Reset extra: permite usar esta classe tanto em <Link> quanto em <button>
+     (CategoryMosaic usa <button onClick> pra trocar de categoria). */
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.cardImageWrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  aspect-ratio: 4 / 5;
+}
+
+@media (min-width: 768px) {
+  .cardImageWrap {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+.cardNumber {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  font-size: 9px;
+  color: rgba(245, 240, 230, 0.8);
+}
+
+/* A imagem preenche 100% do wrapper (inset:0) — object-fit:cover recorta
+   o excesso, nunca esmaga/distorce a imagem. */
+.cardImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1200ms ease-out;
+}
+
+.card:hover .cardImage {
+  transform: scale(1.04);
+}
+
+.cardBody {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cardMeta {
+  font-size: 9px;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.cardName {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  color: var(--fg);
+  line-height: 1.375;
+  margin-bottom: 0.5rem;
+  text-wrap: balance;
+  font-weight: 600;
+}
+
+.cardPrice {
+  font-size: 0.875rem;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+/* Card destaque --------------------------------------------------------- */
+.featured {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  height: auto; /* FIX: era 100% — combinado com align-items:stretch do
+                   .mosaic, forçava o card a crescer até a altura das 2
+                   linhas do grid (gigante). Agora ele só usa a altura do
+                   próprio conteúdo. */
+}
+
+.featuredLink {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+}
+
+.featuredImageWrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  aspect-ratio: 4 / 5; /* FIX: era flex:1 + min-height:320px, que deixava a
+                           imagem esticar pra preencher todo o espaço
+                           disponível. Com aspect-ratio fixo, a imagem do
+                           destaque fica proporcional — um pouco maior que
+                           os cards pequenos, não gigante. */
+}
+
+
+.card:nth-child(6) {
+    position: relative;
+    top: -290px;
+}
+
+
+@media (min-width: 768px) {
+  .featuredImageWrap {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+.featuredNumber {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10;
+  font-size: 10px;
+  color: rgba(245, 240, 230, 0.8);
+}
+
+.featuredImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1400ms ease-out;
+}
+
+.featured:hover .featuredImage {
+  transform: scale(1.09);
+}
+
+.featuredBody {
+  padding: 1.5rem;
+}
+
+.featuredMeta {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.featuredName {
+  font-family: var(--serif);
+  font-size: 1.875rem;
+  color: var(--fg);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  text-wrap: balance;
+  font-weight: 600;
+}
+
+.featuredFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.featuredPrice {
+  font-size: 1rem;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+.featuredCta {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: var(--fg);
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 0.25rem;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.featuredCta:hover {
+  color: var(--gold);
+}
+
+@media (min-width: 768px) {
+  .featuredBody {
+    padding: 2rem;
+  }
+  .featuredName {
+    font-size: 2.25rem;
+  }
+}
+
+/* Selo de certificado --------------------------------------------------- */
+.seal {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 20;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 169, 98, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 9, 8, 0.4);
+  backdrop-filter: blur(1px);
+  user-select: none;
+  transform: rotate(-13deg);
+}
+
+.sealInner {
+  width: 68px;
+  height: 68px;
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 169, 98, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.sealTop {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 7px;
+  color: var(--gold);
+  line-height: 1.1;
+}
+
+.sealName {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--gold);
+  font-size: 0.875rem;
+  margin-top: 0.125rem;
+}
+
+.sealYear {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 6px;
+  color: rgba(201, 169, 98, 0.7);
+  margin-top: 0.125rem;
+}
+
+/* ===================== MANIFESTO ======================================= */
+.manifesto {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.manifestoMark {
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  top: -4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--serif);
+  font-size: 22rem;
+  line-height: 1;
+  color: rgba(245, 240, 230, 0.03);
+}
+
+.manifestoInner {
+  position: relative;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: 7rem 1.5rem;
+  text-align: center;
+}
+
+.manifestoQuote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.875rem;
+  color: var(--fg);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.manifestoFooter {
+  margin-top: 2.5rem;
+}
+
+.manifestoAuthor {
+  font-size: 10px;
+  color: var(--gold);
+}
+
+@media (min-width: 768px) {
+  .manifestoInner {
+    padding: 9rem 1.5rem;
+  }
+  .manifestoQuote {
+    font-size: 3rem;
+  }
+}
+
+
+
+/* =========================================
+   MARQUEE
+========================================= */
+
+.marquee {
+  width: 100%;
+  overflow: hidden;
+
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+
+/* =========================================
+   TRACK
+========================================= */
+
+.marqueeTrack {
+  animation: azoryInfiniteMarquee 60s linear infinite !important;
+}
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  flex-shrink: 0;
+
+  animation-name: azoryInfiniteMarquee;
+  animation-duration: 45s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  will-change: transform;
+}
+
+/* =========================================
+   BLOCO
+========================================= */
+
+.marqueeContent {
+  display: flex;
+
+  flex-shrink: 0;
+
+  width: max-content;
+}
+
+
+/* =========================================
+   TEXTO
+========================================= */
+
+.marqueeText {
+  display: block;
+
+  flex-shrink: 0;
+
+  width: max-content;
+
+  white-space: nowrap;
+
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+
+  /* SUA COR ORIGINAL */
+  color: var(--gold);
+
+  font-size: 10px;
+
+  padding-block: 0.625rem;
+}
+
+
+/* =========================================
+   MOVIMENTO INFINITO
+========================================= */
+
+@keyframes azoryInfiniteMarquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.marquee:hover .marqueeTrack {
+  animation-play-state: paused;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .marqueeText {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  .marqueeTrack {
+    animation-duration: 18s;
+  }
+}
+
+
+/* =========================================
+   ACESSIBILIDADE
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .marqueeItem {
+    font-size: 9px;
+
+    letter-spacing: 0.18em;
+  }
+
+  .marqueeDot {
+    margin-inline: 1rem;
+  }
+
+  .marqueeTrack {
+    animation-duration: 18s;
+  }
+
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .marqueeTrack {
+    animation: none;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .marqueeText {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  .marqueeTrack {
+    animation-duration: 22s;
+  }
+
+}
+
+
+/* =========================================================
+   REDUZIR MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .marqueeTrack {
+    animation: none;
+    transform: translateX(0);
+  }
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 768px) {
+  .marqueeText {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  .marqueeTrack {
+    animation-duration: 22s;
+  }
+}
+
+/* ==========================================
+   ACESSIBILIDADE
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation-play-state: paused;
+  }
+}
+
+
+/* ==========================================
+   HOVER
+========================================== */
+
+.marquee:hover .marqueeTrack {
+  animation-play-state: paused;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 768px) {
+  .marqueeText {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  .marqueeTrack {
+    animation-duration: 24s;
+  }
+}
+
+/* ==========================================
+   ACESSIBILIDADE
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation: none;
+    transform: none;
+  }
+}
+
+
+
+/* ===================== TRUST FOOTER ==================================== */
+.trust {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.trustInner {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 4rem 1.5rem;
+}
+
+.trustGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.trustCol {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+
+.trustCol:first-child {
+  border-top: none;
+}
+
+.trustNumeral {
+  font-family: var(--serif);
+  color: var(--gold);
+  font-size: 1.875rem;
+  margin-bottom: 1rem;
+}
+
+.trustTitle {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+}
+
+.trustText {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.trustBottom {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.trustBrand {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  letter-spacing: 0.3em;
+  color: var(--fg);
+}
+
+.trustYear {
+  font-size: 10px;
+  color: var(--faded);
+}
+
+@media (min-width: 768px) {
+  .trustGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .trustCol {
+    padding: 0.5rem 2.5rem;
+    text-align: left;
+    border-top: none;
+  }
+  .trustCol + .trustCol {
+    border-left: 1px solid var(--line);
+  }
+  .trustBottom {
+    flex-direction: row;
+  }
+}
+
+/* ===================== PAGINATION ====================================== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding-block: 4rem;
+}
+
+.pageBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.pageNum {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  color: var(--faded);
+  transition: color 0.3s ease;
+}
+
+.pageBtn:hover .pageNum {
+  color: var(--fg);
+}
+
+.pageNumActive {
+  color: var(--gold);
+}
+
+.pageBar {
+  height: 1px;
+  width: 1rem;
+  background: var(--line);
+  transition: all 0.3s ease;
+}
+
+.pageBtn:hover .pageBar {
+  background: var(--faded);
+}
+
+.pageBarActive {
+  width: 2rem;
+  background: var(--gold);
+}
+
+/* ===================== STATES ========================================== */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  background: var(--line);
+}
+
+@media (min-width: 640px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.skeletonCard {
+  background: var(--surface);
+}
+
+.skeletonImage {
+  aspect-ratio: 1 / 1;
+  background: rgba(33, 31, 27, 0.6);
+  animation: azoryShimmer 1.8s ease-in-out infinite;
+}
+
+.skeletonBody {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skeletonLine {
+  background: var(--line);
+  animation: azoryShimmer 1.8s ease-in-out infinite;
+}
+
+.skeletonLineSm {
+  height: 0.5rem;
+  width: 50%;
+}
+
+.skeletonLineMd {
+  height: 1rem;
+  width: 75%;
+}
+
+.skeletonLineXs {
+  height: 0.75rem;
+  width: 33%;
+}
+
+@keyframes azoryShimmer {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+.state {
+  padding-block: 7rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stateSeal {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 169, 98, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  transform: rotate(-13deg);
+}
+
+.stateSealText {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--gold);
+  font-size: 1.25rem;
+}
+
+.stateKicker {
+  font-size: 10px;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+}
+
+.stateTitle {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+  text-wrap: balance;
+}
+
+.stateText {
+  font-size: 0.875rem;
+  color: var(--muted);
+  max-width: 24rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.stateAction {
+  margin-top: 2rem;
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: var(--fg);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 0.25rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.stateAction:hover {
+  color: var(--gold);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
