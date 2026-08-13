@@ -103,18 +103,26 @@ function normalizarPedidoAdmin(pedidoApi) {
   };
 }
 
-// Converte a resposta de GET /pedidos/pedidos-admin/:id ({ pedido, itens })
+// Rótulo exibido na timeline pra cada valor de status_pedido do banco.
+const STATUS_LABELS = {
+  pendente: 'Pedido realizado',
+  pago: 'Pagamento aprovado',
+  enviado: 'Enviado',
+  entregue: 'Entregue',
+  cancelado: 'Cancelado',
+};
+
+// Converte a resposta de GET /pedidos/pedidos-admin/:id ({ pedido, itens, timeline })
 // pro formato completo que ModalDetalhesPedido.jsx precisa. É um objeto bem
 // mais rico que o da listagem — por isso é buscado só quando o modal abre,
 // e não já na listagem.
 function normalizarDetalhePedido(resposta) {
-  const { pedido, itens } = resposta;
+  const { pedido, itens, timeline } = resposta;
 
   return {
     id: pedido.id,
     numero: `AZY-${String(pedido.id).padStart(6, '0')}`,
     status: pedido.status_pedido,
-    tipo_entrega: pedido.tipo_entrega,
     cliente: {
       nome: pedido.cliente_nome,
       email: pedido.cliente_email,
@@ -135,9 +143,13 @@ function normalizarDetalhePedido(resposta) {
     frete: formatarMoeda(pedido.frete),
     formaPagamento: pedido.forma_pagamento,
     total: formatarMoeda(pedido.total),
-    // Não existe uma tabela de eventos/timeline no banco ainda — a lista
-    // fica vazia até isso existir; a seção só mostra o que vier aqui.
-    timeline: [],
+    // historico_pedidos vem em ordem cronológica crescente — cada linha já
+    // é um evento que aconteceu de fato, então todas entram "concluídas".
+    timeline: (timeline ?? []).map((evento) => ({
+      etapa: STATUS_LABELS[evento.status] ?? evento.status,
+      data: formatarDataPedido(evento.criado_em),
+      concluido: true,
+    })),
   };
 }
 
@@ -237,11 +249,10 @@ export default function GestaoPedidos() {
     return pedidosFiltrados.slice(inicio, inicio + ITENS_POR_PAGINA);
   }, [pedidosFiltrados, paginaAtual]);
 
-  async function abrirDetalhes(pedido) {
-    setModalAberto(true);
+  async function carregarDetalhe(pedidoId) {
     setCarregandoDetalhe(true);
     try {
-      const resposta = await api.get(`/pedidos/pedidos-admin/${pedido.id}`);
+      const resposta = await api.get(`/pedidos/pedidos-admin/${pedidoId}`);
       setPedidoSelecionado(normalizarDetalhePedido(resposta.data));
     } catch (error) {
       console.error(error);
@@ -252,29 +263,29 @@ export default function GestaoPedidos() {
     }
   }
 
-  function fecharDetalhes() {
-    setModalAberto(false);
+  function abrirDetalhes(pedido) {
+    setModalAberto(true);
+    carregarDetalhe(pedido.id);
   }
 
-
-  async function atualizarStatusPedido(novoStatus) {
-    
-    try{
-      
-        await api.put(`/pedidos/pedidos-admin/${pedidoSelecionado.id}/status`, {status:novoStatus})
-
-        setPedidoSelecionado(prev =>  ({
-          ...prev,
-          status:novoStatus
-        }))
-
-        setPedidos (prev => prev.map(p => p.id === pedidoSelecionado.id ? {...p, status:novoStatus}: p ))
-
-    } catch(error){
-      console.error(error)
+  // Atualiza o status no back e recarrega o detalhe (pedido + timeline nova)
+  // pra refletir o evento que acabou de entrar em historico_pedidos.
+  async function atualizarStatus(novoStatus) {
+    if (!pedidoSelecionado) return;
+    try {
+      await api.put(`/pedidos/pedidos-admin/${pedidoSelecionado.id}/status`, { status: novoStatus });
+      await carregarDetalhe(pedidoSelecionado.id);
+      // a listagem também mostra o status — refaz ela pra não ficar desatualizada
+      const resposta = await api.get('/pedidos/pedidos-admin');
+      setPedidos(resposta.data.map(normalizarPedidoAdmin));
+    } catch (error) {
+      console.error(error);
     }
   }
 
+  function fecharDetalhes() {
+    setModalAberto(false);
+  }
 
   return (
     <div className={styles.pagina}>
@@ -340,7 +351,7 @@ export default function GestaoPedidos() {
         aberto={modalAberto}
         carregando={carregandoDetalhe}
         onFechar={fecharDetalhes}
-        atualizarStatus = {atualizarStatusPedido}
+        atualizarStatus={atualizarStatus}
       />
     </div>
   );

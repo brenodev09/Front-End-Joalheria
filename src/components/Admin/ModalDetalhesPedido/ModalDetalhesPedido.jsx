@@ -154,7 +154,7 @@ export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFech
                   <ul className={styles.timeline}>
                     {(pedido.timeline ?? []).map((etapa, index) => (
                       <li
-                        key={etapa.etapa}
+                        key={`${etapa.etapa}-${index}`}
                         className={`${styles.etapaTimeline} ${etapa.concluido ? styles.etapaConcluida : ''}`}
                       >
                         <span className={styles.marcadorTimeline}>

@@ -33,14 +33,8 @@ const STATUS_DB_PARA_UI = {
 };
 
 // Em que ponto da timeline (Confirmado/Preparando/Enviado/Entregue) cada
-// status_pedido do banco corresponde.
-const ETAPA_POR_STATUS_DB = {
-  pendente: 1,
-  pago: 2,
-  enviado: 3,
-  entregue: 4,
-  cancelado: 0,
-};
+// status_pedido do banco corresponde — a ProgressoEntrega agora calcula isso
+// sozinha a partir do status cru, então esse mapa não é mais necessário aqui.
 
 const LABEL_PAGAMENTO = {
   cartao: 'Cartão de crédito',
@@ -92,9 +86,15 @@ function normalizarPedido(pedidoApi) {
     id: pedidoApi.id,
     numero: `AZY-${String(pedidoApi.id).padStart(6, '0')}`,
     status: STATUS_DB_PARA_UI[pedidoApi.status_pedido] ?? STATUS.PROCESSANDO,
-    etapaAtual: ETAPA_POR_STATUS_DB[pedidoApi.status_pedido] ?? 1,
+    // Valor cru (pendente/pago/enviado/entregue/cancelado) — é o que
+    // ProgressoEntrega usa pra calcular a etapa; "status" acima é só a
+    // versão traduzida pro StatusBadge/filtros da lista.
+    statusPedido: pedidoApi.status_pedido,
     dataCompra: formatarData(pedidoApi.criado_em),
     valorTotal: formatarMoeda(pedidoApi.total),
+    // Histórico real (historico_pedidos), já em ordem cronológica — é o que
+    // alimenta a lista de data/hora embaixo da barra de progresso.
+    timeline: pedidoApi.timeline ?? [],
     itens: itensBrutos.map((item, index) => ({
       id: item.produto_id,
       nome: item.nome,

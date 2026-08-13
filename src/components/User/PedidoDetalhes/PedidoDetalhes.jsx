@@ -1,15 +1,34 @@
 import styles from './PedidoDetalhes.module.css';
-import ProgressoEntrega from './ProgressoEntrega';
+import ProgressoEntrega, { STATUS_LABELS } from './ProgressoEntrega';
+
+function formatarDataHora(dataIso) {
+  const data = new Date(dataIso);
+  const dataParte = data.toLocaleDateString('pt-BR');
+  const horaParte = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return `${dataParte} · ${horaParte}`;
+}
 
 export default function PedidoDetalhes({ pedido }) {
-
-  console.log(pedido.entrega.tipoLabel)
   return (
     <div className={styles.wrap}>
-      {/* Timeline de status — antes ficava no card principal, agora vive aqui */}
+      {/* Acompanhamento: barra de progresso + timeline real (historico_pedidos) */}
       <div className={styles.acompanhamento}>
         <h4 className={styles.tituloColuna}>Acompanhamento do pedido</h4>
-        <ProgressoEntrega status={pedido.status} etapaAtual={pedido.etapaAtual} />
+        <ProgressoEntrega status={pedido.statusPedido ?? pedido.status} />
+
+        {pedido.timeline?.length > 0 && (
+          <ul className={styles.linhaTempoStatus}>
+            {pedido.timeline.map((evento, index) => (
+              <li key={`${evento.status}-${index}`} className={styles.eventoStatus}>
+                <span className={styles.pontoEvento} />
+                <span className={styles.textoEvento}>
+                  {STATUS_LABELS[evento.status] ?? evento.status}
+                </span>
+                <span className={styles.dataEvento}>{formatarDataHora(evento.criado_em)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className={styles.colunas}>
@@ -60,7 +79,7 @@ export default function PedidoDetalhes({ pedido }) {
             Rastreio
           </h4>
           <div className={styles.blocoInfo}>
-            {pedido.entrega.tipoLabel === "Retirada na loja" ? (
+            {pedido.entrega.tipoLabel === 'Retirada na loja' ? (
               <p className={styles.linha}>
                 O código de rastreio não está disponível, pois este pedido será retirado na loja.
               </p>
