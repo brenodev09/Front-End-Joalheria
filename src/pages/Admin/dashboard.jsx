@@ -130,9 +130,9 @@ export default function Dashboard() {
                   alt="real"
                 />
               </div>
-              <span className={style.cardRotulo}>VALOR DO ESTOQUE</span>
+              <span className={style.cardRotulo}>FATURAMENTO BRUTO</span>
             </div>
-            <h1 className={style.cardValor}>R$ {Number(metricas.valorEstoque || 0).toLocaleString("pt-BR")}</h1>
+            <h1 className={style.cardValor}>R$ {Number(vendas.faturamentoBruto || 0).toLocaleString("pt-BR")}</h1>
             <p className={style.cardDescricao}>produtos ativos em estoque</p>
           </div>
 
