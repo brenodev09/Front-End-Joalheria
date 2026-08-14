@@ -26,7 +26,7 @@ export default function Carrinho() {
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [pedidoConfirmado, setPedidoConfirmado] = useState(false);
 
-  const [entregaSelecionada, setEntregaSelecionada] = useState("padrao");
+  const [entregaSelecionada, setEntregaSelecionada] = useState("padrão");
   const [formaPagamento, setFormaPagamento] = useState("cartao");
 
   /* E-mail para envio de Pix/Boleto na etapa de Pagamento */
@@ -46,6 +46,8 @@ export default function Carrinho() {
     nome: "",
     telefone: "",
     endereco: "",
+    numero: "",
+    bairro: "",
     cidade: "",
     estado: "",
     cep: "",
@@ -75,6 +77,8 @@ export default function Carrinho() {
     nome: "Nome Completo",
     telefone: "Telefone",
     endereco: "Endereço",
+    numero: "Número",
+    bairro: "Bairro",
     cidade: "Cidade",
     estado: "Estado",
     cep: "CEP",
@@ -83,7 +87,9 @@ export default function Carrinho() {
   const placeholdersCampoEndereco = {
     nome: "Seu nome completo",
     telefone: "(00) 00000-0000",
-    endereco: "Rua, número, complemento",
+    endereco: "Rua, avenida...",
+    numero: "Número",
+    bairro: "Seu bairro",
     cidade: "Sua cidade",
     estado: "UF",
     cep: "00000-000",
@@ -183,7 +189,7 @@ export default function Carrinho() {
     setEnderecoForm((anterior) => ({ ...anterior, [name]: value }));
   };
 
-  const camposEndereco = ["nome", "telefone", "endereco", "cidade", "estado", "cep"];
+  const camposEndereco = ["nome", "telefone", "endereco", "numero", "bairro", "cidade", "estado", "cep"];
 
   const entregaValida = camposEndereco.every(
     (campo) => enderecoForm[campo].trim() !== ""
@@ -286,16 +292,60 @@ export default function Carrinho() {
   // função de finalizar a compra
   const [valorPedidoFinalizado, setValorPedidoFinalizado] = useState(0)
   const [codigoPedido, setCodigoPedido] = useState(0)
+  const [finalizando, setFinalizando] = useState(false)
+  const [erroFinalizacao, setErroFinalizacao] = useState("")
   const totalFinalCarrinho = Math.max(subtotal - desconto) + valorEntrega
 
+  /* Identifica a bandeira do cartão a partir dos primeiros dígitos —
+     usado só pra exibição, nunca enviamos/guardamos o número completo */
+  function detectarBandeira(numero) {
+    const limpo = numero.replace(/\D/g, "")
+
+    if (/^4/.test(limpo)) return "Visa"
+    if (/^5[1-5]/.test(limpo)) return "Mastercard"
+    if (/^3[47]/.test(limpo)) return "American Express"
+    if (/^6(?:011|5)/.test(limpo)) return "Elo"
+
+    return "Outra"
+  }
+
   async function finalizarCompra() {
+    setErroFinalizacao("")
+    setFinalizando(true)
+
     try {
       const token = localStorage.getItem("token")
-      const resposta = await api.post("/pedidos", {
-        formaPagamento, tipoEntrega: entregaSelecionada, codigo: cupomAplicado
-      }, {
-        headers: {Authorization: `Bearer ${token}`}
-})
+
+      const payload = {
+        formaPagamento,
+        tipoEntrega: entregaSelecionada,
+        codigo: cupomAplicado,
+      }
+
+      if (entregaSelecionada !== "retirada") {
+        payload.endereco = {
+          nome: enderecoForm.nome,
+          telefone: enderecoForm.telefone,
+          endereco: enderecoForm.endereco,
+          numero: enderecoForm.numero,
+          bairro: enderecoForm.bairro,
+          cidade: enderecoForm.cidade,
+          uf: enderecoForm.estado,
+          cep: enderecoForm.cep,
+        }
+      }
+
+      if (formaPagamento === "cartao") {
+        payload.dadosCartao = {
+          numero: cartaoForm.numero,
+          nomeTitular: cartaoForm.nome,
+          bandeira: detectarBandeira(cartaoForm.numero),
+        }
+      }
+
+      const resposta = await api.post("/pedidos", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
 
       console.log(resposta.data)
 
@@ -306,7 +356,11 @@ export default function Carrinho() {
     } catch (error) {
       console.error(error)
 
-
+      const mensagemErro =
+        error.response?.data?.erro || "Erro ao finalizar o pedido, por favor tente novamente"
+      setErroFinalizacao(mensagemErro)
+    } finally {
+      setFinalizando(false)
     }
   }
 
@@ -333,18 +387,7 @@ export default function Carrinho() {
       return;
     }
 
-
-    try {
-
-      await finalizarCompra();
-
-      setPedidoConfirmado(true);
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
+    await finalizarCompra();
   }
 
   return (
@@ -396,7 +439,7 @@ export default function Carrinho() {
 
             {formaPagamento === "cartao" && (
               <p className={estilos.confirmacaoTexto}>
-                Obrigado por escolher a Maison Aurélie. Seu pedido{" "}
+                Obrigado por escolher a Azory. Seu pedido{" "}
                 <strong>#AZ-{codigoPedido}</strong> está sendo preparado com todo o
                 cuidado de nossos artesãos.
               </p>
@@ -404,7 +447,7 @@ export default function Carrinho() {
 
             {formaPagamento === "pix" && (
               <p className={estilos.confirmacaoTexto}>
-                Obrigado por escolher a Maison Aurélie. Seu pedido{" "}
+                Obrigado por escolher a Azory. Seu pedido{" "}
                 <strong>#AZ-{codigoPedido}</strong> foi registrado e o QR Code Pix foi
                 enviado para o e-mail <strong>{emailPagamento}</strong>.
               </p>
@@ -412,7 +455,7 @@ export default function Carrinho() {
 
             {formaPagamento === "boleto" && (
               <p className={estilos.confirmacaoTexto}>
-                Obrigado por escolher a Maison Aurélie. Seu pedido{" "}
+                Obrigado por escolher a Azory. Seu pedido{" "}
                 <strong>#AZ-{codigoPedido}</strong> foi registrado e o boleto foi
                 enviado para o e-mail <strong>{emailPagamento}</strong>.
               </p>
@@ -624,7 +667,7 @@ export default function Carrinho() {
                           {enderecoForm.nome}
                         </p>
                         <p className={estilos.resumoEntregaTexto}>
-                          {enderecoForm.endereco}
+                          {enderecoForm.endereco}, {enderecoForm.numero} — {enderecoForm.bairro}
                         </p>
                         <p className={estilos.resumoEntregaTexto}>
                           {enderecoForm.cidade} - {enderecoForm.estado},{" "}
@@ -881,17 +924,23 @@ export default function Carrinho() {
                     </span>
                   </div>
 
+                  {etapaAtual === 3 && erroFinalizacao && (
+                    <p className={estilos.mensagemErro}>{erroFinalizacao}</p>
+                  )}
+
                   <button
                     type="button"
                     className={estilos.botaoContinuar}
                     onClick={aoClicarBotaoPrincipal}
-                    disabled={produtos.length === 0}
+                    disabled={produtos.length === 0 || finalizando}
                   >
-                    {etapaAtual === 1
-                      ? "Continuar para Entrega"
-                      : etapaAtual === 2
-                        ? "Continuar para Pagamento"
-                        : "Finalizar Compra"}
+                    {finalizando
+                      ? "Finalizando..."
+                      : etapaAtual === 1
+                        ? "Continuar para Entrega"
+                        : etapaAtual === 2
+                          ? "Continuar para Pagamento"
+                          : "Finalizar Compra"}
                   </button>
 
                   <p className={estilos.resumoSeguranca}>
