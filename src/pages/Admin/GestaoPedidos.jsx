@@ -130,6 +130,21 @@ function normalizarDetalhePedido(resposta) {
       // isso for adicionado no banco, é só incluir aqui.
       telefone: pedido.cliente_telefone ?? '—',
     },
+    // Endereço de entrega salvo no próprio pedido — não existe quando o
+    // cliente escolheu retirada na loja. Dados de cartão de propósito NÃO
+    // entram aqui: o admin só deve ver o endereço, nunca o cartão do cliente.
+    endereco: pedido.tipo_entrega !== 'retirada' ? {
+      nome: pedido.endereco_nome_destinatario,
+      telefone: pedido.endereco_telefone,
+      rua: pedido.endereco_rua,
+      numero: pedido.endereco_numero,
+      complemento: pedido.endereco_complemento,
+      bairro: pedido.endereco_bairro,
+      cidade: pedido.endereco_cidade,
+      estado: pedido.endereco_estado,
+      cep: pedido.endereco_cep,
+    } : null,
+    tipoEntregaLabel: pedido.tipo_entrega === 'retirada' ? 'Retirada na loja' : null,
     itens: itens.map((item) => ({
       id: item.produto_id,
       nome: item.nome,

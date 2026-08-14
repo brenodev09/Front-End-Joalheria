@@ -75,6 +75,30 @@ export default function PedidoDetalhes({ pedido }) {
             {pedido.entrega.prazo && <p className={styles.linha}>{pedido.entrega.prazo}</p>}
           </div>
 
+          {pedido.entrega.endereco && (
+            <>
+              <h4 className={styles.tituloColuna} style={{ marginTop: 18 }}>
+                Endereço de entrega
+              </h4>
+              <div className={styles.blocoInfo}>
+                {pedido.entrega.endereco.nome && (
+                  <p className={styles.linhaForte}>{pedido.entrega.endereco.nome}</p>
+                )}
+                <p className={styles.linha}>
+                  {pedido.entrega.endereco.rua}, {pedido.entrega.endereco.numero}
+                  {pedido.entrega.endereco.complemento ? ` — ${pedido.entrega.endereco.complemento}` : ''}
+                </p>
+                <p className={styles.linha}>{pedido.entrega.endereco.bairro}</p>
+                <p className={styles.linha}>
+                  {pedido.entrega.endereco.cidade} - {pedido.entrega.endereco.estado}, {pedido.entrega.endereco.cep}
+                </p>
+                {pedido.entrega.endereco.telefone && (
+                  <p className={styles.linha}>Tel: {pedido.entrega.endereco.telefone}</p>
+                )}
+              </div>
+            </>
+          )}
+
           <h4 className={styles.tituloColuna} style={{ marginTop: 18 }}>
             Rastreio
           </h4>
@@ -104,6 +128,9 @@ export default function PedidoDetalhes({ pedido }) {
               <p className={styles.linha}>
                 {pedido.pagamento.bandeira} •••• {pedido.pagamento.final}
               </p>
+            )}
+            {pedido.pagamento.nomeTitular && (
+              <p className={styles.linha}>{pedido.pagamento.nomeTitular}</p>
             )}
             {pedido.pagamento.parcelas && <p className={styles.linha}>{pedido.pagamento.parcelas}</p>}
           </div>

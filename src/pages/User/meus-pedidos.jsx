@@ -103,16 +103,28 @@ function normalizarPedido(pedidoApi) {
       qtd: item.quantidade,
       tom: TONS[index % TONS.length],
     })),
-    // Ainda não existe cadastro de endereço no banco — usamos o que já temos
-    // (tipo e prazo de entrega) até essa tabela/coluna existir.
+    // Endereço de entrega salvo no pedido — não existe quando a entrega é
+    // retirada na loja, já que nesse caso o back-end não grava esses campos.
     entrega: {
       tipoLabel: LABEL_TIPO_ENTREGA[pedidoApi.tipo_entrega] ?? 'Entrega',
       prazo: pedidoApi.prazo_entrega ?? null,
+      endereco: pedidoApi.tipo_entrega !== 'retirada' ? {
+        nome: pedidoApi.endereco_nome_destinatario,
+        telefone: pedidoApi.endereco_telefone,
+        rua: pedidoApi.endereco_rua,
+        numero: pedidoApi.endereco_numero,
+        complemento: pedidoApi.endereco_complemento,
+        bairro: pedidoApi.endereco_bairro,
+        cidade: pedidoApi.endereco_cidade,
+        estado: pedidoApi.endereco_estado,
+        cep: pedidoApi.endereco_cep,
+      } : null,
     },
     pagamento: {
       metodo: LABEL_PAGAMENTO[pedidoApi.forma_pagamento] ?? pedidoApi.forma_pagamento ?? 'Não informado',
-      bandeira: null,
-      final: null,
+      bandeira: pedidoApi.cartao_bandeira ?? null,
+      final: pedidoApi.cartao_final ?? null,
+      nomeTitular: pedidoApi.cartao_nome_titular ?? null,
       parcelas: null,
     },
     // Rastreio e transportadora ainda não existem no banco.

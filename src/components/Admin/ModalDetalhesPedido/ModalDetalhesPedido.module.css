@@ -13,7 +13,7 @@
 
 .painel {
   width: 100%;
-  max-width: 920px;
+  max-width: 65rem;
   max-height: 88vh;
   overflow-y: auto;
   background: linear-gradient(135deg,
@@ -95,7 +95,7 @@
 .corpoModal {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 30px;
+  gap:5rem;
   padding: 28px 30px 32px;
 }
 
@@ -376,7 +376,7 @@
   color: var(--azory-bg, #0b0a08);
   background: #C9A962;
   border: 1px solid rgba(201, 169, 110, 0.28);
-  border-radius: var(--azory-radius-sm);
+  border-radius: .9px;
   padding: 10px 16px;
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;

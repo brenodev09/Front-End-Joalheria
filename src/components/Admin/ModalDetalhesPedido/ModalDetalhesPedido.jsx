@@ -68,9 +68,26 @@ export default function ModalDetalhesPedido({ pedido, aberto, carregando, onFech
                 <section className={styles.secao}>
                   <h4 className={styles.tituloSecao}>Endereço de entrega</h4>
                   <div className={styles.blocoInfo}>
-                    {/* <p className={styles.linha}>{pedido.endereco.linha1}</p> */}
-                    {/* <p className={styles.linha}>{pedido.endereco.linha2}</p> */}
-                    {/* <p className={styles.linha}>CEP {pedido.endereco.cep}</p> */}
+                    {pedido.endereco ? (
+                      <>
+                        {pedido.endereco.nome && (
+                          <p className={styles.linhaForte}>{pedido.endereco.nome}</p>
+                        )}
+                        <p className={styles.linha}>
+                          {pedido.endereco.rua}, {pedido.endereco.numero}
+                          {pedido.endereco.complemento ? ` — ${pedido.endereco.complemento}` : ''}
+                        </p>
+                        <p className={styles.linha}>{pedido.endereco.bairro}</p>
+                        <p className={styles.linha}>
+                          {pedido.endereco.cidade} - {pedido.endereco.estado}, CEP {pedido.endereco.cep}
+                        </p>
+                        {pedido.endereco.telefone && (
+                          <p className={styles.linha}>Tel: {pedido.endereco.telefone}</p>
+                        )}
+                      </>
+                    ) : (
+                      <p className={styles.linha}>{pedido.tipoEntregaLabel ?? 'Retirada na loja'}</p>
+                    )}
                   </div>
                 </section>
 
