@@ -57,7 +57,7 @@ export default function PedidoDetalhes({ pedido }) {
                   </span>
                   <span className={styles.itemInfo}>
                     <span className={styles.itemNome}>{item.nome}</span>
-                    <span className={styles.itemQtd}>Qtd. {item.qtd}</span>
+                    <span className={styles.itemQtd}>Qtd.: {item.qtd}</span>
                   </span>
                   <span className={styles.itemPreco}>{item.preco}</span>
                 </li>

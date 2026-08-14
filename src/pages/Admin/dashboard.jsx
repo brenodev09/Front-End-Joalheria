@@ -1,4 +1,4 @@
-  import style from "../../styles/Admin/dashboard.module.css";
+import style from "../../styles/Admin/dashboard.module.css";
 import SideBar from "../../components/Admin/SideBar";
 import HeaderAdmin from "../../components/Admin/Header";
 import { useAuth } from "../../context/authContext"
@@ -8,18 +8,63 @@ import { useState } from "react";
 import {
   BarChart,
   Bar,
+  ComposedChart,
+  PieChart,
+  Pie,
+  Cell,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
   ResponsiveContainer
 } from "recharts";
+
 
 export default function Dashboard() {
 
   const { usuario } = useAuth()
   const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, carregando } = dadosDashboard()
+  const vendasUltimos30Dias = vendas.vendasUltimos30Dias || []
 
-  console.log(vendas)
+  const formatarDataGrafico = (data) => {
+    const dataObj = new Date(data)
+
+    return dataObj.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit"
+    })
+  }
+
+  const formatarMoeda = (valor) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(valor)
+  }
+
+
+  const CORES_STATUS = {
+    pendente: "#D4AF37",
+    pago: "#C9A84C",
+    enviado: "#395ea3",
+    entregue: "#1c942a",
+    cancelado: "#9a0606"
+  }
+
+  const formatarStatus = (status) => {
+
+    const nomes = {
+      pendente: "Pendente",
+      pago: "Pago",
+      enviado: "Enviado",
+      entregue: "Entregue",
+      cancelado: "Cancelado"
+    }
+
+    return nomes[status] || status
+
+  }
 
   if (carregando) {
     return <p className={style.carregando}>Carregando dados do dashboard...</p>
@@ -128,6 +173,131 @@ export default function Dashboard() {
         {/* graficos e cards */}
         <section className={style.painelGraficos}>
 
+          <div className={style.cardGraficoGrande}>
+
+            <div className={style.cabecalhoGrafico}>
+              <span>VENDAS DOS ÚLTIMOS 30 DIAS</span>
+
+              <p>
+                Faturamento e quantidade de vendas por dia
+              </p>
+            </div>
+
+
+            <ResponsiveContainer width="100%" height={300}>
+
+              <ComposedChart
+                data={vendas.vendasUltimos30Dias || []}
+                margin={{
+                  top: 10,
+                  right: 10,
+                  left: 10,
+                  bottom: 10
+                }}
+              >
+
+                {/* EIXO HORIZONTAL */}
+
+                <XAxis
+                  dataKey="data"
+                  tickFormatter={formatarDataGrafico}
+                />
+
+
+                {/* EIXO DO FATURAMENTO */}
+
+                <YAxis
+                  yAxisId="faturamento"
+                  orientation="left"
+                  tickFormatter={(valor) => `R$ ${valor}`}
+                />
+
+
+                {/* EIXO DA QUANTIDADE */}
+
+                <YAxis
+                  yAxisId="quantidade"
+                  orientation="right"
+                  allowDecimals={false}
+                />
+
+
+                {/* TOOLTIP */}
+
+                <Tooltip
+                  labelFormatter={(data) =>
+                    `Data: ${formatarDataGrafico(data)}`
+                  }
+
+                  formatter={(valor, nome) => {
+
+                    if (nome === "Faturamento") {
+                      return [
+                        formatarMoeda(valor),
+                        "Faturamento"
+                      ]
+                    }
+
+                    return [
+                      `${valor} vendas`,
+                      "Quantidade"
+                    ]
+
+                  }}
+
+                  contentStyle={{
+                    backgroundColor: "#1b1b1b",
+                    border: "1px solid #C9A84C",
+                    borderRadius: "2px"
+                  }}
+
+                  labelStyle={{
+                    color: "#C9A84C"
+                  }}
+                />
+
+
+                {/* LEGENDA */}
+
+                <Legend />
+
+
+                {/* BARRAS - QUANTIDADE */}
+
+                <Bar
+                  yAxisId="quantidade"
+                  dataKey="quantidade_vendas"
+                  name="Quantidade"
+                  fill="#8F7A3D"
+                  radius={[4, 4, 0, 0]}
+                  barSize={12}
+                />
+
+
+                {/* LINHA - FATURAMENTO */}
+
+                <Line
+                  yAxisId="faturamento"
+                  type="monotone"
+                  dataKey="faturamento"
+                  name="Faturamento"
+                  stroke="#C9A84C"
+                  strokeWidth={3}
+                  dot={{
+                    r: 3,
+                    fill: "#C9A84C"
+                  }}
+                  activeDot={{
+                    r: 6
+                  }}
+                />
+
+              </ComposedChart>
+
+            </ResponsiveContainer>
+
+          </div>
+
           <div className={style.cardGrafico}>
             <div className={style.cabecalhoGrafico}>
               <span>ESTOQUE POR CATEGORIA</span>
@@ -162,8 +332,74 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
+          <div className={style.cardGrafico}>
 
-          <div className={style.cardRecentes}>
+            <div className={style.cabecalhoGrafico}>
+
+              <span>PEDIDOS POR STATUS</span>
+
+              <p>
+                Distribuição dos pedidos atuais
+              </p>
+
+            </div>
+
+
+            <ResponsiveContainer width="100%" height={300}>
+
+              <PieChart>
+
+                <Pie
+                  data={vendas.pedidosPorStatus || []}
+                  dataKey="quantidade"
+                  nameKey="status"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={65}
+                  outerRadius={100}
+                  paddingAngle={3}
+                >
+
+                  {(vendas.pedidosPorStatus || []).map((item) => (
+
+                    <Cell
+                      key={item.status}
+                      fill={CORES_STATUS[item.status]}
+                    />
+
+                  ))}
+
+                </Pie>
+
+
+                <Tooltip
+                  formatter={(valor, nome) => [
+                    `${valor} pedidos`,
+                    nome.charAt(0).toUpperCase() + nome.slice(1)
+                  ]}
+
+                  contentStyle={{
+                    backgroundColor: "#1b1b1b",
+                    border: "1px solid #C9A84C",
+                    borderRadius: "2px"
+                  }}
+
+                  labelStyle={{
+                    color: "#C9A84C"
+                  }}
+                />
+
+
+                <Legend />
+
+              </PieChart>
+
+            </ResponsiveContainer>
+
+          </div>
+
+
+          {/* <div className={style.cardRecentes}>
             <div className={style.cabecalhoRecentes}>
               <div>
                 <p className={style.tituloRecentes}>
@@ -207,6 +443,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
+
           <div className={style.cardEstoque}>
             <div className={style.cabecalho}>
               <span className={style.icone}>⚠</span>
@@ -233,7 +470,7 @@ export default function Dashboard() {
               )}
 
             </div>
-          </div>
+          </div> */}
         </section>
       </main>
     </>

@@ -403,8 +403,8 @@
 
 .thumb {
   position: relative;
-  width: 34px;
-  height: 34px;
+  width: 3.8rem;
+  height: 3.8rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;

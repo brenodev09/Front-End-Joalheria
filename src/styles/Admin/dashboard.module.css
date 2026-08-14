@@ -161,12 +161,27 @@
 }
 
 
-.painelGraficos {
+/* .painelGraficos {
   display: flex;
   align-items: stretch;
   justify-content: center;
   gap: 2rem;
   padding-top: 2rem;
+
+} */
+
+.painelGraficos {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+.cardGraficoGrande {
+  grid-column: span 2;
+  background: #151515;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: 10px;
+    padding: 30px;
 
 }
 
