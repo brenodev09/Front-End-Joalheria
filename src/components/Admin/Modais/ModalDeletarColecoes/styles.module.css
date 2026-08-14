@@ -1,0 +1,135 @@
+.dcm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.dcm-modal {
+  width: 100%;
+  max-width: 560px;
+  background: #0d0d0d;
+  border: 0.5px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 32px 36px;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #e8e2d4;
+  position: relative;
+}
+
+.dcm-icon-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #3a3a38;
+  background: transparent;
+  color: #9a988f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dcm-icon-btn:hover {
+  border-color: #c9a45c;
+  color: #c9a45c;
+}
+
+.dcm-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #2a1414;
+  color: #e0645f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px auto 20px;
+}
+
+.dcm-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: #f2ede1;
+  text-align: center;
+  margin: 0 0 12px;
+}
+
+.dcm-message {
+  font-size: 14px;
+  color: #b8b4a8;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.dcm-highlight {
+  font-style: italic;
+  color: #f2ede1;
+}
+
+.dcm-warning {
+  display: flex;
+  gap: 10px;
+  background: #1c1712;
+  border: 0.5px solid #3a3020;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.dcm-warning svg {
+  color: #c9a45c;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dcm-warning p {
+  font-size: 13px;
+  color: #c8c0a8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.dcm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dcm-btn {
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: none;
+}
+
+.dcm-btn--outline {
+  background: transparent;
+  border: 0.5px solid #3a3a38;
+  color: #c8c4b8;
+}
+
+.dcm-btn--outline:hover {
+  border-color: #5a5a56;
+}
+
+.dcm-btn--danger {
+  background: #8a2b28;
+  color: #f5e6e4;
+  font-weight: 500;
+}
+
+.dcm-btn--danger:hover {
+  background: #9c322e;
+}

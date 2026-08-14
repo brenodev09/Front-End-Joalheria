@@ -1,0 +1,165 @@
+/* ==========================================================================
+   MODAL DE AVISO DE LANÇAMENTO
+   ========================================================================== */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(6, 5, 3, 0.72);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+}
+
+.modal {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    padding: 40px 32px 32px;
+    border-radius: 22px;
+    text-align: center;
+    background: linear-gradient(180deg, #231d14, #14100b);
+    border: 1px solid rgba(201, 163, 91, 0.35);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+    animation: subir 0.25s ease;
+}
+
+.fechar {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: #d8d1c2;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.fechar:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.confete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    font-size: 1.6rem;
+    color: #201a10;
+    background: linear-gradient(135deg, #d9b877, #c9a35b);
+}
+
+.titulo {
+    font-size: 1.35rem;
+    color: #f4eede;
+    margin: 0 0 14px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.destaque {
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    color: #d9b877;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.descricao {
+    font-size: 0.9rem;
+    color: #9a9384;
+    line-height: 1.5;
+    margin: 0 0 18px;
+}
+
+.outras {
+    text-align: left;
+    margin: 0 auto 20px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(201, 163, 91, 0.08);
+    border: 1px solid rgba(201, 163, 91, 0.16);
+}
+
+.outrasRotulo {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #c9a35b;
+    margin-bottom: 6px;
+}
+
+.outras ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #d8d1c2;
+    font-size: 0.85rem;
+}
+
+.acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.botaoPrincipal {
+    padding: 13px 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #d9b877, #c9a35b);
+    color: #201a10;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: filter 0.15s ease;
+}
+
+.botaoPrincipal:hover {
+    filter: brightness(1.05);
+}
+
+.botaoSecundario {
+    padding: 11px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    background: transparent;
+    color: #b9b2a2;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.botaoSecundario:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes subir {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

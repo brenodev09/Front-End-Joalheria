@@ -1,0 +1,1935 @@
+/* =========================================================================
+   TOKENS
+   ========================================================================= */
+
+.overlayModal {
+  --bg-modal: #0f0f0f;
+  --bg-painel: #171717;
+  --bg-input: #171717;
+  --bg-input-hover: #1f1f1f;
+
+  --borda: #242424;
+  --borda-hover: #3a3a3a;
+
+  --dourado: #C9A962;
+  --dourado-claro: #d4b56f;
+  --dourado-escuro: #937432;
+  --dourado-suave: rgba(201, 169, 98, 0.12);
+
+  --texto-primario: #ffffff;
+  --texto-secundario: #9f9f9f;
+  --texto-terciario: #777777;
+
+  --sucesso: #4ade80;
+  --erro: #e2685f;
+
+  --fonte-serif: Georgia, "Times New Roman", serif;
+  --fonte-sans:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  position: fixed;
+  inset: 0;
+
+  z-index: 1000;
+
+  background: rgba(5, 5, 7, 0.88);
+
+  backdrop-filter: blur(14px) saturate(0.7);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  font-family: var(--fonte-sans);
+
+  animation: aparecerFundo 0.2s ease;
+}
+
+
+/* =========================================================================
+   ANIMAÇÕES
+   ========================================================================= */
+
+@keyframes aparecerFundo {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes entrarModal {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes entrarConteudo {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulsarSucesso {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================================
+   MODAL PRINCIPAL
+   ========================================================================= */
+
+.modalColecao {
+  width: min(95vw, 95rem);
+
+  max-height: 92vh;
+  min-height: 80vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #181818 0%,
+      #0f0f0f 50%,
+      #0a0a0a 100%
+    );
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(201, 169, 98, 0.18);
+
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  animation: entrarModal 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+/* =========================================================================
+   CABEÇALHO
+   ========================================================================= */
+
+.cabecalhoModal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1.4rem 2rem 1rem;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  flex-shrink: 0;
+}
+
+
+.tituloModal {
+  font-family: var(--fonte-serif);
+
+  font-size: 1.7rem;
+
+  letter-spacing: 1px;
+
+  color: var(--texto-primario);
+
+  margin: 0 0 6px;
+
+  font-weight: 500;
+}
+
+
+.subtituloModal {
+  font-size: 13px;
+
+  color: var(--texto-secundario);
+
+  margin: 0;
+}
+
+
+/* =========================================================================
+   BOTÃO FECHAR
+   ========================================================================= */
+
+.fecharModal {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #fff;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+
+  flex-shrink: 0;
+}
+
+
+.fecharModal:hover {
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #fff;
+
+  border-color: transparent;
+}
+
+
+.fecharModal:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================================
+   STEPPER
+   ========================================================================= */
+
+.etapas {
+  display: flex;
+  align-items: center;
+
+  padding: 20px 32px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  flex-shrink: 0;
+
+  overflow-x: auto;
+}
+
+
+.blocoEtapa {
+  display: flex;
+  align-items: center;
+
+  flex: 1;
+}
+
+
+.blocoEtapa:last-child {
+  flex: 0 0 auto;
+}
+
+
+.etapa {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  white-space: nowrap;
+}
+
+
+.marcadorEtapa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  color: #888;
+
+  font-size: 0.9rem;
+
+  font-weight: 500;
+
+  transition: 0.3s ease;
+
+  flex-shrink: 0;
+}
+
+
+.tituloEtapa {
+  font-size: 0.85rem;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  transition: 0.3s ease;
+
+  font-weight: 400;
+}
+
+
+.etapaAtiva .marcadorEtapa {
+  background: rgba(201, 169, 98, 0.18);
+
+  border: 1px solid var(--dourado);
+
+  color: #fff;
+}
+
+
+.etapaAtiva .tituloEtapa {
+  color: var(--dourado);
+}
+
+
+.etapaConcluida .marcadorEtapa {
+  background: var(--dourado);
+
+  border-color: var(--dourado);
+
+  color: #0a0a0a;
+}
+
+
+.etapaConcluida .tituloEtapa {
+  color: var(--texto-secundario);
+}
+
+
+.linhaEtapa {
+  width: 50px;
+
+  height: 2px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border-radius: 10px;
+
+  margin: 0 14px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  transition: 0.3s ease;
+}
+
+
+.linhaEtapaConcluida {
+  background: var(--dourado);
+
+  opacity: 0.6;
+}
+
+
+/* =========================================================================
+   CORPO
+   ========================================================================= */
+
+.corpoModal {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 28px 32px 8px;
+}
+
+
+.corpoModal::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.corpoModal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.corpoModal::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 98, 0.3);
+
+  border-radius: 10px;
+}
+
+
+.corpoModal::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 169, 98, 0.5);
+}
+
+
+.conteudoEtapa {
+  animation: entrarConteudo 0.22s ease;
+}
+
+
+.painelEtapa {
+  padding-bottom: 24px;
+}
+
+
+.tituloPainel {
+  font-family: var(--fonte-serif);
+
+  font-size: 1.2rem;
+
+  color: var(--texto-primario);
+
+  margin: 0 0 6px;
+
+  font-weight: 500;
+}
+
+
+.descricaoPainel {
+  font-size: 13.5px;
+
+  color: var(--texto-secundario);
+
+  margin: 0 0 24px;
+}
+
+
+/* =========================================================================
+   CAMPOS
+   ========================================================================= */
+
+.campoFormulario {
+  margin-bottom: 20px;
+}
+
+
+.linhaCampos {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 1rem;
+}
+
+
+.rotuloCampo {
+  display: block;
+
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+  color: #999;
+
+  margin-bottom: 8px;
+
+  font-weight: 500;
+}
+
+
+.entradaTexto,
+.areaTexto,
+.seletorFiltro {
+  width: 100%;
+
+  background: #171717;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  padding: 12px 14px;
+
+  font-size: 14px;
+
+  color: #ffffff;
+
+  font-family: var(--fonte-sans);
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+
+.entradaTexto::placeholder,
+.areaTexto::placeholder {
+  color: #777;
+}
+
+
+.entradaTexto:hover,
+.areaTexto:hover,
+.seletorFiltro:hover {
+  border-color: #3a3a3a;
+
+  background: #1b1b1b;
+}
+
+
+.entradaTexto:focus,
+.areaTexto:focus,
+.seletorFiltro:focus {
+  outline: none;
+
+  border-color: #c9a962;
+
+  background: #1c1c1c;
+
+  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.08);
+}
+
+
+.entradaTexto[type="date"] {
+  color-scheme: dark;
+}
+
+
+.areaTexto {
+  resize: vertical;
+
+  min-height: 92px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================================
+   SELECT
+   ========================================================================= */
+
+.seletorFiltro {
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  -moz-appearance: none;
+
+  cursor: pointer;
+}
+
+
+.seletorFiltro option {
+  background: #151515;
+
+  color: #fff;
+}
+
+
+/* =========================================================================
+   STATUS
+   ========================================================================= */
+
+.seletorStatus {
+  display: flex;
+
+  gap: 10px;
+}
+
+
+.opcaoStatus {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 18px;
+
+  border-radius: 4px;
+
+  border: 1px solid #242424;
+
+  background: #171717;
+
+  color: #999;
+
+  font-size: 13.5px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+
+.opcaoStatus:hover {
+  border-color: #3a3a3a;
+
+  color: #fff;
+}
+
+
+.opcaoStatusAtiva {
+  border-color: var(--dourado);
+
+  background: rgba(201, 169, 98, 0.10);
+
+  color: #fff;
+}
+
+
+.pontoStatus {
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+
+.pontoAtivo {
+  background: var(--sucesso);
+}
+
+
+.pontoRascunho {
+  background: #777;
+}
+
+
+/* =========================================================================
+   DESTAQUE / TOGGLE
+   ========================================================================= */
+
+.campoDestaque {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 12px;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  background: #171717;
+}
+
+
+.rotuloDestaque {
+  font-size: 1rem;
+
+  color: #fff;
+
+  margin: 0 0 4px;
+
+  font-weight: 500;
+}
+
+
+.textoAuxiliar {
+  font-size: 12.5px;
+
+  color: #8f8f8f;
+
+  margin: 0;
+
+  line-height: 1.5;
+}
+
+
+.toggle {
+  position: relative;
+
+  width: 44px;
+
+  height: 22px;
+
+  border-radius: 999px;
+
+  border: none;
+
+  background: #333;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition: 0.3s;
+}
+
+
+.toggleBolinha {
+  position: absolute;
+
+  top: 2px;
+
+  left: 2px;
+
+  width: 18px;
+
+  height: 18px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  transition: 0.3s;
+}
+
+
+.toggleAtivo {
+  background: var(--dourado);
+}
+
+
+.toggleAtivo .toggleBolinha {
+  transform: translateX(22px);
+
+  background: #fff;
+}
+
+
+/* =========================================================================
+   ETAPA 2 — UPLOAD
+   ========================================================================= */
+
+.grelhaUpload {
+  display: grid;
+
+  grid-template-columns: 1.4fr 1fr;
+
+  gap: 20px;
+
+  align-items: start;
+}
+
+
+.areaUpload {
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  gap: 6px;
+
+  min-height: 260px;
+
+  border: 1px dashed rgba(201, 169, 98, 0.3);
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.02);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+
+  padding: 24px;
+}
+
+
+.areaUpload:hover {
+  border-color: rgba(201, 169, 98, 0.6);
+
+  background: rgba(201, 169, 98, 0.03);
+}
+
+
+.areaUploadArrastando {
+  border-color: var(--dourado);
+
+  background: rgba(201, 169, 98, 0.06);
+
+  transform: scale(0.99);
+}
+
+
+.iconeUpload {
+  color: var(--dourado);
+
+  margin-bottom: 8px;
+
+  font-size: 22px;
+}
+
+
+.textoUploadPrincipal {
+  font-size: 14.5px;
+
+  color: #fff;
+
+  margin: 0;
+
+  font-weight: 500;
+}
+
+
+.textoUploadSecundario {
+  font-size: 13px;
+
+  color: #9f9f9f;
+
+  margin: 0;
+}
+
+
+.linkSelecionar {
+  color: var(--dourado);
+
+  text-decoration: underline;
+
+  text-underline-offset: 2px;
+}
+
+
+.textoUploadFormatos {
+  font-size: 11.5px;
+
+  color: #777;
+
+  margin: 10px 0 0;
+
+  letter-spacing: 0.03em;
+
+  text-transform: uppercase;
+}
+
+
+.inputArquivoOculto {
+  display: none;
+}
+
+
+/* =========================================================================
+   PREVIEW DA IMAGEM
+   ========================================================================= */
+
+.previewImagem {
+  position: relative;
+
+  min-height: 260px;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(201, 169, 98, 0.18);
+
+  background: #171717;
+}
+
+
+.imagemPreview {
+  width: 100%;
+
+  height: 260px;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+
+.acoesPreview {
+  position: absolute;
+
+  bottom: 12px;
+
+  left: 12px;
+
+  right: 12px;
+
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.botaoTrocarImagem,
+.botaoRemoverImagem {
+  flex: 1;
+
+  padding: 9px 12px;
+
+  border-radius: 4px;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  backdrop-filter: blur(6px);
+}
+
+
+.botaoTrocarImagem {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  background: rgba(20, 20, 20, 0.72);
+
+  color: #fff;
+}
+
+
+.botaoTrocarImagem:hover {
+  background: rgba(20, 20, 20, 0.9);
+}
+
+
+.botaoRemoverImagem {
+  border: 1px solid rgba(226, 104, 95, 0.5);
+
+  background: rgba(60, 20, 18, 0.75);
+
+  color: #ffb3ac;
+}
+
+
+.botaoRemoverImagem:hover {
+  background: rgba(80, 24, 20, 0.9);
+}
+
+
+.infoImagem {
+  padding: 18px;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  background: #171717;
+}
+
+
+.tituloInfoImagem {
+  font-size: 13.5px;
+
+  color: #fff;
+
+  margin: 0 0 8px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================================
+   ETAPA 3 — PRODUTOS
+   ========================================================================= */
+
+.barraFiltrosProdutos {
+  display: grid;
+
+  grid-template-columns: 1.6fr 1fr 1fr;
+
+  gap: 12px;
+
+  margin-bottom: 16px;
+}
+
+
+.campoBusca {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 14px;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  background: #171717;
+
+  color: #777;
+
+  transition: 0.2s ease;
+}
+
+
+.campoBusca:focus-within {
+  border-color: var(--dourado);
+
+  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.08);
+}
+
+
+.entradaBusca {
+  flex: 1;
+
+  border: none;
+
+  background: transparent;
+
+  padding: 11px 0;
+
+  font-size: 13.5px;
+
+  color: #fff;
+
+  outline: none;
+}
+
+
+.entradaBusca::placeholder {
+  color: #777;
+}
+
+
+.resumoContagem {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  font-size: 12.5px;
+
+  color: #9f9f9f;
+
+  margin-bottom: 14px;
+}
+
+
+.contagemSelecionados {
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  background: rgba(201, 169, 98, 0.1);
+
+  color: var(--dourado);
+
+  font-weight: 600;
+}
+
+
+.rotuloSecaoProdutos {
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+  color: #999;
+
+  font-weight: 500;
+
+  margin: 0 0 10px;
+}
+
+
+/* =========================================================================
+   LISTA DE PRODUTOS
+   ========================================================================= */
+
+.listaProdutos {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 10px;
+
+  max-height: 300px;
+
+  overflow-y: auto;
+
+  padding: 4px 4px 4px 0;
+
+  margin-bottom: 4px;
+}
+
+
+.listaProdutos::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.listaProdutos::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 98, 0.3);
+
+  border-radius: 10px;
+}
+
+
+.cardProduto {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 10px;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  background: #171717;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition: 0.2s ease;
+
+  font-family: var(--fonte-sans);
+}
+
+
+.cardProduto:hover {
+  border-color: #3a3a3a;
+
+  background: #1c1c1c;
+}
+
+
+.produtoSelecionado {
+  border-color: var(--dourado);
+
+  background: rgba(201, 169, 98, 0.08);
+}
+
+
+.checkboxProduto {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 18px;
+
+  height: 18px;
+
+  border-radius: 4px;
+
+  border: 1px solid #3a3a3a;
+
+  color: #0a0a0a;
+
+  flex-shrink: 0;
+
+  transition: 0.2s ease;
+}
+
+
+.checkboxMarcado {
+  background: var(--dourado);
+
+  border-color: var(--dourado);
+}
+
+
+.miniaturaProduto {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 46px;
+
+  height: 46px;
+
+  border-radius: 4px;
+
+  background: #1c1c1c;
+
+  color: var(--dourado);
+
+  flex-shrink: 0;
+}
+
+
+.infoCardProduto {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+
+.nomeProduto {
+  font-size: 13.5px;
+
+  color: #fff;
+
+  font-weight: 500;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.categoriaProduto {
+  font-size: 11.5px;
+
+  color: #777;
+}
+
+
+.linhaPrecoEstoque {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 3px;
+}
+
+
+.precoProduto {
+  font-size: 12.5px;
+
+  color: var(--dourado);
+
+  font-weight: 600;
+}
+
+
+.estoqueProduto {
+  font-size: 11px;
+
+  color: #777;
+}
+
+
+.estoqueZerado {
+  font-size: 11px;
+
+  color: var(--erro);
+}
+
+
+.estadoVazioProdutos {
+  grid-column: 1 / -1;
+
+  text-align: center;
+
+  padding: 32px 12px;
+
+  color: #777;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================================
+   PRODUTOS SELECIONADOS
+   ========================================================================= */
+
+.secaoSelecionados {
+  margin-top: 20px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.grelhaSelecionados {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+
+.chipProdutoSelecionado {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 6px 8px 6px 6px;
+
+  border: 1px solid #242424;
+
+  border-radius: 999px;
+
+  background: #171717;
+}
+
+
+.miniaturaChip {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 26px;
+
+  height: 26px;
+
+  border-radius: 50%;
+
+  background: #1f1f1f;
+
+  color: var(--dourado);
+
+  flex-shrink: 0;
+}
+
+
+.nomeChip {
+  font-size: 12.5px;
+
+  color: #fff;
+
+  max-width: 120px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.botaoRemoverChip {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 22px;
+
+  height: 22px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: transparent;
+
+  color: #777;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+
+  flex-shrink: 0;
+}
+
+
+.botaoRemoverChip:hover {
+  background: rgba(226, 104, 95, 0.15);
+
+  color: var(--erro);
+}
+
+
+/* =========================================================================
+   ETAPA 4 — REVISÃO
+   ========================================================================= */
+
+.resumoColecao {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+.cardResumo {
+  padding: 20px;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  background: #171717;
+}
+
+
+.cabecalhoCardResumo {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 4px;
+}
+
+
+.tituloCardResumo {
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+  color: var(--dourado);
+
+  font-weight: 500;
+
+  margin: 0 0 14px;
+}
+
+
+.grelhaResumo {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+}
+
+
+.spanCompleto {
+  grid-column: 1 / -1;
+}
+
+
+.rotuloResumo {
+  font-size: 11.5px;
+
+  color: #777;
+
+  margin: 0 0 4px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+}
+
+
+.valorResumo {
+  font-size: 14px;
+
+  color: #fff;
+
+  margin: 0;
+
+  line-height: 1.5;
+}
+
+
+.imagemResumo {
+  width: 100%;
+
+  max-height: 220px;
+
+  object-fit: cover;
+
+  border-radius: 4px;
+
+  display: block;
+}
+
+
+.botaoVerProdutos {
+  border: none;
+
+  background: transparent;
+
+  color: var(--dourado);
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  text-decoration: underline;
+
+  text-underline-offset: 2px;
+}
+
+
+.grelhaThumbnails {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+
+.thumbnailProduto {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  aspect-ratio: 1;
+
+  border-radius: 4px;
+
+  background: #1c1c1c;
+
+  border: 1px solid #242424;
+
+  color: var(--dourado);
+}
+
+
+/* =========================================================================
+   CONFIRMAÇÃO
+   ========================================================================= */
+
+.cardConfirmacao {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 20px;
+
+  border: 1px solid rgba(201, 169, 98, 0.3);
+
+  border-radius: 4px;
+
+  background: rgba(201, 169, 98, 0.06);
+}
+
+
+.iconeConfirmacao {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 44px;
+
+  height: 44px;
+
+  border-radius: 50%;
+
+  background: var(--dourado);
+
+  color: #0a0a0a;
+
+  flex-shrink: 0;
+}
+
+
+.tituloConfirmacao {
+  font-size: 14.5px;
+
+  color: #fff;
+
+  margin: 0 0 3px;
+
+  font-weight: 600;
+}
+
+
+.textoConfirmacao {
+  font-size: 12.5px;
+
+  color: #9f9f9f;
+
+  margin: 0;
+}
+
+
+/* =========================================================================
+   RODAPÉ
+   ========================================================================= */
+
+.rodapeModal {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 18px 32px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  flex-shrink: 0;
+}
+
+
+.rodapeEsquerda,
+.rodapeDireita {
+  display: flex;
+
+  align-items: center;
+
+  gap: 1rem;
+}
+
+
+/* =========================================================================
+   BOTÕES
+   ========================================================================= */
+
+.botaoCancelar,
+.botaoVoltar {
+  padding: 11px 22px;
+
+  border-radius: 4px;
+
+  border: 1px solid #242424;
+
+  background: transparent;
+
+  color: #999;
+
+  font-size: 13.5px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+
+.botaoCancelar:hover,
+.botaoVoltar:hover {
+  border-color: #3a3a3a;
+
+  color: #fff;
+
+  background: rgba(255, 255, 255, 0.03);
+}
+
+
+.botaoAvancar,
+.botaoSalvar {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 11px 26px;
+
+  min-width: 12rem;
+
+  border-radius: 4px;
+
+  border: 1px solid rgba(201, 169, 110, 0.28);
+
+  background: #C9A962;
+
+  color: #0a0a0a;
+
+  font-size: 13.5px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+
+  letter-spacing: 0.08rem;
+}
+
+
+.botaoAvancar:hover,
+.botaoSalvar:hover {
+  background: #937432;
+
+  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+
+  transform: translateY(-1px);
+}
+
+
+.botaoAvancar:disabled {
+  opacity: 0.35;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  filter: none;
+}
+
+
+.botaoCarregando {
+  opacity: 0.85;
+
+  cursor: wait;
+}
+
+
+/* =========================================================================
+   SPINNER
+   ========================================================================= */
+
+.spinner {
+  width: 14px;
+
+  height: 14px;
+
+  border-radius: 50%;
+
+  border: 2px solid rgba(10, 10, 10, 0.35);
+
+  border-top-color: #0a0a0a;
+
+  animation: girar 0.7s linear infinite;
+}
+
+
+/* =========================================================================
+   TELA DE SUCESSO
+   ========================================================================= */
+
+.telaSucesso {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+
+  padding: 56px 24px 40px;
+
+  animation: entrarConteudo 0.25s ease;
+}
+
+
+.circuloSucesso {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 72px;
+
+  height: 72px;
+
+  border-radius: 50%;
+
+  background: rgba(201, 169, 98, 0.1);
+
+  border: 1.5px solid var(--dourado);
+
+  color: var(--dourado);
+
+  margin-bottom: 20px;
+
+  animation: pulsarSucesso 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+.tituloSucesso {
+  font-family: var(--fonte-serif);
+
+  font-size: 20px;
+
+  color: #fff;
+
+  margin: 0 0 8px;
+}
+
+
+.textoSucesso {
+  font-size: 13.5px;
+
+  color: #9f9f9f;
+
+  margin: 0 0 28px;
+
+  max-width: 360px;
+}
+
+
+/* =========================================================================
+   RESPONSIVIDADE
+   ========================================================================= */
+
+@media (max-width: 1100px) {
+
+  .modalColecao {
+    width: 95vw;
+  }
+
+  .grelhaUpload {
+    grid-template-columns: 1fr;
+  }
+
+  .listaProdutos {
+    grid-template-columns: 1fr;
+  }
+
+  .barraFiltrosProdutos {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 860px) {
+
+  .modalColecao {
+    max-height: 92vh;
+  }
+
+  .grelhaResumo {
+    grid-template-columns: 1fr;
+  }
+
+  .linhaCampos {
+    grid-template-columns: 1fr;
+  }
+
+  .etapas {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .corpoModal {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .cabecalhoModal {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .rodapeModal {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+
+@media (max-width: 560px) {
+
+  .overlayModal {
+    padding: 0;
+
+    align-items: flex-end;
+  }
+
+  .modalColecao {
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: 94vh;
+
+    min-height: 0;
+
+    border-radius: 18px 18px 0 0;
+  }
+
+  .cabecalhoModal,
+  .etapas,
+  .corpoModal,
+  .rodapeModal {
+    padding-left: 18px;
+
+    padding-right: 18px;
+  }
+
+  .tituloModal {
+    font-size: 1.4rem;
+  }
+
+  .tituloEtapa {
+    display: none;
+  }
+
+  .linhaEtapa {
+    margin: 0 8px;
+  }
+
+  .linhaCampos {
+    grid-template-columns: 1fr;
+  }
+
+  .seletorStatus {
+    flex-direction: column;
+  }
+
+  .rodapeModal {
+    flex-direction: column-reverse;
+
+    gap: 10px;
+  }
+
+  .rodapeEsquerda,
+  .rodapeDireita {
+    width: 100%;
+  }
+
+  .botaoCancelar,
+  .botaoVoltar,
+  .botaoAvancar,
+  .botaoSalvar {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .campoDestaque {
+    align-items: flex-start;
+  }
+}

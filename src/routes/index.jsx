@@ -31,6 +31,8 @@ import Login from "../pages/login.jsx";
 import Inicial from "../pages/inicial.jsx";
 import PagProduto from "../pages/ProdutoJoalheria.jsx";
 import Catalogo from "../pages/User/Catalogo";
+import ColecoesPublicas from "../pages/User/Colecoes.jsx";
+import ColecaoDetalhe from "../pages/User/ColecaoDetalhe.jsx";
 
 
 
@@ -44,6 +46,8 @@ export default function Rotas() {
                 <Route path="/produto/:id" element={<PagProduto />} />
                 <Route path="/carrinho" element={<Carrinho />} />
                 <Route path="/catalogo" element={<Catalogo />} />
+                <Route path="/colecoes" element={<ColecoesPublicas />} />
+                <Route path="/colecoes/:id" element={<ColecaoDetalhe />} />
 
                 <Route element={<RotasAdmin />}>
                     <Route path="/admin" element={<AdminLayout />}>

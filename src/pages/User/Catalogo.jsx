@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../services/api";
-
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
+
+import ProximasColecoes from "../../components/User/ProximasColecoes";
 
 import MarqueeBar from "../../components/User/Catalogo/MarqueeBar";
 import EditorialHero from "../../components/User/Catalogo/EditorialHero";
@@ -25,9 +27,6 @@ import styles from "../../styles/User/catalogoAzory.module.css";
 
 const PER_PAGE = 9;
 
-
-
-
 function buildLookup(lista = []) {
   const map = {};
 
@@ -43,18 +42,13 @@ function buildLookup(lista = []) {
   return map;
 }
 
-
-
-
 function normalizeId(value) {
   if (value == null) return null;
 
   return String(value);
 }
 
-
 export default function Catalogo() {
-
   const [produtos, setProdutos] = useState([]);
 
   const [categoriasBanco, setCategoriasBanco] = useState([]);
@@ -63,7 +57,7 @@ export default function Catalogo() {
   const [materialMap, setMaterialMap] = useState({});
 
   const [status, setStatus] = useState("loading");
-
+const navegar = useNavigate();
   const [busca, setBusca] = useState("");
 
   const [sort, setSort] = useState("recentes");
@@ -72,132 +66,96 @@ export default function Catalogo() {
 
   const [
     categoriaSelecionada,
-    setCategoriaSelecionada
+    setCategoriaSelecionada,
   ] = useState("Todas");
 
-
-
   async function carregarDados() {
-
     try {
-
       setStatus("loading");
-
 
       const [
         produtosResponse,
         categoriasResponse,
-        materiaisResponse
+        materiaisResponse,
       ] = await Promise.all([
-
         api.get("/produtos"),
-
-    
         api.get("/categorias"),
-
-        api.get("/materiais")
-
+        api.get("/materiais"),
       ]);
-
 
       const produtosData =
         Array.isArray(produtosResponse.data)
           ? produtosResponse.data
           : [];
 
-
       const categoriasData =
         Array.isArray(categoriasResponse.data)
           ? categoriasResponse.data
           : [];
-
 
       const materiaisData =
         Array.isArray(materiaisResponse.data)
           ? materiaisResponse.data
           : [];
 
-
-     
-
       const produtosComNumero =
         produtosData.map((produto, index) => ({
           ...produto,
-          numero: index + 1
+          numero: index + 1,
         }));
-
 
       setProdutos(produtosComNumero);
 
-
-     
-
       setCategoriasBanco(categoriasData);
-
 
       setCategoriaMap(
         buildLookup(categoriasData)
       );
 
-
       setMaterialMap(
         buildLookup(materiaisData)
       );
 
-
       setStatus("ready");
-
     } catch (error) {
-
       console.error(
         "Erro ao carregar catálogo:",
         error
       );
 
       setStatus("error");
-
     }
-
   }
 
-
   useEffect(() => {
-
     carregarDados();
-
   }, []);
 
-
-  /* ============================================================
-     RESET PAGINAÇÃO
-  ============================================================ */
+  /*
+    RESET DA PAGINAÇÃO
+  */
 
   useEffect(() => {
-
     setPagina(1);
-
   }, [
     busca,
     sort,
-    categoriaSelecionada
+    categoriaSelecionada,
   ]);
 
-
-  
+  /*
+    PREPARAR PRODUTOS
+  */
 
   const produtosPreparados = useMemo(() => {
-
     return produtos.map((produto) => {
-
       const categoriaId =
         normalizeId(produto.categoria);
 
       const materialId =
         normalizeId(produto.material);
 
-
       return {
-
         ...produto,
 
         categoria:
@@ -208,28 +166,26 @@ export default function Catalogo() {
         material:
           materialMap[materialId] ??
           materialMap[produto.material] ??
-          produto.material
-
+          produto.material,
       };
-
     });
-
   }, [
     produtos,
     categoriaMap,
-    materialMap
+    materialMap,
   ]);
 
-
-
+  /*
+    CATEGORIAS
+  */
 
   const categorias = useMemo(() => {
-
     return categoriasBanco
-      .filter((categoria) => categoria?.id != null)
+      .filter(
+        (categoria) =>
+          categoria?.id != null
+      )
       .map((categoria) => {
-
-
         const imagemCategoria =
           categoria.imagem ??
           categoria.image ??
@@ -238,9 +194,7 @@ export default function Catalogo() {
           categoria.image_url ??
           null;
 
-
         return {
-
           id: categoria.id,
 
           nome:
@@ -248,241 +202,172 @@ export default function Catalogo() {
             categoria.name ??
             `Categoria ${categoria.id}`,
 
-          imagem:
-            imagemCategoria,
-
-      
+          imagem: imagemCategoria,
 
           totalProdutos:
             produtos.filter((produto) => {
-
-              return normalizeId(
-                produto.categoria
-              ) === normalizeId(
-                categoria.id
+              return (
+                normalizeId(
+                  produto.categoria
+                ) ===
+                normalizeId(
+                  categoria.id
+                )
               );
-
-            }).length
-
+            }).length,
         };
-
       });
-
   }, [
     categoriasBanco,
-    produtos
+    produtos,
   ]);
 
-
-  /* ============================================================
-     NOMES DAS CATEGORIAS PARA O CATEGORY TABS
-
-     Sempre começa com Todas.
-  ============================================================ */
+  /*
+    NOMES DAS CATEGORIAS
+  */
 
   const nomesCategorias = useMemo(() => {
-
     return [
       "Todas",
       ...categorias.map(
-        (categoria) => categoria.nome
-      )
+        (categoria) =>
+          categoria.nome
+      ),
     ];
+  }, [categorias]);
 
-  }, [
-    categorias
-  ]);
+  /*
+    PRODUTOS FILTRADOS
+  */
 
+  const produtosFiltrados =
+    useMemo(() => {
+      let lista = [
+        ...produtosPreparados,
+      ];
 
-  /* ============================================================
-     ENCONTRAR ID DA CATEGORIA SELECIONADA
+      /*
+        FILTRO DE CATEGORIA
+      */
 
-     Exemplo:
-
-     "Anéis"
-
-     vira:
-
-     categoria.id = 1
-  ============================================================ */
-
-  const categoriaSelecionadaObj = useMemo(() => {
-
-    if (
-      categoriaSelecionada === "Todas"
-    ) {
-      return null;
-    }
-
-
-    return categorias.find(
-      (categoria) =>
-        String(categoria.nome).toLowerCase() ===
-        String(categoriaSelecionada).toLowerCase()
-    ) ?? null;
-
-  }, [
-    categorias,
-    categoriaSelecionada
-  ]);
-
-
-  /* ============================================================
-     PRODUTOS FILTRADOS
-  ============================================================ */
-
-  const produtosFiltrados = useMemo(() => {
-
-    let lista = [
-      ...produtosPreparados
-    ];
-
-
-    /*
-      FILTRO DE CATEGORIA
-
-      Só aplica quando uma categoria específica
-      estiver selecionada.
-    */
-
-    if (
-      categoriaSelecionada !== "Todas"
-    ) {
-
-      lista = lista.filter((produto) => {
-
-        return (
-          String(produto.categoria).toLowerCase() ===
-          String(categoriaSelecionada).toLowerCase()
+      if (
+        categoriaSelecionada !==
+        "Todas"
+      ) {
+        lista = lista.filter(
+          (produto) => {
+            return (
+              String(
+                produto.categoria
+              ).toLowerCase() ===
+              String(
+                categoriaSelecionada
+              ).toLowerCase()
+            );
+          }
         );
+      }
 
-      });
+      /*
+        BUSCA
+      */
 
-    }
+      if (busca.trim()) {
+        const termo =
+          busca.trim().toLowerCase();
 
+        lista = lista.filter(
+          (produto) => {
+            const nome =
+              String(
+                produto.nome ?? ""
+              ).toLowerCase();
 
-    /* ==========================================================
-       BUSCA
-    ========================================================== */
+            const material =
+              String(
+                produto.material ?? ""
+              ).toLowerCase();
 
-    if (busca.trim()) {
-
-      const termo =
-        busca.trim().toLowerCase();
-
-
-      lista = lista.filter((produto) => {
-
-        const nome =
-          String(
-            produto.nome ?? ""
-          ).toLowerCase();
-
-
-        const material =
-          String(
-            produto.material ?? ""
-          ).toLowerCase();
-
-
-        return (
-          nome.includes(termo) ||
-          material.includes(termo)
+            return (
+              nome.includes(termo) ||
+              material.includes(termo)
+            );
+          }
         );
+      }
 
-      });
+      /*
+        ORDENAÇÃO
+      */
 
-    }
+      switch (sort) {
+        case "preco-asc":
+          lista.sort(
+            (a, b) =>
+              Number(a.preco) -
+              Number(b.preco)
+          );
+          break;
 
+        case "preco-desc":
+          lista.sort(
+            (a, b) =>
+              Number(b.preco) -
+              Number(a.preco)
+          );
+          break;
 
-    /* ==========================================================
-       ORDENAÇÃO
-    ========================================================== */
+        case "nome":
+          lista.sort(
+            (a, b) =>
+              String(
+                a.nome ?? ""
+              ).localeCompare(
+                String(
+                  b.nome ?? ""
+                ),
+                "pt-BR"
+              )
+          );
+          break;
 
-    switch (sort) {
+        default:
+          lista.sort(
+            (a, b) =>
+              Number(b.numero) -
+              Number(a.numero)
+          );
+          break;
+      }
 
-      case "preco-asc":
+      return lista;
+    }, [
+      produtosPreparados,
+      categoriaSelecionada,
+      busca,
+      sort,
+    ]);
 
-        lista.sort(
-          (a, b) =>
-            Number(a.preco) -
-            Number(b.preco)
-        );
-
-        break;
-
-
-      case "preco-desc":
-
-        lista.sort(
-          (a, b) =>
-            Number(b.preco) -
-            Number(a.preco)
-        );
-
-        break;
-
-
-      case "nome":
-
-        lista.sort(
-          (a, b) =>
-            String(a.nome ?? "").localeCompare(
-              String(b.nome ?? ""),
-              "pt-BR"
-            )
-        );
-
-        break;
-
-
-      default:
-
-        lista.sort(
-          (a, b) =>
-            Number(b.numero) -
-            Number(a.numero)
-        );
-
-        break;
-
-    }
-
-
-    return lista;
-
-  }, [
-    produtosPreparados,
-    categoriaSelecionada,
-    busca,
-    sort
-  ]);
-
-
-  /* ============================================================
-     PAGINAÇÃO
-  ============================================================ */
+  /*
+    PAGINAÇÃO
+  */
 
   const totalPages = Math.max(
     1,
     Math.ceil(
       produtosFiltrados.length /
-      PER_PAGE
+        PER_PAGE
     )
   );
 
-
-  const paginaSegura =
-    Math.min(
-      pagina,
-      totalPages
-    );
-
+  const paginaSegura = Math.min(
+    pagina,
+    totalPages
+  );
 
   const inicio =
     (paginaSegura - 1) *
     PER_PAGE;
-
 
   const itensPagina =
     produtosFiltrados.slice(
@@ -490,222 +375,153 @@ export default function Catalogo() {
       inicio + PER_PAGE
     );
 
-
-  /* ============================================================
-     RENDER
-  ============================================================ */
+  /*
+    RENDER
+  */
 
   return (
-
     <main className={styles.page}>
 
       <Header />
 
       <MarqueeBar />
 
-
-   
-
-
       <section
         className={styles.container}
       >
 
-
-        {/* ======================================================
-            FILTRO DE CATEGORIAS
-        ====================================================== */}
+        {/* CATEGORIAS */}
 
         <CategoryTabs
-
           categorias={
             nomesCategorias
           }
-
           active={
             categoriaSelecionada
           }
-
           onChange={
             setCategoriaSelecionada
           }
-
         />
 
-
-    
+        {/* BUSCA E ORDENAÇÃO */}
 
         <div
           className={styles.toolbar}
         >
-
           <CatalogSearchBar
-
             value={busca}
-
             onChange={setBusca}
-
           />
-
 
           <SortDropdown
-
             value={sort}
-
             onChange={setSort}
-
           />
-
         </div>
 
-
-        {/* ======================================================
-            CONTEÚDO
-        ====================================================== */}
+        {/* CATÁLOGO */}
 
         <div
           className={styles.gridArea}
         >
 
-
           {/* LOADING */}
 
           {status === "loading" && (
-
             <SkeletonGrid
               count={PER_PAGE}
             />
-
           )}
-
 
           {/* ERRO */}
 
           {status === "error" && (
-
             <ErrorState
               onRetry={
                 carregarDados
               }
             />
-
           )}
 
-
-          {/* ====================================================
-              CATÁLOGO PRONTO
-          ==================================================== */}
+          {/* PRONTO */}
 
           {status === "ready" && (
+            categoriaSelecionada ===
+            "Todas" ? (
 
-            categoriaSelecionada === "Todas"
+              categorias.length > 0 ? (
 
-              ? (
+                <CategoryMosaic
+                  categorias={
+                    categorias
+                  }
+                  onSelect={
+                    setCategoriaSelecionada
+                  }
+                />
 
-                /*
-                  AQUI NÃO TEM ProductMosaic.
+              ) : (
 
-                  Só categorias.
-                */
-
-                categorias.length > 0
-
-                  ? (
-
-                    <CategoryMosaic
-
-                      categorias={
-                        categorias
-                      }
-
-                      onSelect={
-                        setCategoriaSelecionada
-                      }
-
-                    />
-
-                  )
-
-                  : (
-
-                    <EmptyState />
-
-                  )
+                <EmptyState />
 
               )
 
-              : (
+            ) : (
 
-                /*
-                  AGORA SIM MOSTRAMOS PRODUTOS.
-                */
+              itensPagina.length > 0 ? (
 
-                itensPagina.length > 0
+                <ProductMosaic
+                  produtos={
+                    itensPagina
+                  }
+                />
 
-                  ? (
+              ) : (
 
-                    <ProductMosaic
-
-                      produtos={
-                        itensPagina
-                      }
-
-                    />
-
-                  )
-
-                  : (
-
-                    <EmptyState />
-
-                  )
+                <EmptyState />
 
               )
 
+            )
           )}
-
 
         </div>
 
-
-        {/* ======================================================
-            PAGINAÇÃO
-
-            Só aparece quando estamos dentro de uma categoria.
-        ====================================================== */}
+        {/* PAGINAÇÃO */}
 
         {status === "ready" &&
-
-          categoriaSelecionada !== "Todas" &&
-
-          produtosFiltrados.length > 0 && (
+          categoriaSelecionada !==
+            "Todas" &&
+          produtosFiltrados.length >
+            0 && (
 
             <CatalogPagination
-
               page={
                 paginaSegura
               }
-
               totalPages={
                 totalPages
               }
-
               onChange={
                 setPagina
               }
-
             />
 
           )}
 
-
       </section>
 
+      {/* =====================================================
+          PRÓXIMAS COLEÇÕES
+          ===================================================== */}
 
-    
+<ProximasColecoes
+    onLoginNecessario={() => {
+        window.location.href = "/Login";
+    }}
+/>
 
     </main>
-
   );
-
 }

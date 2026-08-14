@@ -11,7 +11,7 @@
 import Rotas from "./routes/index.jsx"
 
 import SideBarCarrinho from "./components/SideBarCarrinho"
-
+import AvisoLancamento from "./components/User/AvisoLancamento";
 
 import "./styles/cssGlobal.css"
 
@@ -21,7 +21,7 @@ function App() {
      
       <Rotas/> 
        <SideBarCarrinho/>
-       
+       <AvisoLancamento />
       {/* <Cadastro/> */}
      {/* <Produtos/> */}
      {/* <ProdutosAdmin/> */}
