@@ -1,0 +1,47 @@
+/*
+  Classes de botão GLOBAIS (não são CSS Modules — use as strings
+  "addProductBtn" e "btnPadrao" direto no className, sem import de
+  objeto de estilos).
+
+  addProductBtn: botão principal (dourado) — código exatamente como
+  fornecido para o projeto. Se esta classe já existir globalmente no
+  seu app (compartilhada com a página de Produtos), APAGUE este bloco
+  e apenas remova o import deste arquivo em FuncionariosPage.jsx —
+  a classe já vai existir e funcionar do mesmo jeito.
+
+  btnPadrao: assumido como já existente globalmente no seu projeto
+  (conforme você informou). Não está redefinida aqui.
+*/
+
+.addProductBtn {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.18rem;
+  background: #c9a962;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  padding: 0.6rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.addProductBtn p {
+  color: black;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.addProductBtn:hover {
+  background: #937432;
+  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+.addProductBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

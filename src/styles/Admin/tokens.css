@@ -1,0 +1,87 @@
+/*
+  Tokens de design do Painel Administrativo — Joalheria Azory
+  --------------------------------------------------------------
+  Paleta escura + dourado de marca (#C9A962), alinhada às páginas de
+  Produtos/Pedidos/Coleções já existentes.
+
+  Este arquivo NÃO define background de página — o app já cuida disso
+  no layout. Os componentes aqui só usam os tokens abaixo para cor de
+  texto, superfícies de card/input, bordas e estados.
+*/
+
+:root {
+  /* ===== Superfícies (cards, inputs, modal) ===== */
+  --cor-superficie: #141414;
+  --cor-superficie-alt: #1c1a16;
+  --cor-superficie-input: #101010;
+
+  /* ===== Bordas — sempre com leve tom dourado, como no botão de marca ===== */
+  --cor-borda: rgba(201, 169, 110, 0.16);
+  --cor-borda-forte: rgba(201, 169, 110, 0.32);
+  --cor-borda-hover: rgba(201, 169, 110, 0.45);
+
+  /* ===== Texto ===== */
+  --cor-texto-primario: #f3efe6;
+  --cor-texto-secundario: #a79e8e;
+  --cor-texto-terciario: #756c5c;
+  --cor-texto-inverso: #0d0d0d;
+
+  /* ===== Dourado (cor de marca) ===== */
+  --cor-dourado-500: #c9a962;
+  --cor-dourado-700: #937432;
+  --cor-dourado-100: rgba(201, 169, 110, 0.15);
+  --cor-dourado-050: rgba(201, 169, 110, 0.08);
+  --cor-dourado-borda-botao: rgba(201, 169, 110, 0.28);
+
+  /* ===== Estados ===== */
+  --cor-sucesso-texto: #4ade80;
+  --cor-sucesso-fundo: rgba(34, 197, 94, 0.14);
+  --cor-sucesso-borda: rgba(34, 197, 94, 0.35);
+
+  --cor-erro-texto: #f87171;
+  --cor-erro-fundo: rgba(239, 68, 68, 0.14);
+  --cor-erro-borda: rgba(239, 68, 68, 0.35);
+
+  --cor-info-texto: #7da6f0;
+  --cor-info-fundo: rgba(96, 148, 237, 0.14);
+  --cor-info-borda: rgba(96, 148, 237, 0.32);
+
+  /* ===== Tipografia ===== */
+  --fonte-display: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --fonte-corpo: "Manrope", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --tamanho-xs: 0.75rem;
+  --tamanho-sm: 0.8125rem;
+  --tamanho-md: 0.9375rem;
+  --tamanho-lg: 1.125rem;
+  --tamanho-xl: 1.5rem;
+  --tamanho-2xl: 2rem;
+  --tamanho-3xl: 2.75rem;
+
+  /* ===== Espaçamento ===== */
+  --espaco-1: 4px;
+  --espaco-2: 8px;
+  --espaco-3: 12px;
+  --espaco-4: 16px;
+  --espaco-5: 20px;
+  --espaco-6: 24px;
+  --espaco-8: 32px;
+  --espaco-10: 40px;
+  --espaco-12: 48px;
+
+  /* ===== Raios ===== */
+  --raio-sm: 8px;
+  --raio-md: 12px;
+  --raio-lg: 16px;
+  --raio-pill: 999px;
+
+  /* ===== Sombras — discretas, tema escuro não precisa de sombra pesada ===== */
+  --sombra-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --sombra-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --sombra-lg: 0 24px 64px rgba(0, 0, 0, 0.55);
+  --sombra-dourada-hover: 0 0 22px rgba(201, 169, 110, 0.1);
+
+  /* ===== Transições ===== */
+  --transicao-rapida: 150ms ease;
+  --transicao-padrao: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}

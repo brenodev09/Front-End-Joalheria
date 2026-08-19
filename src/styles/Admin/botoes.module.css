@@ -1,0 +1,52 @@
+/*
+  Classes de botão reutilizadas pelo cabeçalho da página e pelos rodapés
+  dos modais. Não é um componente (não tem .jsx correspondente), por isso
+  fica em styles/ junto dos tokens, e não em components/.
+*/
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-2);
+  padding: 10px var(--espaco-5);
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-md);
+  font-weight: 700;
+  border-radius: var(--raio-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transicao-rapida);
+  white-space: nowrap;
+}
+
+.botaoPrimario {
+  color: #fff;
+  background: linear-gradient(135deg, var(--cor-dourado-500), var(--cor-dourado-700));
+  box-shadow: var(--sombra-dourada);
+}
+
+.botaoPrimario:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.botaoSecundario {
+  color: var(--cor-texto-secundario);
+  background: var(--cor-superficie);
+  border-color: var(--cor-borda);
+}
+
+.botaoSecundario:hover {
+  background: var(--cor-superficie-alt);
+  color: var(--cor-texto-primario);
+}
+
+.botaoPerigo {
+  color: #fff;
+  background: var(--cor-erro-texto);
+}
+
+.botaoPerigo:hover {
+  filter: brightness(1.08);
+}

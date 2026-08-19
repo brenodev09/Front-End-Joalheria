@@ -1,0 +1,104 @@
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-3);
+  padding: var(--espaco-4) var(--espaco-5);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-sm);
+  margin-bottom: var(--espaco-6);
+}
+
+.filtrosCampoBusca {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+.filtrosIconeBusca {
+  position: absolute;
+  left: var(--espaco-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-texto-terciario);
+  pointer-events: none;
+}
+
+.filtrosInputBusca {
+  width: 100%;
+  padding: 10px var(--espaco-4) 10px 42px;
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-md);
+  color: var(--cor-texto-primario);
+  background: var(--cor-superficie-input);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pill);
+  transition: border-color var(--transicao-rapida);
+}
+
+.filtrosInputBusca::placeholder {
+  color: var(--cor-texto-terciario);
+}
+
+.filtrosInputBusca:focus {
+  outline: none;
+  border-color: var(--cor-dourado-500);
+}
+
+.filtrosSelect {
+  flex: 0 1 200px;
+  min-width: 170px;
+  padding: 10px var(--espaco-4);
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-md);
+  color: var(--cor-texto-primario);
+  background: var(--cor-superficie-input);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pill);
+  cursor: pointer;
+  transition: border-color var(--transicao-rapida);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A79E8E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--espaco-4) center;
+  padding-right: var(--espaco-8);
+}
+
+.filtrosSelect:focus {
+  outline: none;
+  border-color: var(--cor-dourado-500);
+}
+
+.filtrosBotaoLimpar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-sm);
+  font-weight: 600;
+  color: var(--cor-texto-secundario);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--transicao-rapida);
+}
+
+.filtrosBotaoLimpar:hover {
+  color: var(--cor-dourado-500);
+}
+
+@media (max-width: 640px) {
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtrosSelect,
+  .filtrosCampoBusca {
+    flex: 1 1 auto;
+  }
+}

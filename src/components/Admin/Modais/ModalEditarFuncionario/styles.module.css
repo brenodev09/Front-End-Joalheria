@@ -1,0 +1,608 @@
+/* =========================
+   OVERLAY
+========================= */
+.overlayModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 7, 0.88);
+  backdrop-filter: blur(14px) saturate(0.7);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+.containerModal {
+  width: min(95vw, 90rem);
+  max-height: 92vh;
+  min-height: 70vh;
+
+  background: linear-gradient(135deg, #181818 0%, #0f0f0f 50%, #0a0a0a 100%);
+
+  border-radius: 14px;
+  border: 1px solid rgba(201, 169, 98, 0.18);
+
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  padding: 2rem;
+  overflow: hidden;
+}
+
+/* =========================
+   HEADER
+========================= */
+.cabecalhoModal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 1rem;
+}
+
+.tituloModal {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+}
+
+.subtituloModal {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* =========================
+   STEPPER
+========================= */
+.etapasModal {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  flex: 1;
+  justify-content: center;
+  padding: 0 2rem;
+}
+
+.itemEtapa {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.circuloEtapa {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.85rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #888;
+
+  transition: 0.3s ease;
+}
+
+.etapaAtiva {
+  background: rgba(201, 169, 98, 0.18);
+  border: 1px solid #c9a962;
+  color: #fff;
+}
+
+.textoEtapa {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  transition: 0.3s ease;
+}
+
+.textoEtapaAtiva {
+  color: #c9a962;
+}
+
+.linhaEtapa {
+  width: 50px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.linhaEtapa::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c9a962;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: 0.4s ease;
+}
+
+.linhaPreenchida::after {
+  transform: scaleX(1);
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+.botaoFechar {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.botaoFechar:hover {
+  border-color: rgba(201, 169, 98, 0.5);
+  color: #e8cf94;
+  background: rgba(201, 169, 98, 0.08);
+}
+
+/* =========================
+   LAYOUT PRINCIPAL
+========================= */
+.contentModal {
+  display: flex;
+  gap: 3rem;
+
+  flex: 1;
+  overflow: hidden;
+}
+
+/* =========================
+   PREVIEW
+========================= */
+.containerPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 22rem;
+  flex-shrink: 0;
+}
+
+.containerPreview > p {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cardPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+
+  background: #1c1c1c;
+  border: 0.4px solid rgba(209, 169, 75, 0.241);
+  border-radius: 0.6rem;
+  padding: 2rem 1.4rem;
+}
+
+.fotoPreviewCard {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  background: #272727;
+  border: 2px solid rgba(201, 169, 98, 0.25);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagemPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.iconeAvatarVazio {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.6rem;
+}
+
+.textCard {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.textCard h1 {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.textCard p {
+  color: #9f9f9f;
+  font-size: 0.85rem;
+}
+
+.emailPreview {
+  color: #c9a962 !important;
+  font-size: 0.78rem !important;
+}
+
+.badgeStatusPreview {
+  margin-top: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+}
+
+.badgeAtivo {
+  background: rgba(127, 176, 143, 0.14);
+  border: 1px solid rgba(127, 176, 143, 0.32);
+  color: #7fb08f;
+}
+
+.badgeInativo {
+  background: rgba(158, 166, 194, 0.1);
+  border: 1px solid rgba(158, 166, 194, 0.3);
+  color: #9ea6c2;
+}
+
+/* =========================
+   FORM
+========================= */
+.containerFormulario {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.containerFormulario::-webkit-scrollbar {
+  width: 6px;
+}
+
+.containerFormulario::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 98, 0.3);
+  border-radius: 10px;
+}
+
+/* =========================
+   CAMPOS
+========================= */
+.grupoCampo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labelCampo {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.inputCampo,
+.textareaCampo {
+  width: 100%;
+  background: #171717;
+  border: 1px solid #242424;
+  border-radius: 4px;
+  color: #f3ead8;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.inputCampo::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.inputCampo:focus,
+.textareaCampo:focus {
+  border-color: #c9a962;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* =========================
+   UPLOAD
+========================= */
+.areaUpload {
+  position: relative;
+
+  width: 100%;
+  height: 9rem;
+
+  border-radius: 12px;
+  border: 1px dashed rgba(201, 169, 98, 0.3);
+
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.areaUpload:hover {
+  border-color: rgba(201, 169, 98, 0.6);
+  background: rgba(201, 169, 98, 0.03);
+}
+
+.inputArquivo {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.conteudoUpload {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #bbb;
+  gap: 6px;
+}
+
+.textoUpload {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.textoAuxiliar {
+  color: #8f8f8f;
+  font-size: 0.8rem;
+}
+
+.arquivoSelecionado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatarSelecionado {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* =========================
+   STATUS
+========================= */
+.cabecalhoSecao {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tituloSecao {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #e8cf94;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.linhaTitulo {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 169, 98, 0.4), transparent);
+}
+
+.cardStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px;
+  border-radius: 4px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.switch {
+  position: relative;
+  width: 44px;
+  height: 22px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #333;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  top: 2px;
+  left: 2px;
+
+  background: #fff;
+  border-radius: 50%;
+
+  transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+  background: #c9a962;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(22px);
+}
+
+/* =========================
+   REVISÃO
+========================= */
+.gridRevisao {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.itemRevisao {
+  padding: 16px 18px;
+  min-height: 70px;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.itemRevisao p {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #888;
+  margin: 0 0 4px;
+}
+
+.itemRevisao span {
+  font-size: 15px;
+  color: #fff;
+  word-break: break-word;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+.mensagemErro {
+  font-size: 12.5px;
+  color: #d97373;
+  margin: 0;
+}
+
+.botoesAcao {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.btnCancelar {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0.7rem;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.btnCancelar:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.btnAvancar,
+.btnSalvar {
+  flex: 1;
+  letter-spacing: 0.12em;
+  background: #c9a962;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  border-radius: 4px;
+  padding: 0.7rem;
+  color: black;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btnAvancar:hover,
+.btnSalvar:hover {
+  background: #937432;
+  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+.btnAvancar:disabled,
+.btnSalvar:disabled,
+.btnCancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+@media (max-width: 1100px) {
+  .contentModal {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .containerPreview {
+    width: 100%;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .gridRevisao {
+    grid-template-columns: 1fr;
+  }
+}

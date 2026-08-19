@@ -1,0 +1,65 @@
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--espaco-4);
+  padding: var(--espaco-2) 0;
+}
+
+.iconeAlerta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}
+
+.mensagem {
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-md);
+  line-height: 1.6;
+  color: var(--cor-texto-secundario);
+  margin: 0;
+}
+
+.mensagem strong {
+  color: var(--cor-texto-primario);
+}
+
+/*
+  Variante local de "addProductBtn" para ação destrutiva — não existe
+  um botão de perigo no seu design system ainda, então segui a mesma
+  linguagem visual (mesmo padding, letter-spacing, texto em <p>),
+  só trocando dourado por vermelho.
+*/
+.botaoPerigo {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.18rem;
+  background: #e05252;
+  border: 1px solid rgba(224, 82, 82, 0.28);
+  padding: 0.6rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.botaoPerigo p {
+  color: black;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.botaoPerigo:hover {
+  background: #a83a3a;
+  box-shadow: 0 0 22px rgba(224, 82, 82, 0.15);
+}

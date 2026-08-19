@@ -1,0 +1,77 @@
+.cardMetrica {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-4);
+  padding: var(--espaco-5) var(--espaco-6);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-sm);
+  min-width: 0;
+  transition: border-color var(--transicao-padrao), transform var(--transicao-padrao);
+}
+
+.cardMetrica:hover {
+  border-color: var(--cor-borda-hover);
+  transform: translateY(-2px);
+}
+
+.cardMetricaIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--raio-md);
+  flex-shrink: 0;
+}
+
+.cardMetricaIcone svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tom-dourado {
+  background: var(--cor-dourado-100);
+  color: var(--cor-dourado-500);
+}
+
+.tom-sucesso {
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-texto);
+}
+
+.tom-erro {
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}
+
+.tom-info {
+  background: var(--cor-info-fundo);
+  color: var(--cor-info-texto);
+}
+
+.cardMetricaTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cardMetricaValor {
+  font-family: var(--fonte-display);
+  font-size: var(--tamanho-3xl);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--cor-texto-primario);
+}
+
+.cardMetricaTitulo {
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-sm);
+  color: var(--cor-texto-secundario);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

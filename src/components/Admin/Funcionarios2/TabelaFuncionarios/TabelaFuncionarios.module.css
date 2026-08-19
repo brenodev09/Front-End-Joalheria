@@ -1,0 +1,226 @@
+.envoltorio {
+  background: linear-gradient(155deg, rgba(27, 27, 30, 0.85), rgba(19, 19, 21, 0.85));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 168, 76, 0.21);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Grid compartilhado entre cabeçalho e linhas */
+.cabecalhoTabela,
+.linha {
+  display: grid;
+  grid-template-columns: 1.7fr 1.8fr 1.1fr 1fr 1fr 0.8fr;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 22px;
+}
+
+.cabecalhoTabela {
+  border-bottom: 1px solid var(--azory-hairline);
+  font-family: var(--azory-font-body);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--azory-text-faint);
+}
+
+/* Título da coluna Ações centralizado no cabeçalho */
+.cabecalhoTabela .colunaAcoes {
+  text-align: center;
+}
+
+.corpoTabela {
+  display: flex;
+  flex-direction: column;
+}
+
+.linha {
+  border-bottom: 1px solid var(--azory-hairline);
+  transition: background 0.25s var(--azory-ease);
+}
+
+.linha:last-child {
+  border-bottom: none;
+}
+
+.linha:hover {
+  background: rgba(201, 162, 75, 0.045);
+}
+
+.colunaFuncionario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.avatarFuncionario {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+}
+
+.nomeFuncionario {
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  color: var(--azory-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.colunaEmail {
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  color: var(--azory-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.colunaCargo,
+.colunaAdmissao {
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  color: var(--azory-text-muted);
+}
+
+.colunaAcoes {
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== Ações (editar / excluir) ===== */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.actions button {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  border-radius: 6px;
+
+  color: var(--azory-text-muted);
+  cursor: pointer;
+
+  transition: color 0.25s var(--azory-ease),
+    border-color 0.25s var(--azory-ease),
+    background 0.25s var(--azory-ease);
+}
+
+.actions button:hover {
+  border-color: var(--azory-gold);
+  color: var(--azory-gold-light);
+  background: var(--azory-gold-soft);
+}
+
+.actions button:active {
+  transform: scale(0.95);
+}
+
+.actions .delete:hover {
+  border-color: #d97373;
+  color: #d97373;
+  background: rgba(217, 115, 115, 0.1);
+}
+
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  padding: 70px 20px;
+}
+
+.vazioIcone {
+  color: var(--azory-gold-dim);
+  font-size: 22px;
+}
+
+.vazioTitulo {
+  font-family: var(--azory-font-display);
+  font-size: 18px;
+  color: var(--azory-ivory);
+  margin: 0;
+}
+
+.vazioTexto {
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  color: var(--azory-text-muted);
+  margin: 0;
+}
+
+/* ===== Responsivo: tabela vira lista de cards ===== */
+@media (max-width: 980px) {
+  .cabecalhoTabela {
+    display: none;
+  }
+
+  .linha {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+
+  .linha > span:not(.colunaFuncionario):not(.colunaAcoes) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .linha > span:not(.colunaFuncionario):not(.colunaAcoes)::before {
+    content: attr(data-rotulo);
+    font-family: var(--azory-font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--azory-text-faint);
+    flex-shrink: 0;
+  }
+
+  /* Funcionário mantém avatar + nome lado a lado, só ganha o rótulo acima */
+  .colunaFuncionario::before {
+    content: attr(data-rotulo);
+    font-family: var(--azory-font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--azory-text-faint);
+    width: 100%;
+  }
+
+  .colunaAcoes {
+    margin-top: 4px;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+}

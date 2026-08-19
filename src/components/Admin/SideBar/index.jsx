@@ -63,17 +63,8 @@ export default function Sidebar() {
           <span className={styles.textoNav}>Materiais</span>
         </NavLink>
 
-        <NavLink to="/admin/conta" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/fluency-systems-regular/27/ffffff/user--v1.png"
-            alt="user"
-          />
-          <span className={styles.textoNav}>Conta</span>
-        </NavLink>
 
-        <NavLink
+          <NavLink
           to="/admin/colecoes"
           end
           className={({ isActive }) =>
@@ -88,6 +79,29 @@ export default function Sidebar() {
           />
           <span className={styles.textoNav}>Coleções</span>
         </NavLink>
+
+        <NavLink
+          to="/admin/funcionarios"
+          end
+          className={({ isActive }) =>
+            `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
+          }
+        >
+        <img width="27" height="27" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff"/>
+          <span className={styles.textoNav}>Funcionários</span>
+        </NavLink>
+
+        <NavLink to="/admin/conta" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
+          <img
+            width="27"
+            height="27"
+            src="https://img.icons8.com/fluency-systems-regular/27/ffffff/user--v1.png"
+            alt="user"
+          />
+          <span className={styles.textoNav}>Conta</span>
+        </NavLink>
+
+      
 
       </main>
     </aside>

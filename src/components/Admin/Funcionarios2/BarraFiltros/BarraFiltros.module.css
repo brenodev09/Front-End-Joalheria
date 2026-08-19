@@ -1,0 +1,119 @@
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 18px 20px;
+  background: linear-gradient(155deg, rgba(27, 27, 30, 0.85), rgba(19, 19, 21, 0.85));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.3px solid rgba(201, 168, 76, 0.21);
+  border-radius: 5px;
+}
+
+.campoBusca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #1a1a1a;
+  border: 1px solid var(--azory-hairline);
+  border-radius: 2px;
+  padding: 11px 16px;
+  flex: 1;
+  min-width: 260px;
+  transition: border-color 0.25s var(--azory-ease);
+}
+
+.campoBusca:focus-within {
+  border-color: var(--azory-gold-dim);
+}
+
+.iconeBusca {
+  width: 15px;
+  height: 15px;
+  color: var(--azory-text-muted);
+  flex-shrink: 0;
+}
+
+.inputBusca {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--azory-text);
+  font-family: var(--azory-font-body);
+  font-size: 13px;
+  width: 100%;
+}
+
+.inputBusca::placeholder {
+  color: var(--azory-text-faint);
+}
+
+.gruposFiltro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.campoSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rotuloSelect {
+  font-family: var(--azory-font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--azory-text-faint);
+  padding-left: 2px;
+}
+
+.select {
+  appearance: none;
+  background: var(--azory-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a24b' stroke-width='1.6'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;
+  background-size: 13px;
+  border: 1.3px solid rgba(152, 126, 55, 0.21);
+  padding: 10px 34px 10px 14px;
+  font-family: var(--azory-font-body);
+  font-size: 12.5px;
+  color: var(--azory-text);
+  cursor: pointer;
+  min-width: 160px;
+  transition: border-color 0.25s var(--azory-ease);
+}
+
+.select:hover,
+.select:focus {
+  border-color: var(--azory-gold-dim);
+  outline: none;
+}
+
+.select option {
+  background: var(--azory-surface);
+  color: var(--azory-text);
+}
+
+@media (max-width: 720px) {
+  .barra {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .campoBusca {
+    min-width: 0;
+  }
+  .gruposFiltro {
+    justify-content: space-between;
+  }
+  .campoSelect {
+    flex: 1;
+  }
+  .select {
+    width: 100%;
+    min-width: 0;
+  }
+}

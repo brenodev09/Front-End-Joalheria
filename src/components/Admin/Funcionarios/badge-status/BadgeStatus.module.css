@@ -1,0 +1,40 @@
+.badgeStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  padding: 5px var(--espaco-3);
+  border-radius: var(--raio-pill);
+  font-family: var(--fonte-corpo);
+  font-size: var(--tamanho-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badgeStatusPonto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badgeStatusAtivo {
+  color: var(--cor-sucesso-texto);
+  background: var(--cor-sucesso-fundo);
+  border-color: var(--cor-sucesso-borda);
+}
+
+.badgeStatusAtivo .badgeStatusPonto {
+  background: var(--cor-sucesso-texto);
+}
+
+.badgeStatusInativo {
+  color: var(--cor-erro-texto);
+  background: var(--cor-erro-fundo);
+  border-color: var(--cor-erro-borda);
+}
+
+.badgeStatusInativo .badgeStatusPonto {
+  background: var(--cor-erro-texto);
+}
