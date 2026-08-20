@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import style from './styles.module.css';
+import { api } from "../../../../services/api"
 
 const ETAPAS = [
   { numero: 1, rotulo: 'Informações' },
   { numero: 2, rotulo: 'Revisão' },
 ];
-
-const ESTADO_INICIAL = {
-  nome: '',
-  email: '',
-  telefone: '',
-  cargo: '',
-  dataAdmissao: '',
-};
 
 // Modal de cadastro de funcionário, em duas etapas: Informações (formulário)
 // e Revisão (conferência dos dados antes de salvar). Segue o mesmo padrão
@@ -21,19 +15,32 @@ const ESTADO_INICIAL = {
 // estoque, categoria/material, coleções etc.).
 export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosDisponiveis = [], aoSalvar }) {
   const [etapa, setEtapa] = useState(1);
-  const [dados, setDados] = useState(ESTADO_INICIAL);
+
+  // Campos do formulário como estados individuais (sem objeto ESTADO_INICIAL).
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [cargo, setCargo] = useState("");
+  const [dataAdmissao, setDataAdmissao] = useState("");
   const [ativo, setAtivo] = useState(true);
+
   const [foto, setFoto] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
   const [erro, setErro] = useState('');
   const [salvando, setSalvando] = useState(false);
+
+  const navegar = useNavigate();
 
   // Reseta o formulário toda vez que o modal é reaberto.
   useEffect(() => {
     if (!isOpen) return;
 
     setEtapa(1);
-    setDados(ESTADO_INICIAL);
+    setNome("");
+    setEmail("");
+    setTelefone("");
+    setCargo("");
+    setDataAdmissao("");
     setAtivo(true);
     setFoto(null);
     setFotoPreview(null);
@@ -48,10 +55,6 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
       }
     };
   }, [fotoPreview]);
-
-  function atualizarCampo(campo, valor) {
-    setDados((atual) => ({ ...atual, [campo]: valor }));
-  }
 
   function capturarFoto(event) {
     const arquivo = event.target.files?.[0];
@@ -77,7 +80,7 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
   }
 
   function avancar() {
-    if (!dados.nome.trim() || !dados.email.trim() || !dados.cargo.trim()) {
+    if (!nome.trim() || !email.trim() || !cargo.trim()) {
       mostrarErro('Preencha nome, e-mail e cargo para continuar.');
       return;
     }
@@ -88,24 +91,35 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
     setEtapa(1);
   }
 
-  async function salvarFuncionario() {
-    if (salvando) return;
+  async function salvarFuncionario(event) {
+    event.preventDefault();
     setSalvando(true);
 
-    const novoFuncionario = {
-      id: Date.now(),
-      nome: dados.nome.trim(),
-      email: dados.email.trim(),
-      telefone: dados.telefone.trim() || '—',
-      cargo: dados.cargo.trim(),
-      dataAdmissao: formatarDataAdmissao(dados.dataAdmissao),
-      status: ativo ? 'ativo' : 'inativo',
-      foto: fotoPreview || 'https://img.icons8.com/ios-filled/100/6b6b6b/user--v1.png',
-    };
+    try {
+      const formData = new FormData();
 
-    aoSalvar?.(novoFuncionario);
-    setSalvando(false);
-    fecharModal();
+      formData.append("nome", nome);
+      formData.append("email", email);
+      formData.append("telefone", telefone);
+      formData.append("cargo", cargo);
+      formData.append("data_admissao", dataAdmissao);
+      formData.append("ativo", ativo);
+      if (foto) formData.append("foto", foto);
+
+      await api.post("/funcionarios/adicionar-funcionario", formData);
+
+      fecharModal();
+      aoSalvar?.();
+      navegar("");
+
+    } catch (error) {
+      console.error(error);
+      mostrarErro(
+        error.response?.data?.erro || "Erro ao salvar funcionário. Tente novamente."
+      );
+    } finally {
+      setSalvando(false);
+    }
   }
 
   if (!isOpen) return null;
@@ -149,16 +163,16 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
             <div className={style.cardPreview}>
               <div className={style.fotoPreviewCard}>
                 {fotoPreview ? (
-                  <img src={fotoPreview} alt={dados.nome} className={style.imagemPreview} />
+                  <img src={fotoPreview} alt={nome} className={style.imagemPreview} />
                 ) : (
                   <span className={style.iconeAvatarVazio}>?</span>
                 )}
               </div>
 
               <div className={style.textCard}>
-                <h1>{dados.nome || 'Nome do funcionário'}</h1>
-                <p>{dados.cargo || 'Cargo não informado'}</p>
-                <p className={style.emailPreview}>{dados.email || 'email@azory.com'}</p>
+                <h1>{nome || 'Nome do funcionário'}</h1>
+                <p>{cargo || 'Cargo não informado'}</p>
+                <p className={style.emailPreview}>{email || 'email@azory.com'}</p>
               </div>
 
               <span className={`${style.badgeStatusPreview} ${ativo ? style.badgeAtivo : style.badgeInativo}`}>
@@ -205,8 +219,8 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
                   type="text"
                   className={style.inputCampo}
                   placeholder="Digite o nome do funcionário"
-                  value={dados.nome}
-                  onChange={(e) => atualizarCampo('nome', e.target.value)}
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                 />
               </div>
 
@@ -217,8 +231,8 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
                     type="email"
                     className={style.inputCampo}
                     placeholder="email@azory.com"
-                    value={dados.email}
-                    onChange={(e) => atualizarCampo('email', e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
@@ -228,8 +242,8 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
                     type="tel"
                     className={style.inputCampo}
                     placeholder="(00) 00000-0000"
-                    value={dados.telefone}
-                    onChange={(e) => atualizarCampo('telefone', e.target.value)}
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
                   />
                 </div>
               </div>
@@ -242,12 +256,12 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
                     type="text"
                     className={style.inputCampo}
                     placeholder="Ex.: Vendedor"
-                    value={dados.cargo}
-                    onChange={(e) => atualizarCampo('cargo', e.target.value)}
+                    value={cargo}
+                    onChange={(e) => setCargo(e.target.value)}
                   />
                   <datalist id="cargos-disponiveis">
-                    {cargosDisponiveis.map((cargo) => (
-                      <option key={cargo} value={cargo} />
+                    {cargosDisponiveis.map((cargoDisponivel) => (
+                      <option key={cargoDisponivel} value={cargoDisponivel} />
                     ))}
                   </datalist>
                 </div>
@@ -257,8 +271,8 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
                   <input
                     type="date"
                     className={style.inputCampo}
-                    value={dados.dataAdmissao}
-                    onChange={(e) => atualizarCampo('dataAdmissao', e.target.value)}
+                    value={dataAdmissao}
+                    onChange={(e) => setDataAdmissao(e.target.value)}
                   />
                 </div>
               </div>
@@ -322,27 +336,27 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
               <div className={style.gridRevisao}>
                 <div className={style.itemRevisao}>
                   <p>NOME</p>
-                  <span>{dados.nome || '—'}</span>
+                  <span>{nome || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>CARGO</p>
-                  <span>{dados.cargo || '—'}</span>
+                  <span>{cargo || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>E-MAIL</p>
-                  <span>{dados.email || '—'}</span>
+                  <span>{email || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>TELEFONE</p>
-                  <span>{dados.telefone || '—'}</span>
+                  <span>{telefone || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>DATA DE ADMISSÃO</p>
-                  <span>{formatarDataAdmissao(dados.dataAdmissao)}</span>
+                  <span>{formatarDataAdmissao(dataAdmissao)}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
