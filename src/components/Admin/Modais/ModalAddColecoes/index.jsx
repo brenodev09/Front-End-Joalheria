@@ -1130,7 +1130,7 @@ export default function ModalAdicionarColecao({
 
                 <button
                   type="button"
-                  className={styles.botaoCancelar}
+                  className={`btnPadrao`}
                   onClick={fecharModal}
                   disabled={carregando}
                 >
@@ -1141,7 +1141,7 @@ export default function ModalAdicionarColecao({
 
                 <button
                   type="button"
-                  className={styles.botaoVoltar}
+                  className={`btnPadrao`}
                   onClick={irParaEtapaAnterior}
                   disabled={carregando}
                 >
@@ -1165,6 +1165,8 @@ export default function ModalAdicionarColecao({
                   onClick={irParaProximaEtapa}
                   disabled={!podeAvancar}
                 >
+
+                  
                   Continuar
                 </button>
 

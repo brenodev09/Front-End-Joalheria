@@ -1,119 +1,28 @@
-/* =========================================================================
-   TOKENS
-   ========================================================================= */
+/* =========================================================
+   OVERLAY
+========================================================= */
 
 .overlayModal {
-  --bg-modal: #0f0f0f;
-  --bg-painel: #171717;
-  --bg-input: #171717;
-  --bg-input-hover: #1f1f1f;
-
-  --borda: #242424;
-  --borda-hover: #3a3a3a;
-
-  --dourado: #C9A962;
-  --dourado-claro: #d4b56f;
-  --dourado-escuro: #937432;
-  --dourado-suave: rgba(201, 169, 98, 0.12);
-
-  --texto-primario: #ffffff;
-  --texto-secundario: #9f9f9f;
-  --texto-terciario: #777777;
-
-  --sucesso: #4ade80;
-  --erro: #e2685f;
-
-  --fonte-serif: Georgia, "Times New Roman", serif;
-  --fonte-sans:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
-
   position: fixed;
   inset: 0;
-
-  z-index: 1000;
 
   background: rgba(5, 5, 7, 0.88);
 
   backdrop-filter: blur(14px) saturate(0.7);
+
+  z-index: 1000;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   padding: 20px;
-
-  font-family: var(--fonte-sans);
-
-  animation: aparecerFundo 0.2s ease;
 }
 
 
-/* =========================================================================
-   ANIMAÇÕES
-   ========================================================================= */
-
-@keyframes aparecerFundo {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes entrarModal {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes entrarConteudo {
-  from {
-    opacity: 0;
-    transform: translateX(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes girar {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulsarSucesso {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-
-/* =========================================================================
-   MODAL PRINCIPAL
-   ========================================================================= */
+/* =========================================================
+   CONTAINER PRINCIPAL
+========================================================= */
 
 .modalColecao {
   width: min(95vw, 95rem);
@@ -142,62 +51,58 @@
 
   overflow: hidden;
 
-  animation: entrarModal 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 2rem;
 }
 
 
-/* =========================================================================
+/* =========================================================
    CABEÇALHO
-   ========================================================================= */
+========================================================= */
 
 .cabecalhoModal {
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 1.4rem 2rem 1rem;
+  flex-shrink: 0;
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-  flex-shrink: 0;
+  padding-bottom: 1rem;
 }
 
-
 .tituloModal {
-  font-family: var(--fonte-serif);
+  margin: 0;
 
   font-size: 1.7rem;
 
-  letter-spacing: 1px;
-
-  color: var(--texto-primario);
-
-  margin: 0 0 6px;
-
   font-weight: 500;
-}
 
+  color: #fff;
+
+  letter-spacing: 1px;
+}
 
 .subtituloModal {
-  font-size: 13px;
+  margin: .35rem 0 0;
 
-  color: var(--texto-secundario);
+  color: #8f8f8f;
 
-  margin: 0;
+  font-size: .85rem;
+
+  line-height: 1.5;
 }
 
 
-/* =========================================================================
+/* =========================================================
    BOTÃO FECHAR
-   ========================================================================= */
+========================================================= */
 
 .fecharModal {
   width: 42px;
   height: 42px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-shrink: 0;
 
   border-radius: 50%;
 
@@ -207,265 +112,307 @@
 
   color: #fff;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
 
-  transition: 0.2s ease;
-
-  flex-shrink: 0;
+  transition: .2s ease;
 }
-
 
 .fecharModal:hover {
   background: rgba(255, 255, 255, 0.12);
 
-  color: #fff;
-
-  border-color: transparent;
+  color: #C9A962;
 }
 
-
 .fecharModal:disabled {
-  opacity: 0.4;
+  opacity: .5;
 
   cursor: not-allowed;
 }
 
 
-/* =========================================================================
+/* =========================================================
    STEPPER
-   ========================================================================= */
+========================================================= */
 
 .etapas {
   display: flex;
   align-items: center;
+  justify-content: center;
 
-  padding: 20px 32px;
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 1rem;
 
   flex-shrink: 0;
 
-  overflow-x: auto;
+  padding: 1.2rem 2rem 1rem;
 }
-
 
 .blocoEtapa {
   display: flex;
   align-items: center;
 
-  flex: 1;
+  gap: 1rem;
 }
-
-
-.blocoEtapa:last-child {
-  flex: 0 0 auto;
-}
-
 
 .etapa {
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: .7rem;
 
-  white-space: nowrap;
+  color: #777;
+
+  transition: .3s ease;
 }
 
-
 .marcadorEtapa {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 38px;
-  height: 38px;
-
   border-radius: 50%;
 
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, .15);
 
-  color: #888;
+  color: #777;
 
-  font-size: 0.9rem;
+  font-size: .9rem;
 
-  font-weight: 500;
+  transition: .3s ease;
+}
 
-  transition: 0.3s ease;
+.tituloEtapa {
+  font-size: .85rem;
+
+  letter-spacing: .05rem;
+
+  color: rgba(255, 255, 255, .45);
+
+  transition: .3s ease;
+}
+
+.etapaAtiva {
+  color: #C9A962;
+}
+
+.etapaAtiva .marcadorEtapa {
+  background: rgba(201, 169, 98, .15);
+
+  border-color: #C9A962;
+
+  color: #fff;
+}
+
+.etapaAtiva .tituloEtapa {
+  color: #C9A962;
+}
+
+.etapaConcluida {
+  color: #C9A962;
+}
+
+.etapaConcluida .marcadorEtapa {
+  background: rgba(201, 169, 98, .12);
+
+  border-color: #C9A962;
+
+  color: #C9A962;
+}
+
+.etapaConcluida .tituloEtapa {
+  color: rgba(201, 169, 98, .75);
+}
+
+.linhaEtapa {
+  width: 50px;
+  height: 2px;
+
+  background: rgba(255, 255, 255, .08);
+
+  border-radius: 10px;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.linhaEtapa::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: #C9A962;
+
+  transform: scaleX(0);
+
+  transform-origin: left;
+
+  transition: .4s ease;
+}
+
+.linhaEtapaConcluida::after {
+  transform: scaleX(1);
+}
+
+
+/* =========================================================
+   ERRO
+========================================================= */
+
+.erro {
+  margin: 12px 24px;
+
+  padding: 10px 14px;
+
+  border-radius: 8px;
+
+  background: rgba(168, 50, 50, .12);
+
+  border: 1px solid rgba(168, 50, 50, .25);
+
+  color: #d96a6a;
+
+  font-size: 13px;
 
   flex-shrink: 0;
 }
 
 
-.tituloEtapa {
-  font-size: 0.85rem;
-
-  color: rgba(255, 255, 255, 0.5);
-
-  transition: 0.3s ease;
-
-  font-weight: 400;
-}
-
-
-.etapaAtiva .marcadorEtapa {
-  background: rgba(201, 169, 98, 0.18);
-
-  border: 1px solid var(--dourado);
-
-  color: #fff;
-}
-
-
-.etapaAtiva .tituloEtapa {
-  color: var(--dourado);
-}
-
-
-.etapaConcluida .marcadorEtapa {
-  background: var(--dourado);
-
-  border-color: var(--dourado);
-
-  color: #0a0a0a;
-}
-
-
-.etapaConcluida .tituloEtapa {
-  color: var(--texto-secundario);
-}
-
-
-.linhaEtapa {
-  width: 50px;
-
-  height: 2px;
-
-  background: rgba(255, 255, 255, 0.08);
-
-  border-radius: 10px;
-
-  margin: 0 14px;
-
-  position: relative;
-
-  overflow: hidden;
-
-  transition: 0.3s ease;
-}
-
-
-.linhaEtapaConcluida {
-  background: var(--dourado);
-
-  opacity: 0.6;
-}
-
-
-/* =========================================================================
-   CORPO
-   ========================================================================= */
+/* =========================================================
+   CORPO DO MODAL
+========================================================= */
 
 .corpoModal {
   flex: 1;
 
-  overflow-y: auto;
+  min-height: 0;
 
-  padding: 28px 32px 8px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
 }
 
 
-.corpoModal::-webkit-scrollbar {
+/* =========================================================
+   CONTEÚDO DA ETAPA
+
+   IMPORTANTE:
+   O SCROLL FICA AQUI.
+========================================================= */
+
+.conteudoEtapa {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  padding: .5rem .8rem .5rem 0;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.conteudoEtapa::-webkit-scrollbar {
   width: 6px;
 }
 
-
-.corpoModal::-webkit-scrollbar-track {
+.conteudoEtapa::-webkit-scrollbar-track {
   background: transparent;
 }
 
-
-.corpoModal::-webkit-scrollbar-thumb {
-  background: rgba(201, 169, 98, 0.3);
+.conteudoEtapa::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 98, .3);
 
   border-radius: 10px;
 }
 
-
-.corpoModal::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 169, 98, 0.5);
+.conteudoEtapa::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 169, 98, .55);
 }
 
 
-.conteudoEtapa {
-  animation: entrarConteudo 0.22s ease;
-}
-
+/* =========================================================
+   PAINEL DA ETAPA
+========================================================= */
 
 .painelEtapa {
-  padding-bottom: 24px;
+  width: 100%;
+
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.2rem;
 }
 
+
+/* =========================================================
+   TÍTULOS DAS SEÇÕES
+========================================================= */
 
 .tituloPainel {
-  font-family: var(--fonte-serif);
+  margin: 0;
 
-  font-size: 1.2rem;
-
-  color: var(--texto-primario);
-
-  margin: 0 0 6px;
+  font-size: 1rem;
 
   font-weight: 500;
-}
 
+  color: #C9A962;
+
+  opacity: 90%;
+}
 
 .descricaoPainel {
-  font-size: 13.5px;
+  margin: -0.6rem 0 .2rem;
 
-  color: var(--texto-secundario);
+  color: #8f8f8f;
 
-  margin: 0 0 24px;
+  font-size: .85rem;
+
+  line-height: 1.6;
 }
 
 
-/* =========================================================================
+/* =========================================================
    CAMPOS
-   ========================================================================= */
+========================================================= */
 
 .campoFormulario {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  width: 100%;
 }
-
-
-.linhaCampos {
-  display: grid;
-
-  grid-template-columns: 1fr 1fr;
-
-  gap: 1rem;
-}
-
 
 .rotuloCampo {
-  display: block;
-
   font-size: 12px;
-
-  text-transform: uppercase;
-
-  letter-spacing: 1px;
 
   color: #999;
 
-  margin-bottom: 8px;
-
-  font-weight: 500;
+  letter-spacing: 1px;
 }
 
-
 .entradaTexto,
-.areaTexto,
-.seletorFiltro {
+.areaTexto {
   width: 100%;
 
   background: #171717;
@@ -474,76 +421,523 @@
 
   border-radius: 4px;
 
+  color: #fff;
+
   padding: 12px 14px;
 
   font-size: 14px;
 
-  color: #ffffff;
-
-  font-family: var(--fonte-sans);
-
   outline: none;
 
-  transition: 0.2s ease;
+  transition: .2s ease;
 }
 
+.entradaTexto {
+  height: 44px;
+}
+
+.areaTexto {
+  min-height: 105px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
 
 .entradaTexto::placeholder,
 .areaTexto::placeholder {
-  color: #777;
+  color: #555;
 }
-
-
-.entradaTexto:hover,
-.areaTexto:hover,
-.seletorFiltro:hover {
-  border-color: #3a3a3a;
-
-  background: #1b1b1b;
-}
-
 
 .entradaTexto:focus,
-.areaTexto:focus,
-.seletorFiltro:focus {
-  outline: none;
+.areaTexto:focus {
+  border-color: #C9A962;
 
-  border-color: #c9a962;
-
-  background: #1c1c1c;
-
-  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.08);
+  box-shadow:
+    0 0 0 3px rgba(201, 169, 98, .08);
 }
 
 
-.entradaTexto[type="date"] {
-  color-scheme: dark;
+/* =========================================================
+   LINHA DE CAMPOS
+========================================================= */
+
+.linhaCampos {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 1rem;
+
+  width: 100%;
 }
 
 
-.areaTexto {
-  resize: vertical;
+/* =========================================================
+   STATUS / SELETORES
+========================================================= */
 
-  min-height: 92px;
+.seletorStatus {
+  display: flex;
+
+  gap: .6rem;
+
+  flex-wrap: wrap;
+}
+
+.opcaoStatus {
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: .5rem;
+
+  padding: .6rem 1rem;
+
+  background: #171717;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  color: #999;
+
+  font-size: .85rem;
+
+  cursor: pointer;
+
+  transition: .2s ease;
+}
+
+.opcaoStatus:hover {
+  border-color: rgba(201, 169, 98, .35);
+
+  color: #fff;
+}
+
+.opcaoStatusAtiva {
+  background: rgba(201, 169, 98, .1);
+
+  border-color: #C9A962;
+
+  color: #C9A962;
+}
+
+.pontoStatus {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #555;
+}
+
+.pontoAtivo {
+  background: #C9A962;
+
+  box-shadow:
+    0 0 8px rgba(201, 169, 98, .4);
+}
+
+.pontoRascunho {
+  background: #777;
+}
+
+
+/* =========================================================
+   TEXTO AUXILIAR
+========================================================= */
+
+.textoAuxiliar {
+  margin: 0;
+
+  color: #8f8f8f;
+
+  font-size: .85rem;
 
   line-height: 1.5;
 }
 
 
-/* =========================================================================
-   SELECT
-   ========================================================================= */
+/* =========================================================
+   DESTAQUE
+========================================================= */
 
-.seletorFiltro {
-  appearance: none;
+.campoDestaque {
+  width: 100%;
 
-  -webkit-appearance: none;
+  background: #171717;
 
-  -moz-appearance: none;
+  border: 1px solid #242424;
 
-  cursor: pointer;
+  border-radius: 4px;
+
+  padding: .8rem 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
 }
 
+.rotuloDestaque {
+  margin: 0 0 .25rem;
+
+  color: #fff;
+
+  font-size: 1rem;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+.toggle {
+  position: relative;
+
+  width: 44px;
+  height: 22px;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 999px;
+
+  background: #333;
+
+  cursor: pointer;
+
+  transition: .3s ease;
+}
+
+.toggleBolinha {
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  top: 2px;
+  left: 2px;
+
+  background: #fff;
+
+  border-radius: 50%;
+
+  transition: .3s ease;
+}
+
+.toggleAtivo {
+  background: #C9A962;
+}
+
+.toggleAtivo .toggleBolinha {
+  transform: translateX(22px);
+}
+
+
+/* =========================================================
+   ETAPA 2 — UPLOAD
+========================================================= */
+
+.grelhaUpload {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) 280px;
+
+  gap: 1.5rem;
+
+  width: 100%;
+}
+
+.areaUpload {
+  position: relative;
+
+  width: 100%;
+
+  min-height: 290px;
+
+  border-radius: 12px;
+
+  border: 1px dashed rgba(201, 169, 98, .3);
+
+  background: rgba(255, 255, 255, .02);
+
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: .5rem;
+
+  transition: .2s ease;
+}
+
+.areaUpload:hover,
+.areaUploadArrastando {
+  border-color: rgba(201, 169, 98, .6);
+
+  background: rgba(201, 169, 98, .03);
+}
+
+.iconeUpload {
+  color: #C9A962;
+
+  margin-bottom: .4rem;
+}
+
+.textoUploadPrincipal {
+  margin: 0;
+
+  color: #bbb;
+
+  font-size: .95rem;
+}
+
+.textoUploadSecundario {
+  margin: 0;
+
+  color: #777;
+
+  font-size: .85rem;
+}
+
+.linkSelecionar {
+  color: #C9A962;
+
+  text-decoration: underline;
+}
+
+.textoUploadFormatos {
+  margin: .4rem 0 0;
+
+  color: #555;
+
+  font-size: .75rem;
+
+  letter-spacing: .05rem;
+}
+
+.inputArquivoOculto {
+  display: none;
+}
+
+
+/* =========================================================
+   PREVIEW DA IMAGEM
+========================================================= */
+
+.previewImagem {
+  width: 100%;
+
+  min-height: 290px;
+
+  background: #171717;
+
+  border: 1px solid #242424;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.imagemPreview {
+  width: 100%;
+
+  flex: 1;
+
+  min-height: 240px;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.acoesPreview {
+  display: flex;
+
+  align-items: center;
+
+  gap: .7rem;
+
+  padding: .8rem;
+
+  background: #171717;
+
+  border-top: 1px solid rgba(255, 255, 255, .05);
+}
+
+.botaoTrocarImagem,
+.botaoRemoverImagem {
+  flex: 1;
+
+  min-height: 38px;
+
+  border-radius: 4px;
+
+  font-size: .8rem;
+
+  cursor: pointer;
+
+  transition: .2s ease;
+}
+
+.botaoTrocarImagem {
+  background: #C9A962;
+
+  border: 1px solid rgba(201, 169, 110, .28);
+
+  color: #000;
+
+  font-weight: 600;
+}
+
+.botaoTrocarImagem:hover {
+  background: #937432;
+}
+
+.botaoRemoverImagem {
+  background: transparent;
+
+  border: 1px solid rgba(255, 255, 255, .1);
+
+  color: #999;
+}
+
+.botaoRemoverImagem:hover {
+  border-color: rgba(255, 255, 255, .2);
+
+  color: #fff;
+}
+
+.infoImagem {
+  padding: 1rem;
+
+  background: #171717;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  align-self: start;
+}
+
+.tituloInfoImagem {
+  margin: 0 0 .5rem;
+
+  color: #fff;
+
+  font-size: .95rem;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   ETAPA 3 — FILTROS
+========================================================= */
+
+.barraFiltrosProdutos {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) 180px 180px;
+
+  gap: .8rem;
+
+  width: 100%;
+}
+
+.campoBusca {
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+
+  gap: .7rem;
+
+  padding: 0 .9rem;
+
+  background: #171717;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  color: #777;
+
+  transition: .2s ease;
+}
+
+.campoBusca:focus-within {
+  border-color: #C9A962;
+
+  box-shadow:
+    0 0 0 3px rgba(201, 169, 98, .08);
+}
+
+.entradaBusca {
+  width: 100%;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #fff;
+
+  font-size: .85rem;
+}
+
+.entradaBusca::placeholder {
+  color: #555;
+}
+
+.seletorFiltro {
+  height: 44px;
+
+  width: 100%;
+
+  padding: 0 12px;
+
+  background: #171717;
+
+  border: 1px solid #242424;
+
+  border-radius: 4px;
+
+  color: #fff;
+
+  font-size: .85rem;
+
+  outline: none;
+
+  cursor: pointer;
+
+  appearance: none;
+
+  transition: .2s ease;
+}
+
+.seletorFiltro:focus {
+  border-color: #C9A962;
+
+  box-shadow:
+    0 0 0 3px rgba(201, 169, 98, .08);
+}
 
 .seletorFiltro option {
   background: #151515;
@@ -552,656 +946,154 @@
 }
 
 
-/* =========================================================================
-   STATUS
-   ========================================================================= */
-
-.seletorStatus {
-  display: flex;
-
-  gap: 10px;
-}
-
-
-.opcaoStatus {
-  display: flex;
-  align-items: center;
-
-  gap: 8px;
-
-  padding: 10px 18px;
-
-  border-radius: 4px;
-
-  border: 1px solid #242424;
-
-  background: #171717;
-
-  color: #999;
-
-  font-size: 13.5px;
-
-  font-weight: 500;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
-}
-
-
-.opcaoStatus:hover {
-  border-color: #3a3a3a;
-
-  color: #fff;
-}
-
-
-.opcaoStatusAtiva {
-  border-color: var(--dourado);
-
-  background: rgba(201, 169, 98, 0.10);
-
-  color: #fff;
-}
-
-
-.pontoStatus {
-  width: 7px;
-
-  height: 7px;
-
-  border-radius: 50%;
-
-  flex-shrink: 0;
-}
-
-
-.pontoAtivo {
-  background: var(--sucesso);
-}
-
-
-.pontoRascunho {
-  background: #777;
-}
-
-
-/* =========================================================================
-   DESTAQUE / TOGGLE
-   ========================================================================= */
-
-.campoDestaque {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 20px;
-
-  padding: 12px;
-
-  border: 1px solid #242424;
-
-  border-radius: 4px;
-
-  background: #171717;
-}
-
-
-.rotuloDestaque {
-  font-size: 1rem;
-
-  color: #fff;
-
-  margin: 0 0 4px;
-
-  font-weight: 500;
-}
-
-
-.textoAuxiliar {
-  font-size: 12.5px;
-
-  color: #8f8f8f;
-
-  margin: 0;
-
-  line-height: 1.5;
-}
-
-
-.toggle {
-  position: relative;
-
-  width: 44px;
-
-  height: 22px;
-
-  border-radius: 999px;
-
-  border: none;
-
-  background: #333;
-
-  cursor: pointer;
-
-  flex-shrink: 0;
-
-  transition: 0.3s;
-}
-
-
-.toggleBolinha {
-  position: absolute;
-
-  top: 2px;
-
-  left: 2px;
-
-  width: 18px;
-
-  height: 18px;
-
-  border-radius: 50%;
-
-  background: #fff;
-
-  transition: 0.3s;
-}
-
-
-.toggleAtivo {
-  background: var(--dourado);
-}
-
-
-.toggleAtivo .toggleBolinha {
-  transform: translateX(22px);
-
-  background: #fff;
-}
-
-
-/* =========================================================================
-   ETAPA 2 — UPLOAD
-   ========================================================================= */
-
-.grelhaUpload {
-  display: grid;
-
-  grid-template-columns: 1.4fr 1fr;
-
-  gap: 20px;
-
-  align-items: start;
-}
-
-
-.areaUpload {
-  position: relative;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: center;
-
-  text-align: center;
-
-  gap: 6px;
-
-  min-height: 260px;
-
-  border: 1px dashed rgba(201, 169, 98, 0.3);
-
-  border-radius: 12px;
-
-  background: rgba(255, 255, 255, 0.02);
-
-  cursor: pointer;
-
-  transition: 0.2s ease;
-
-  padding: 24px;
-}
-
-
-.areaUpload:hover {
-  border-color: rgba(201, 169, 98, 0.6);
-
-  background: rgba(201, 169, 98, 0.03);
-}
-
-
-.areaUploadArrastando {
-  border-color: var(--dourado);
-
-  background: rgba(201, 169, 98, 0.06);
-
-  transform: scale(0.99);
-}
-
-
-.iconeUpload {
-  color: var(--dourado);
-
-  margin-bottom: 8px;
-
-  font-size: 22px;
-}
-
-
-.textoUploadPrincipal {
-  font-size: 14.5px;
-
-  color: #fff;
-
-  margin: 0;
-
-  font-weight: 500;
-}
-
-
-.textoUploadSecundario {
-  font-size: 13px;
-
-  color: #9f9f9f;
-
-  margin: 0;
-}
-
-
-.linkSelecionar {
-  color: var(--dourado);
-
-  text-decoration: underline;
-
-  text-underline-offset: 2px;
-}
-
-
-.textoUploadFormatos {
-  font-size: 11.5px;
-
-  color: #777;
-
-  margin: 10px 0 0;
-
-  letter-spacing: 0.03em;
-
-  text-transform: uppercase;
-}
-
-
-.inputArquivoOculto {
-  display: none;
-}
-
-
-/* =========================================================================
-   PREVIEW DA IMAGEM
-   ========================================================================= */
-
-.previewImagem {
-  position: relative;
-
-  min-height: 260px;
-
-  border-radius: 12px;
-
-  overflow: hidden;
-
-  border: 1px solid rgba(201, 169, 98, 0.18);
-
-  background: #171717;
-}
-
-
-.imagemPreview {
-  width: 100%;
-
-  height: 260px;
-
-  object-fit: cover;
-
-  display: block;
-}
-
-
-.acoesPreview {
-  position: absolute;
-
-  bottom: 12px;
-
-  left: 12px;
-
-  right: 12px;
-
-  display: flex;
-
-  gap: 8px;
-}
-
-
-.botaoTrocarImagem,
-.botaoRemoverImagem {
-  flex: 1;
-
-  padding: 9px 12px;
-
-  border-radius: 4px;
-
-  font-size: 12.5px;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
-
-  backdrop-filter: blur(6px);
-}
-
-
-.botaoTrocarImagem {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-
-  background: rgba(20, 20, 20, 0.72);
-
-  color: #fff;
-}
-
-
-.botaoTrocarImagem:hover {
-  background: rgba(20, 20, 20, 0.9);
-}
-
-
-.botaoRemoverImagem {
-  border: 1px solid rgba(226, 104, 95, 0.5);
-
-  background: rgba(60, 20, 18, 0.75);
-
-  color: #ffb3ac;
-}
-
-
-.botaoRemoverImagem:hover {
-  background: rgba(80, 24, 20, 0.9);
-}
-
-
-.infoImagem {
-  padding: 18px;
-
-  border: 1px solid #242424;
-
-  border-radius: 4px;
-
-  background: #171717;
-}
-
-
-.tituloInfoImagem {
-  font-size: 13.5px;
-
-  color: #fff;
-
-  margin: 0 0 8px;
-
-  font-weight: 600;
-}
-
-
-/* =========================================================================
-   ETAPA 3 — PRODUTOS
-   ========================================================================= */
-
-.barraFiltrosProdutos {
-  display: grid;
-
-  grid-template-columns: 1.6fr 1fr 1fr;
-
-  gap: 12px;
-
-  margin-bottom: 16px;
-}
-
-
-.campoBusca {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 0 14px;
-
-  border: 1px solid #242424;
-
-  border-radius: 4px;
-
-  background: #171717;
-
-  color: #777;
-
-  transition: 0.2s ease;
-}
-
-
-.campoBusca:focus-within {
-  border-color: var(--dourado);
-
-  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.08);
-}
-
-
-.entradaBusca {
-  flex: 1;
-
-  border: none;
-
-  background: transparent;
-
-  padding: 11px 0;
-
-  font-size: 13.5px;
-
-  color: #fff;
-
-  outline: none;
-}
-
-
-.entradaBusca::placeholder {
-  color: #777;
-}
-
+/* =========================================================
+   RESUMO DOS PRODUTOS
+========================================================= */
 
 .resumoContagem {
   display: flex;
 
   align-items: center;
+  justify-content: space-between;
 
-  gap: 14px;
+  padding: .7rem 0;
 
-  font-size: 12.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, .05);
 
-  color: #9f9f9f;
+  color: #777;
 
-  margin-bottom: 14px;
+  font-size: .8rem;
 }
-
 
 .contagemSelecionados {
-  padding: 4px 10px;
-
-  border-radius: 999px;
-
-  background: rgba(201, 169, 98, 0.1);
-
-  color: var(--dourado);
-
-  font-weight: 600;
+  color: #C9A962;
 }
 
-
 .rotuloSecaoProdutos {
-  font-size: 12px;
+  margin: 0;
 
-  text-transform: uppercase;
+  color: #C9A962;
 
-  letter-spacing: 1px;
-
-  color: #999;
+  font-size: .85rem;
 
   font-weight: 500;
 
-  margin: 0 0 10px;
+  letter-spacing: .05rem;
 }
 
 
-/* =========================================================================
+/* =========================================================
    LISTA DE PRODUTOS
-   ========================================================================= */
+========================================================= */
 
 .listaProdutos {
-  display: grid;
-
-  grid-template-columns: repeat(2, 1fr);
-
-  gap: 10px;
-
-  max-height: 300px;
-
-  overflow-y: auto;
-
-  padding: 4px 4px 4px 0;
-
-  margin-bottom: 4px;
-}
-
-
-.listaProdutos::-webkit-scrollbar {
-  width: 6px;
-}
-
-
-.listaProdutos::-webkit-scrollbar-thumb {
-  background: rgba(201, 169, 98, 0.3);
-
-  border-radius: 10px;
-}
-
-
-.cardProduto {
   display: flex;
 
+  flex-direction: column;
+
+  gap: .5rem;
+
+  width: 100%;
+}
+
+.cardProduto {
+  width: 100%;
+
+  min-height: 78px;
+
+  display: flex;
   align-items: center;
 
-  gap: 12px;
+  gap: .8rem;
 
-  padding: 10px;
+  padding: .7rem;
+
+  background: #171717;
 
   border: 1px solid #242424;
 
   border-radius: 4px;
 
-  background: #171717;
-
-  cursor: pointer;
+  color: #fff;
 
   text-align: left;
 
-  transition: 0.2s ease;
+  cursor: pointer;
 
-  font-family: var(--fonte-sans);
+  transition: .2s ease;
 }
-
 
 .cardProduto:hover {
-  border-color: #3a3a3a;
+  border-color: rgba(201, 169, 98, .35);
 
-  background: #1c1c1c;
+  background: #1b1b1b;
 }
-
 
 .produtoSelecionado {
-  border-color: var(--dourado);
+  border-color: rgba(201, 169, 98, .65);
 
-  background: rgba(201, 169, 98, 0.08);
+  background: rgba(201, 169, 98, .06);
 }
-
 
 .checkboxProduto {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  width: 18px;
-
-  height: 18px;
-
-  border-radius: 4px;
-
-  border: 1px solid #3a3a3a;
-
-  color: #0a0a0a;
+  width: 20px;
+  height: 20px;
 
   flex-shrink: 0;
 
-  transition: 0.2s ease;
-}
+  border: 1px solid rgba(255, 255, 255, .2);
 
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #000;
+
+  transition: .2s ease;
+}
 
 .checkboxMarcado {
-  background: var(--dourado);
+  background: #C9A962;
 
-  border-color: var(--dourado);
+  border-color: #C9A962;
 }
-
 
 .miniaturaProduto {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  width: 46px;
-
-  height: 46px;
-
-  border-radius: 4px;
-
-  background: #1c1c1c;
-
-  color: var(--dourado);
+  width: 54px;
+  height: 54px;
 
   flex-shrink: 0;
-}
 
+  border-radius: 8px;
+
+  overflow: hidden;
+
+  background: #272727;
+
+  color: #C9A962;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .infoCardProduto {
-  display: flex;
+  min-width: 0;
 
+  display: flex;
   flex-direction: column;
 
-  gap: 2px;
+  gap: .25rem;
 
-  min-width: 0;
+  flex: 1;
 }
 
-
 .nomeProduto {
-  font-size: 13.5px;
-
   color: #fff;
+
+  font-size: .9rem;
 
   font-weight: 500;
 
@@ -1212,127 +1104,129 @@
   text-overflow: ellipsis;
 }
 
-
 .categoriaProduto {
-  font-size: 11.5px;
-
   color: #777;
-}
 
+  font-size: .75rem;
+}
 
 .linhaPrecoEstoque {
   display: flex;
 
   align-items: center;
 
-  gap: 8px;
+  gap: .8rem;
 
-  margin-top: 3px;
+  flex-wrap: wrap;
 }
 
-
 .precoProduto {
-  font-size: 12.5px;
+  color: #C9A962;
 
-  color: var(--dourado);
+  font-size: .8rem;
 
   font-weight: 600;
 }
 
+.estoqueProduto,
+.estoqueZerado {
+  font-size: .75rem;
+}
 
 .estoqueProduto {
-  font-size: 11px;
-
   color: #777;
 }
 
-
 .estoqueZerado {
-  font-size: 11px;
-
-  color: var(--erro);
+  color: #a83232;
 }
 
 
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
 .estadoVazioProdutos {
-  grid-column: 1 / -1;
+  padding: 2rem;
 
   text-align: center;
 
-  padding: 32px 12px;
-
   color: #777;
 
-  font-size: 13px;
+  font-size: .85rem;
+
+  background: rgba(255, 255, 255, .02);
+
+  border: 1px solid rgba(255, 255, 255, .05);
+
+  border-radius: 8px;
 }
 
 
-/* =========================================================================
+/* =========================================================
    PRODUTOS SELECIONADOS
-   ========================================================================= */
+========================================================= */
 
 .secaoSelecionados {
-  margin-top: 20px;
+  display: flex;
 
-  padding-top: 18px;
+  flex-direction: column;
 
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: .7rem;
+
+  padding-top: .5rem;
 }
-
 
 .grelhaSelecionados {
-  display: flex;
+  display: grid;
 
-  flex-wrap: wrap;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
-  gap: 8px;
+  gap: .5rem;
 }
-
 
 .chipProdutoSelecionado {
-  display: flex;
+  min-width: 0;
 
+  display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: .6rem;
 
-  padding: 6px 8px 6px 6px;
-
-  border: 1px solid #242424;
-
-  border-radius: 999px;
+  padding: .5rem;
 
   background: #171717;
-}
 
+  border: 1px solid rgba(201, 169, 98, .15);
+
+  border-radius: 8px;
+}
 
 .miniaturaChip {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  width: 26px;
-
-  height: 26px;
-
-  border-radius: 50%;
-
-  background: #1f1f1f;
-
-  color: var(--dourado);
+  width: 32px;
+  height: 32px;
 
   flex-shrink: 0;
+
+  border-radius: 6px;
+
+  background: #272727;
+
+  color: #C9A962;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
 .nomeChip {
-  font-size: 12.5px;
+  flex: 1;
 
-  color: #fff;
+  min-width: 0;
 
-  max-width: 120px;
+  color: #bbb;
+
+  font-size: .78rem;
 
   white-space: nowrap;
 
@@ -1341,271 +1235,253 @@
   text-overflow: ellipsis;
 }
 
-
 .botaoRemoverChip {
-  display: flex;
+  width: 28px;
+  height: 28px;
 
-  align-items: center;
-
-  justify-content: center;
-
-  width: 22px;
-
-  height: 22px;
-
-  border-radius: 50%;
+  flex-shrink: 0;
 
   border: none;
+
+  border-radius: 5px;
 
   background: transparent;
 
   color: #777;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
 
-  transition: 0.2s ease;
-
-  flex-shrink: 0;
+  transition: .2s ease;
 }
-
 
 .botaoRemoverChip:hover {
-  background: rgba(226, 104, 95, 0.15);
+  background: rgba(168, 50, 50, .12);
 
-  color: var(--erro);
+  color: #d96a6a;
 }
 
 
-/* =========================================================================
+/* =========================================================
    ETAPA 4 — REVISÃO
-   ========================================================================= */
+========================================================= */
 
 .resumoColecao {
   display: flex;
 
   flex-direction: column;
 
-  gap: 16px;
-}
+  gap: 1rem;
 
+  width: 100%;
+}
 
 .cardResumo {
-  padding: 20px;
+  width: 100%;
 
-  border: 1px solid #242424;
+  padding: 1.2rem;
 
-  border-radius: 4px;
+  border-radius: 10px;
 
-  background: #171717;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, .03),
+      rgba(255, 255, 255, .01)
+    );
+
+  border: 1px solid rgba(201, 169, 98, .12);
 }
-
-
-.cabecalhoCardResumo {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  margin-bottom: 4px;
-}
-
 
 .tituloCardResumo {
-  font-size: 12px;
+  margin: 0 0 1rem;
 
-  text-transform: uppercase;
+  color: #C9A962;
 
-  letter-spacing: 1px;
-
-  color: var(--dourado);
+  font-size: .9rem;
 
   font-weight: 500;
 
-  margin: 0 0 14px;
+  letter-spacing: .05rem;
 }
 
+.cabecalhoCardResumo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 .grelhaResumo {
   display: grid;
 
   grid-template-columns: 1fr 1fr;
 
-  gap: 16px;
+  gap: 1rem;
 }
 
+.rotuloResumo {
+  margin: 0 0 .35rem;
+
+  color: #777;
+
+  font-size: 11px;
+
+  letter-spacing: 1px;
+}
+
+.valorResumo {
+  margin: 0;
+
+  color: #fff;
+
+  font-size: .9rem;
+
+  line-height: 1.5;
+
+  word-break: break-word;
+}
 
 .spanCompleto {
   grid-column: 1 / -1;
 }
 
-
-.rotuloResumo {
-  font-size: 11.5px;
-
-  color: #777;
-
-  margin: 0 0 4px;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.04em;
-}
-
-
-.valorResumo {
-  font-size: 14px;
-
-  color: #fff;
-
-  margin: 0;
-
-  line-height: 1.5;
-}
-
-
 .imagemResumo {
   width: 100%;
 
-  max-height: 220px;
+  max-height: 260px;
 
   object-fit: cover;
 
-  border-radius: 4px;
-
   display: block;
-}
 
+  border-radius: 8px;
+
+  border: 1px solid rgba(255, 255, 255, .06);
+}
 
 .botaoVerProdutos {
-  border: none;
-
   background: transparent;
 
-  color: var(--dourado);
+  border: none;
 
-  font-size: 12.5px;
+  color: #C9A962;
 
-  font-weight: 600;
+  font-size: .8rem;
 
   cursor: pointer;
-
-  text-decoration: underline;
-
-  text-underline-offset: 2px;
 }
 
+.botaoVerProdutos:hover {
+  text-decoration: underline;
+}
 
 .grelhaThumbnails {
   display: grid;
 
-  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
 
-  gap: 8px;
+  gap: .6rem;
 
-  margin-top: 12px;
+  margin-top: 1rem;
 }
-
 
 .thumbnailProduto {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
   aspect-ratio: 1;
 
-  border-radius: 4px;
+  overflow: hidden;
 
-  background: #1c1c1c;
+  border-radius: 8px;
 
-  border: 1px solid #242424;
+  background: #272727;
 
-  color: var(--dourado);
+  color: #C9A962;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
-/* =========================================================================
+/* =========================================================
    CONFIRMAÇÃO
-   ========================================================================= */
+========================================================= */
 
 .cardConfirmacao {
   display: flex;
 
   align-items: center;
 
-  gap: 16px;
+  gap: 1rem;
 
-  padding: 20px;
+  padding: 1.2rem;
 
-  border: 1px solid rgba(201, 169, 98, 0.3);
+  border-radius: 10px;
 
-  border-radius: 4px;
+  background: rgba(201, 169, 98, .05);
 
-  background: rgba(201, 169, 98, 0.06);
+  border: 1px solid rgba(201, 169, 98, .15);
 }
 
-
 .iconeConfirmacao {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
   width: 44px;
-
   height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   border-radius: 50%;
 
-  background: var(--dourado);
+  background: rgba(201, 169, 98, .12);
 
-  color: #0a0a0a;
-
-  flex-shrink: 0;
+  color: #C9A962;
 }
 
-
 .tituloConfirmacao {
-  font-size: 14.5px;
+  margin: 0 0 .25rem;
 
   color: #fff;
 
-  margin: 0 0 3px;
+  font-size: .9rem;
 
-  font-weight: 600;
+  font-weight: 500;
 }
-
 
 .textoConfirmacao {
-  font-size: 12.5px;
-
-  color: #9f9f9f;
-
   margin: 0;
+
+  color: #777;
+
+  font-size: .8rem;
 }
 
 
-/* =========================================================================
+/* =========================================================
    RODAPÉ
-   ========================================================================= */
+========================================================= */
 
 .rodapeModal {
+  flex-shrink: 0;
+
   display: flex;
 
   align-items: center;
 
   justify-content: space-between;
 
-  padding: 18px 32px;
+  gap: 1rem;
 
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 1rem;
 
-  flex-shrink: 0;
+  padding-top: 1.2rem;
+
+  border-top: 1px solid rgba(255, 255, 255, .06);
 }
-
 
 .rodapeEsquerda,
 .rodapeDireita {
@@ -1613,284 +1489,297 @@
 
   align-items: center;
 
-  gap: 1rem;
+  gap: .8rem;
 }
 
 
-/* =========================================================================
-   BOTÕES
-   ========================================================================= */
+/* =========================================================
+   BOTÃO CANCELAR
+========================================================= */
 
 .botaoCancelar,
 .botaoVoltar {
-  padding: 11px 22px;
+  min-width: 10rem;
 
-  border-radius: 4px;
+  min-height: 42px;
 
-  border: 1px solid #242424;
+  padding: .7rem 1.2rem;
 
   background: transparent;
 
+  border: 1px solid rgba(255, 255, 255, .1);
+
+  border-radius: 4px;
+
   color: #999;
 
-  font-size: 13.5px;
-
-  font-weight: 500;
+  font-size: .8rem;
 
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition: .2s ease;
 }
-
 
 .botaoCancelar:hover,
 .botaoVoltar:hover {
-  border-color: #3a3a3a;
+  border-color: rgba(255, 255, 255, .2);
 
   color: #fff;
-
-  background: rgba(255, 255, 255, 0.03);
 }
 
 
-.botaoAvancar,
+/* =========================================================
+   BOTÃO AVANÇAR
+========================================================= */
+
+.botaoAvancar {
+ background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    cursor: pointer;
+    letter-spacing: 0.18rem;
+    background: #C9A962;
+    border: 1px solid rgba(201, 169, 110, 0.28);
+    padding: .75rem;
+    width: 10rem;
+    position: relative;
+    overflow: hidden;
+    
+    transition: all .3s ease;
+
+    
+        color: black;
+        font-size: 12px;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
+
+
+
+    
+}
+
+.botaoAvancar:hover:not(:disabled) {
+  background: #937432;
+
+  box-shadow:
+    0 0 22px rgba(201, 169, 110, .1);
+}
+
+.botaoAvancar:disabled {
+  opacity: .35;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   BOTÃO SALVAR
+========================================================= */
+
 .botaoSalvar {
+  width: 16rem;
+
+  min-height: 42px;
+
   display: flex;
 
   align-items: center;
 
   justify-content: center;
 
-  gap: 10px;
+  gap: 1rem;
 
-  padding: 11px 26px;
-
-  min-width: 12rem;
-
-  border-radius: 4px;
-
-  border: 1px solid rgba(201, 169, 110, 0.28);
+  letter-spacing: .18rem;
 
   background: #C9A962;
 
-  color: #0a0a0a;
+  border: 1px solid rgba(201, 169, 110, .28);
 
-  font-size: 13.5px;
+  border-radius: 2px;
 
-  font-weight: 700;
+  padding: .6rem;
+
+  transition: all .3s ease;
+
+  color: #000;
+
+  font-weight: 600;
 
   cursor: pointer;
-
-  transition: all 0.3s ease;
-
-  letter-spacing: 0.08rem;
 }
 
-
-.botaoAvancar:hover,
-.botaoSalvar:hover {
+.botaoSalvar:hover:not(:disabled) {
   background: #937432;
 
-  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
-
-  transform: translateY(-1px);
+  box-shadow:
+    0 0 22px rgba(201, 169, 110, .1);
 }
 
-
-.botaoAvancar:disabled {
-  opacity: 0.35;
+.botaoSalvar:disabled {
+  opacity: .5;
 
   cursor: not-allowed;
-
-  transform: none;
-
-  filter: none;
 }
 
-
 .botaoCarregando {
-  opacity: 0.85;
-
   cursor: wait;
 }
 
 
-/* =========================================================================
+/* =========================================================
    SPINNER
-   ========================================================================= */
+========================================================= */
 
 .spinner {
-  width: 14px;
-
-  height: 14px;
+  width: 16px;
+  height: 16px;
 
   border-radius: 50%;
 
-  border: 2px solid rgba(10, 10, 10, 0.35);
+  border: 2px solid rgba(0, 0, 0, .25);
 
-  border-top-color: #0a0a0a;
+  border-top-color: #000;
 
-  animation: girar 0.7s linear infinite;
+  animation: girar .7s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 
-/* =========================================================================
+/* =========================================================
    TELA DE SUCESSO
-   ========================================================================= */
+========================================================= */
 
 .telaSucesso {
+  flex: 1;
+
+  min-height: 450px;
+
   display: flex;
 
   flex-direction: column;
 
   align-items: center;
 
-  text-align: center;
-
-  padding: 56px 24px 40px;
-
-  animation: entrarConteudo 0.25s ease;
-}
-
-
-.circuloSucesso {
-  display: flex;
-
-  align-items: center;
-
   justify-content: center;
 
-  width: 72px;
+  gap: 1rem;
 
-  height: 72px;
+  text-align: center;
+}
+
+.circuloSucesso {
+  width: 74px;
+  height: 74px;
 
   border-radius: 50%;
 
-  background: rgba(201, 169, 98, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  border: 1.5px solid var(--dourado);
+  color: #C9A962;
 
-  color: var(--dourado);
+  background: rgba(201, 169, 98, .1);
 
-  margin-bottom: 20px;
+  border: 1px solid rgba(201, 169, 98, .25);
 
-  animation: pulsarSucesso 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 0 30px rgba(201, 169, 98, .08);
 }
 
-
 .tituloSucesso {
-  font-family: var(--fonte-serif);
-
-  font-size: 20px;
+  margin: .5rem 0 0;
 
   color: #fff;
 
-  margin: 0 0 8px;
-}
+  font-size: 1.4rem;
 
+  font-weight: 500;
+}
 
 .textoSucesso {
-  font-size: 13.5px;
+  max-width: 450px;
 
-  color: #9f9f9f;
+  margin: 0;
 
-  margin: 0 0 28px;
+  color: #777;
 
-  max-width: 360px;
+  font-size: .9rem;
+
+  line-height: 1.6;
 }
 
 
-/* =========================================================================
-   RESPONSIVIDADE
-   ========================================================================= */
+/* =========================================================
+   RESPONSIVO
+========================================================= */
 
 @media (max-width: 1100px) {
 
   .modalColecao {
-    width: 95vw;
+    width: min(95vw, 75rem);
+
+    min-height: 75vh;
+
+    padding: 1.5rem;
   }
 
   .grelhaUpload {
     grid-template-columns: 1fr;
   }
 
-  .listaProdutos {
-    grid-template-columns: 1fr;
+  .infoImagem {
+    width: 100%;
   }
 
   .barraFiltrosProdutos {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
+
+  .campoBusca {
+    grid-column: 1 / -1;
+  }
+
 }
 
 
-@media (max-width: 860px) {
-
-  .modalColecao {
-    max-height: 92vh;
-  }
-
-  .grelhaResumo {
-    grid-template-columns: 1fr;
-  }
-
-  .linhaCampos {
-    grid-template-columns: 1fr;
-  }
-
-  .etapas {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .corpoModal {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .cabecalhoModal {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .rodapeModal {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-
-@media (max-width: 560px) {
+@media (max-width: 800px) {
 
   .overlayModal {
-    padding: 0;
-
-    align-items: flex-end;
+    padding: 10px;
   }
 
   .modalColecao {
     width: 100%;
 
-    max-width: 100%;
+    height: 95vh;
 
-    max-height: 94vh;
+    max-height: 95vh;
 
     min-height: 0;
 
-    border-radius: 18px 18px 0 0;
+    padding: 1.2rem;
   }
 
-  .cabecalhoModal,
-  .etapas,
-  .corpoModal,
-  .rodapeModal {
-    padding-left: 18px;
+  .etapas {
+    justify-content: flex-start;
 
-    padding-right: 18px;
+    overflow-x: auto;
+
+    padding-left: 0;
+    padding-right: 0;
   }
 
-  .tituloModal {
-    font-size: 1.4rem;
+  .etapas::-webkit-scrollbar {
+    display: none;
   }
 
   .tituloEtapa {
@@ -1898,21 +1787,63 @@
   }
 
   .linhaEtapa {
-    margin: 0 8px;
+    width: 30px;
   }
 
   .linhaCampos {
     grid-template-columns: 1fr;
   }
 
-  .seletorStatus {
-    flex-direction: column;
+  .barraFiltrosProdutos {
+    grid-template-columns: 1fr;
+  }
+
+  .campoBusca {
+    grid-column: auto;
+  }
+
+  .grelhaSelecionados {
+    grid-template-columns: 1fr;
+  }
+
+  .grelhaResumo {
+    grid-template-columns: 1fr;
+  }
+
+  .spanCompleto {
+    grid-column: auto;
+  }
+
+  .grelhaThumbnails {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+}
+
+
+@media (max-width: 550px) {
+
+  .modalColecao {
+    padding: 1rem;
+  }
+
+  .tituloModal {
+    font-size: 1.4rem;
+  }
+
+  .subtituloModal {
+    font-size: .75rem;
+  }
+
+  .fecharModal {
+    width: 36px;
+    height: 36px;
   }
 
   .rodapeModal {
-    flex-direction: column-reverse;
+    flex-direction: column;
 
-    gap: 10px;
+    align-items: stretch;
   }
 
   .rodapeEsquerda,
@@ -1925,11 +1856,18 @@
   .botaoAvancar,
   .botaoSalvar {
     width: 100%;
-
-    justify-content: center;
   }
 
-  .campoDestaque {
+  .rodapeDireita {
+    justify-content: stretch;
+  }
+
+  .grelhaThumbnails {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cardConfirmacao {
     align-items: flex-start;
   }
+
 }

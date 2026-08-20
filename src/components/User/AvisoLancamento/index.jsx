@@ -2,11 +2,15 @@
 //  AVISO DE LANÇAMENTO (modal exibido no primeiro login após o lançamento)
 //  Caminho sugerido: src/components/User/AvisoLancamento/index.jsx
 //
+//  Conceito visual: um estojo de joia se abre — a tampa (emblema AZORY)
+//  balança para trás em 3D, um facho de luz acende e revela a coleção
+//  deitada sobre uma "almofada", com brilhos de faceta no instante da abertura.
+//
 //  Comportamento:
 //   - Quando o usuário está logado, busca em /colecoes/avisos/:usuarioId
 //     as coleções que ele pediu para ser avisado, que JÁ lançaram e que
 //     ainda não foram notificadas.
-//   - Se houver, abre o modal comemorativo.
+//   - Se houver, abre o modal.
 //   - Ao fechar (ou clicar em "Ver coleção"), marca como notificado no
 //     backend para nunca mais aparecer.
 //
@@ -17,15 +21,29 @@
 // ============================================================================
 
 import { useEffect, useState } from "react";
+import { X, Gem, ArrowRight } from "lucide-react";
 import styles from "./styles.module.css";
 import { api } from "../../../services/api";
 import { useAuth } from "../../../context/authContext";
+import { resolveImage } from "../Catalogo/azoryUtils";
+
+// Atributos que já aparecem na faixa do seu site — reaproveitados no ticker
+// do rodapé do modal para reforçar a identidade da marca.
+const ATRIBUTOS = [
+    "Peças numeradas",
+    "Certificado de autenticidade",
+    "Garantia vitalícia",
+    "Lapidação artesanal",
+];
+
+const DURACAO_SAIDA_MS = 240;
 
 export default function AvisoLancamento({ onVerColecao }) {
     const { usuario } = useAuth();
 
     const [avisos, setAvisos] = useState([]);
     const [aberto, setAberto] = useState(false);
+    const [saindo, setSaindo] = useState(false);
 
     useEffect(() => {
         // Sem usuário logado, não faz nada.
@@ -49,6 +67,31 @@ export default function AvisoLancamento({ onVerColecao }) {
         buscarAvisos();
     }, [usuario]);
 
+    // Trava o scroll do fundo e permite fechar com ESC enquanto o estojo
+    // estiver aberto.
+    useEffect(() => {
+        if (!aberto) {
+            return;
+        }
+
+        const overflowOriginal = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        function aoPressionarTecla(evento) {
+            if (evento.key === "Escape") {
+                fechar();
+            }
+        }
+
+        window.addEventListener("keydown", aoPressionarTecla);
+
+        return () => {
+            document.body.style.overflow = overflowOriginal;
+            window.removeEventListener("keydown", aoPressionarTecla);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [aberto]);
+
     async function marcarComoNotificado() {
         if (!usuario?.id) {
             return;
@@ -63,15 +106,27 @@ export default function AvisoLancamento({ onVerColecao }) {
         }
     }
 
-    async function fechar() {
-        await marcarComoNotificado();
-        setAberto(false);
+    // Dispara a animação de saída e só desmonta/marca como notificado
+    // depois que ela termina.
+    function fechar() {
+        if (saindo) return;
+        setSaindo(true);
+        setTimeout(async () => {
+            await marcarComoNotificado();
+            setAberto(false);
+            setSaindo(false);
+        }, DURACAO_SAIDA_MS);
     }
 
-    async function verColecao(colecao) {
-        await marcarComoNotificado();
-        setAberto(false);
-        onVerColecao?.(colecao);
+    function verColecao(colecao) {
+        if (saindo) return;
+        setSaindo(true);
+        setTimeout(async () => {
+            await marcarComoNotificado();
+            setAberto(false);
+            setSaindo(false);
+            onVerColecao?.(colecao);
+        }, DURACAO_SAIDA_MS);
     }
 
     if (!aberto || avisos.length === 0) {
@@ -82,12 +137,16 @@ export default function AvisoLancamento({ onVerColecao }) {
     const [principal, ...outras] = avisos;
 
     return (
-        <div className={styles.overlay} onClick={fechar}>
+        <div
+            className={`${styles.overlay} ${saindo ? styles.overlaySaindo : ""}`}
+            onClick={fechar}
+        >
             <div
-                className={styles.modal}
+                className={`${styles.estojo} ${saindo ? styles.estojoSaindo : ""}`}
                 onClick={(evento) => evento.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
+                aria-labelledby="aviso-lancamento-titulo"
             >
                 <button
                     type="button"
@@ -95,50 +154,82 @@ export default function AvisoLancamento({ onVerColecao }) {
                     onClick={fechar}
                     aria-label="Fechar aviso"
                 >
-                    ×
+                    <X size={16} strokeWidth={1.6} />
                 </button>
 
-                <span className={styles.confete}>✦</span>
+                {/* Tampa do estojo — balança para trás em 3D ao abrir */}
+                <div className={styles.tampa} aria-hidden="true">
+                    <Gem size={20} strokeWidth={1.3} className={styles.tampaGema} />
+                    <span className={styles.tampaEmblema}>AZORY</span>
+                    <span className={styles.tampaLinha} />
+                    <span className={styles.tampaSub}>uma coleção acaba de chegar</span>
+                </div>
 
-                <h2 className={styles.titulo}>
-                    A coleção que você aguardava chegou!
-                </h2>
+                {/* Interior do estojo — revelado quando a tampa abre */}
+                <div className={styles.base}>
+                    <span className={styles.facho} aria-hidden="true" />
+                    <span className={styles.brilho1} aria-hidden="true" />
+                    <span className={styles.brilho2} aria-hidden="true" />
+                    <span className={styles.brilho3} aria-hidden="true" />
+                    <span className={styles.brilho4} aria-hidden="true" />
 
-                <p className={styles.destaque}>{principal.nome}</p>
+                    <span className={styles.eyebrow}>A peça que você aguardava chegou</span>
 
-                {principal.descricao && (
-                    <p className={styles.descricao}>{principal.descricao}</p>
-                )}
+                    <h2 id="aviso-lancamento-titulo" className={styles.titulo}>
+                        {principal.nome}
+                    </h2>
 
-                {outras.length > 0 && (
-                    <div className={styles.outras}>
-                        <span className={styles.outrasRotulo}>
-                            Também disponíveis:
-                        </span>
-                        <ul>
+                    {principal.imagem && (
+                        <div className={styles.coxim}>
+                            <div className={styles.vitrine}>
+                                <img src={resolveImage(principal.imagem)} alt={principal.nome} />
+                            </div>
+                        </div>
+                    )}
+
+                    {principal.descricao && (
+                        <p className={styles.descricao}>{principal.descricao}</p>
+                    )}
+
+                    {outras.length > 0 && (
+                        <div className={styles.gemas}>
                             {outras.map((colecao) => (
-                                <li key={colecao.id}>{colecao.nome}</li>
+                                <span key={colecao.id} className={styles.gema}>
+                                    <Gem size={11} strokeWidth={1.6} />
+                                    {colecao.nome}
+                                </span>
                             ))}
-                        </ul>
+                        </div>
+                    )}
+
+                    <div className={styles.acoes}>
+                        <button
+                            type="button"
+                            className={styles.botaoPrincipal}
+                            onClick={() => verColecao(principal)}
+                        >
+                            <span>Ver coleção</span>
+                            <ArrowRight size={16} strokeWidth={1.8} />
+                        </button>
+
+                        <button
+                            type="button"
+                            className={styles.botaoSecundario}
+                            onClick={fechar}
+                        >
+                            Agora não
+                        </button>
                     </div>
-                )}
 
-                <div className={styles.acoes}>
-                    <button
-                        type="button"
-                        className={styles.botaoPrincipal}
-                        onClick={() => verColecao(principal)}
-                    >
-                        Ver coleção
-                    </button>
-
-                    <button
-                        type="button"
-                        className={styles.botaoSecundario}
-                        onClick={fechar}
-                    >
-                        Agora não
-                    </button>
+                    <div className={styles.ticker} aria-hidden="true">
+                        <div className={styles.tickerTrilha}>
+                            {[...ATRIBUTOS, ...ATRIBUTOS].map((atributo, indice) => (
+                                <span key={`${atributo}-${indice}`} className={styles.tickerItem}>
+                                    {atributo}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

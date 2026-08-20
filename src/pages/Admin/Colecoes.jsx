@@ -517,7 +517,7 @@ export default function Colecoes() {
             onClick={() => abrirModal("add")}
           >
             <Plus size={16} />
-            Nova coleção
+            <p>  Nova coleção</p>
           </button>
         </div>
       </header>
@@ -825,9 +825,7 @@ export default function Colecoes() {
                       </button>
 
                       <div className={styles.acoesColecao}>
-                        <button className={styles.botaoAcao} title="Analytics">
-                          <BarChart3 size={16} />
-                        </button>
+                       
 
                         <button
                           className={styles.botaoAcao}
