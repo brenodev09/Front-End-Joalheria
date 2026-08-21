@@ -233,6 +233,16 @@ function criarFormData({
 
 function prepararColecaoParaModal(colecao) {
   if (!colecao) return null;
+
+  const produtos = (colecao.produtos || []).map((produto) => ({
+    id: produto.id,
+    name: produto.nome,
+    category: produto.categoria,
+    material: produto.material,
+    price: produto.preco != null ? Number(produto.preco) : null,
+    imageUrl: obterImagem(produto.imagem),
+  }));
+
   return {
     id: colecao.id,
     name: colecao.nome || "",
@@ -243,8 +253,11 @@ function prepararColecaoParaModal(colecao) {
     createdAt: colecao.created_at ? String(colecao.created_at).split("T")[0] : "",
     startDate: colecao.data_inicio ? String(colecao.data_inicio).split("T")[0] : "",
     endDate: colecao.data_fim ? String(colecao.data_fim).split("T")[0] : "",
-    productCount: colecao.quantidade_produtos || 0,
-    products: colecao.produtos || [],
+    // GET /colecoes (lista) manda "quantidade_produtos" (COUNT) mas não o array;
+    // GET /colecoes/:id manda o array "produtos" mas não recalcula a contagem.
+    // Usamos o array quando disponível; senão caímos pro count da listagem.
+    productCount: colecao.produtos ? produtos.length : colecao.quantidade_produtos || 0,
+    products: produtos,
   };
 }
 
@@ -300,9 +313,23 @@ export default function Colecoes() {
 
   // ---- MODAIS --------------------------------------------------------------
 
-  function abrirModal(tipo, colecao = null) {
-    setColecaoSelecionada(colecao);
+  // A listagem (GET /colecoes) só traz "quantidade_produtos" (contagem),
+  // e não o array de produtos em si — isso vem apenas de GET /colecoes/:id.
+  // Por isso, para os modais que precisam listar os produtos (detalhes/edição),
+  // buscamos a coleção completa antes de abrir o modal.
+  async function abrirModal(tipo, colecao = null) {
     setModalAberto(tipo);
+    setColecaoSelecionada(colecao);
+
+    if ((tipo === "details" || tipo === "edit") && colecao?.id) {
+      try {
+        const { data } = await api.get(`/colecoes/${colecao.id}`);
+        setColecaoSelecionada(data);
+      } catch (error) {
+        console.error("Erro ao carregar detalhes da coleção:", error);
+        // mantém os dados resumidos da listagem como fallback
+      }
+    }
   }
 
   function fecharModal() {
