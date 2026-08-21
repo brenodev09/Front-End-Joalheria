@@ -110,7 +110,7 @@ export default function ModalAdicionarFuncionario({ isOpen, fecharModal, cargosD
 
       fecharModal();
       aoSalvar?.();
-      navegar("");
+      navegar("/admin/funcionarios");
 
     } catch (error) {
       console.error(error);

@@ -7,6 +7,7 @@ import TabelaFuncionarios from '../../components/Admin/Funcionarios2/TabelaFunci
 import ModalAdicionarFuncionario from '../../components/Admin/Modais/ModalAddFuncionario/ModalAddFuncionario';
 import ModalEditarFuncionario from '../../components/Admin/Modais/ModalEditarFuncionario/ModalEditarFuncionario';
 import PaginacaoAdmin from '../../components/Admin/PaginacaoAdmin/PaginacaoAdmin';
+import {api} from "../../services/api"
 
 const ITENS_POR_PAGINA = 5;
 
@@ -88,19 +89,24 @@ export default function GestaoFuncionarios() {
   const [modalAdicionarAberto, setModalAdicionarAberto] = useState(false);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
+  const [erro, setErro] = useState("")
 
   // Carrega a lista de funcionários uma única vez, na página — é aqui (e não
   // dentro de TabelaFuncionarios) porque os cards de métrica e os filtros
   // precisam da lista inteira, não só da página atual.
   useEffect(() => {
     setCarregando(true);
-    const tempo = setTimeout(() => {
-      setFuncionarios(FUNCIONARIOS_MOCK);
-      setCarregando(false);
-    }, 400);
-    return () => clearTimeout(tempo);
-  }, []);
 
+    api.get("/funcionarios/funcionarios-cadastrados")  .then((resposta) => {
+        setFuncionarios(resposta.data);
+      }).catch(() => {
+        setErro("Erro ao exibir os funcionários cadastrados");
+      }).finally(() => {
+        setCarregando(false);
+      });
+
+  }, []);
+  
   const cargosDisponiveis = useMemo(
     () => [...new Set(funcionarios.map((f) => f.cargo))].sort(),
     [funcionarios]
@@ -108,8 +114,8 @@ export default function GestaoFuncionarios() {
 
   const metricas = useMemo(() => {
     const total = funcionarios.length;
-    const ativos = funcionarios.filter((f) => f.status === STATUS_FUNCIONARIO.ATIVO).length;
-    const inativos = funcionarios.filter((f) => f.status === STATUS_FUNCIONARIO.INATIVO).length;
+    const ativos = funcionarios.filter((f) => f.ativo === 1 || f.ativo === true).length;
+    const inativos = funcionarios.filter((f) => f.ativo === 0 || f.ativo === false).length;
     const cargos = cargosDisponiveis.length;
 
     return { total, ativos, inativos, cargos };
@@ -126,7 +132,10 @@ export default function GestaoFuncionarios() {
     const termo = busca.trim().toLowerCase();
 
     return funcionarios.filter((funcionario) => {
-      const passaStatus = statusFiltro === 'todos' || funcionario.status === statusFiltro;
+      const statusFuncionario = funcionario.ativo === 1 || funcionario.ativo === true
+        ? STATUS_FUNCIONARIO.ATIVO
+        : STATUS_FUNCIONARIO.INATIVO;
+      const passaStatus = statusFiltro === 'todos' || statusFuncionario === statusFiltro;
       if (!passaStatus) return false;
 
       const passaCargo = cargoFiltro === 'todos' || funcionario.cargo === cargoFiltro;

@@ -153,7 +153,7 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
             <div className={style.cardPreview}>
               <div className={style.fotoPreviewCard}>
                 {fotoPreview ? (
-                  <img src={fotoPreview} alt={dados.nome} className={style.imagemPreview} />
+                  <img src={`http://localhost:3000${funcionario.foto}`} alt={dados.nome} className={style.imagemPreview} />
                 ) : (
                   <span className={style.iconeAvatarVazio}>?</span>
                 )}

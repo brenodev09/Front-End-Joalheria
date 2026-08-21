@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Pencil, Trash2 } from 'lucide-react';
 import styles from './TabelaFuncionarios.module.css';
 import BadgeStatusFuncionario from '../BadgeStatusFuncionario/BadgeStatusFuncionario';
+import {api} from "../../../../services/api"
 
 const variantesLista = {
   oculto: {},
@@ -12,6 +13,24 @@ const variantesLinha = {
   oculto: { opacity: 0, y: 12 },
   visivel: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
+
+// A API retorna data_admissao como string ISO (ex.: "2023-04-04T03:00:00.000Z").
+// Aqui convertemos pra dd/mm/aaaa, que é o formato exibido na tabela.
+function formatarDataAdmissao(valor) {
+  if (!valor) return '—';
+
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) return '—';
+
+  return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+}
+
+// A API retorna "ativo" como 1/0 (ou true/false), mas o BadgeStatusFuncionario
+// espera as strings "ativo"/"inativo". Normalizamos aqui antes de repassar.
+function normalizarStatus(ativo) {
+  const ehAtivo = ativo === 1 || ativo === true || ativo === '1';
+  return ehAtivo ? 'ativo' : 'inativo';
+}
 
 // Componente 100% de apresentação: quem busca os funcionários é a página
 // (FuncionariosPage.jsx), que já cuida de filtro, busca e paginação sobre a
@@ -51,7 +70,7 @@ export default function TabelaFuncionarios({ funcionarios, carregando, onEditar,
               <span className={styles.colunaFuncionario} data-rotulo="Funcionário">
                 <img
                   className={styles.avatarFuncionario}
-                  src={funcionario.foto}
+                  src={`http://localhost:3000${funcionario.foto}`}
                   alt={funcionario.nome}
                 />
                 <span className={styles.nomeFuncionario}>{funcionario.nome}</span>
@@ -66,11 +85,11 @@ export default function TabelaFuncionarios({ funcionarios, carregando, onEditar,
               </span>
 
               <span className={styles.colunaAdmissao} data-rotulo="Admissão">
-                {funcionario.dataAdmissao}
+                {formatarDataAdmissao(funcionario.data_admissao)}
               </span>
 
               <span className={styles.colunaStatus} data-rotulo="Status">
-                <BadgeStatusFuncionario status={funcionario.status} />
+                <BadgeStatusFuncionario status={normalizarStatus(funcionario.ativo)} />
               </span>
 
               <span className={styles.colunaAcoes} data-rotulo="Ações">
