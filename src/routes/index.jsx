@@ -16,6 +16,7 @@ import Materiais from "../pages/Admin/Materiais.jsx";
 import InfoConta from "../pages/Admin/infoConta.jsx";
 import Pedidos from "../pages/Admin/GestaoPedidos.jsx"
 import Funcionarios from "../pages/Admin/FuncionariosPage.jsx"
+import Cupons from "../pages/Admin/Cupons.jsx"
 
 // paginas do usuario
 import UserLayout from "../Layouts/UserLayout.jsx";
@@ -60,6 +61,7 @@ export default function Rotas() {
                         <Route path="pedidos" element={<Pedidos />} />
                         <Route path="colecoes" element={<Colecoes />} />
                         <Route path="funcionarios" element={<Funcionarios />} />
+                        <Route path="cupons" element={<Cupons />} />
                     </Route>
                 </Route>
 
