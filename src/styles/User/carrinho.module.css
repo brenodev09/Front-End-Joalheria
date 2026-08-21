@@ -671,6 +671,40 @@
   letter-spacing: 0;
 }
 
+.pixQr {
+  width: 220px;
+  height: 220px;
+  padding: 12px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.pixCodigoWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pixCodigo {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  color: rgba(245, 245, 245, 0.75);
+  background: transparent;
+  border: 1px solid var(--linha-sutil);
+  font-size: 12px;
+}
+
+.pixCopiar {
+  align-self: center;
+  padding: 10px 16px;
+  color: var(--preto);
+  background: var(--dourado);
+  border: 1px solid var(--dourado);
+  cursor: pointer;
+}
+
 /* ==========================================================================
    Resumo do pedido
    ========================================================================== */

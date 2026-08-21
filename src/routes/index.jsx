@@ -43,6 +43,7 @@ export default function Rotas() {
 
     return (
         <>
+        <script src="https://sdk.mercadopago.com/js/v2"></script>
             <Routes>
                 <Route path="/" element={<Inicial />} />
                 <Route path="/produto/:id" element={<PagProduto />} />
