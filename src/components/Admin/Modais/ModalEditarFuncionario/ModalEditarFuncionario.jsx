@@ -1,23 +1,45 @@
 import { useEffect, useState } from 'react';
 import style from './styles.module.css';
+import {api} from "../../../../services/api"
 
 const ETAPAS = [
   { numero: 1, rotulo: 'Informações' },
   { numero: 2, rotulo: 'Revisão' },
 ];
 
-// Converte "dd/mm/aaaa" (formato usado na listagem) pro formato "aaaa-mm-dd"
-// que o <input type="date"> espera.
-function paraInputDate(dataBr) {
-  if (!dataBr || !dataBr.includes('/')) return '';
-  const [dia, mes, ano] = dataBr.split('/');
-  return `${ano}-${mes}-${dia}`;
+// Converte a data de admissão vinda do funcionário (pode chegar como ISO
+// "aaaa-mm-ddTHH:MM:ss.000Z" da API, ou como "dd/mm/aaaa" em telas antigas)
+// pro formato "aaaa-mm-dd" que o <input type="date"> espera.
+function paraInputDate(valor) {
+  if (!valor) return '';
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
+    return valor.slice(0, 10);
+  }
+
+  if (valor.includes('/')) {
+    const [dia, mes, ano] = valor.split('/');
+    return `${ano}-${mes}-${dia}`;
+  }
+
+  return '';
 }
 
+// Converte "aaaa-mm-dd" (valor do <input type="date">) pra "dd/mm/aaaa",
+// usado só na tela de revisão.
 function formatarDataAdmissao(valorIso) {
   if (!valorIso) return '—';
   const [ano, mes, dia] = valorIso.split('-');
   return `${dia}/${mes}/${ano}`;
+}
+
+// Monta a URL da foto pro <img>: se for um preview novo (blob: local), usa
+// direto; se for o caminho relativo salvo no banco (ex.: "/uploads/x.png"),
+// prefixa com o host da API.
+function resolverFotoUrl(caminho) {
+  if (!caminho) return null;
+  if (caminho.startsWith('blob:') || caminho.startsWith('http')) return caminho;
+  return `http://localhost:3000${caminho}`;
 }
 
 // Modal de edição de funcionário, no mesmo padrão em duas etapas do modal de
@@ -25,8 +47,14 @@ function formatarDataAdmissao(valorIso) {
 // funcionário selecionado preenchidos.
 export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionario, cargosDisponiveis = [], aoSalvar }) {
   const [etapa, setEtapa] = useState(1);
-  const [dados, setDados] = useState({ nome: '', email: '', telefone: '', cargo: '', dataAdmissao: '' });
+
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [cargo, setCargo] = useState("");
+  const [dataAdmissao, setDataAdmissao] = useState("");
   const [ativo, setAtivo] = useState(true);
+
   const [foto, setFoto] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
   const [erro, setErro] = useState('');
@@ -37,14 +65,12 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
     if (!isOpen || !funcionario) return;
 
     setEtapa(1);
-    setDados({
-      nome: funcionario.nome || '',
-      email: funcionario.email || '',
-      telefone: funcionario.telefone && funcionario.telefone !== '—' ? funcionario.telefone : '',
-      cargo: funcionario.cargo || '',
-      dataAdmissao: paraInputDate(funcionario.dataAdmissao),
-    });
-    setAtivo(funcionario.status === 'ativo');
+    setNome(funcionario.nome || '');
+    setEmail(funcionario.email || '');
+    setTelefone(funcionario.telefone && funcionario.telefone !== '—' ? funcionario.telefone : '');
+    setCargo(funcionario.cargo || '');
+    setDataAdmissao(paraInputDate(funcionario.data_admissao));
+    setAtivo(funcionario.ativo === 1 || funcionario.ativo === true);
     setFoto(null);
     setFotoPreview(funcionario.foto || null);
     setErro('');
@@ -58,10 +84,6 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
       }
     };
   }, [fotoPreview]);
-
-  function atualizarCampo(campo, valor) {
-    setDados((atual) => ({ ...atual, [campo]: valor }));
-  }
 
   function capturarFoto(event) {
     const arquivo = event.target.files?.[0];
@@ -81,7 +103,7 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
   }
 
   function avancar() {
-    if (!dados.nome.trim() || !dados.email.trim() || !dados.cargo.trim()) {
+    if (!nome.trim() || !email.trim() || !cargo.trim()) {
       mostrarErro('Preencha nome, e-mail e cargo para continuar.');
       return;
     }
@@ -92,27 +114,37 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
     setEtapa(1);
   }
 
-  async function salvarAlteracoes() {
-    if (salvando || !funcionario) return;
+  async function salvarAlteracoes(event) {
+    event.preventDefault();
     setSalvando(true);
 
-    const funcionarioAtualizado = {
-      ...funcionario,
-      nome: dados.nome.trim(),
-      email: dados.email.trim(),
-      telefone: dados.telefone.trim() || '—',
-      cargo: dados.cargo.trim(),
-      dataAdmissao: formatarDataAdmissao(dados.dataAdmissao),
-      status: ativo ? 'ativo' : 'inativo',
-      foto: fotoPreview || funcionario.foto,
-    };
+    try {
+      const formData = new FormData();
 
-    aoSalvar?.(funcionarioAtualizado);
-    setSalvando(false);
-    fecharModal();
+      formData.append("nome", nome);
+      formData.append("email", email);
+      formData.append("cargo", cargo);
+      formData.append("telefone", telefone);
+      formData.append("data_admissao", dataAdmissao);
+      formData.append("ativo", ativo);
+      if (foto) formData.append("foto", foto);
+
+      const resposta = await api.put(`/funcionarios/editar-funcionario/${funcionario.id}`, formData);
+
+      fecharModal();
+      aoSalvar?.(resposta.data);
+
+    } catch (error) {
+      console.error(error);
+      mostrarErro(error.response?.data?.erro || "Erro ao editar funcionário");
+    } finally {
+      setSalvando(false);
+    }
   }
 
   if (!isOpen || !funcionario) return null;
+
+  const fotoPreviewUrl = resolverFotoUrl(fotoPreview);
 
   return (
     <main className={style.overlayModal}>
@@ -152,17 +184,17 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
 
             <div className={style.cardPreview}>
               <div className={style.fotoPreviewCard}>
-                {fotoPreview ? (
-                  <img src={`http://localhost:3000${funcionario.foto}`} alt={dados.nome} className={style.imagemPreview} />
+                {fotoPreviewUrl ? (
+                  <img src={fotoPreviewUrl} alt={nome} className={style.imagemPreview} />
                 ) : (
                   <span className={style.iconeAvatarVazio}>?</span>
                 )}
               </div>
 
               <div className={style.textCard}>
-                <h1>{dados.nome || 'Nome do funcionário'}</h1>
-                <p>{dados.cargo || 'Cargo não informado'}</p>
-                <p className={style.emailPreview}>{dados.email || 'email@azory.com'}</p>
+                <h1>{nome || 'Nome do funcionário'}</h1>
+                <p>{cargo || 'Cargo não informado'}</p>
+                <p className={style.emailPreview}>{email || 'email@azory.com'}</p>
               </div>
 
               <span className={`${style.badgeStatusPreview} ${ativo ? style.badgeAtivo : style.badgeInativo}`}>
@@ -209,8 +241,8 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
                   type="text"
                   className={style.inputCampo}
                   placeholder="Digite o nome do funcionário"
-                  value={dados.nome}
-                  onChange={(e) => atualizarCampo('nome', e.target.value)}
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                 />
               </div>
 
@@ -221,8 +253,8 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
                     type="email"
                     className={style.inputCampo}
                     placeholder="email@azory.com"
-                    value={dados.email}
-                    onChange={(e) => atualizarCampo('email', e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
@@ -232,8 +264,8 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
                     type="tel"
                     className={style.inputCampo}
                     placeholder="(00) 00000-0000"
-                    value={dados.telefone}
-                    onChange={(e) => atualizarCampo('telefone', e.target.value)}
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
                   />
                 </div>
               </div>
@@ -246,12 +278,12 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
                     type="text"
                     className={style.inputCampo}
                     placeholder="Ex.: Vendedor"
-                    value={dados.cargo}
-                    onChange={(e) => atualizarCampo('cargo', e.target.value)}
+                    value={cargo}
+                    onChange={(e) => setCargo(e.target.value)}
                   />
                   <datalist id="cargos-disponiveis-edicao">
-                    {cargosDisponiveis.map((cargo) => (
-                      <option key={cargo} value={cargo} />
+                    {cargosDisponiveis.map((cargoDisponivel) => (
+                      <option key={cargoDisponivel} value={cargoDisponivel} />
                     ))}
                   </datalist>
                 </div>
@@ -261,8 +293,8 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
                   <input
                     type="date"
                     className={style.inputCampo}
-                    value={dados.dataAdmissao}
-                    onChange={(e) => atualizarCampo('dataAdmissao', e.target.value)}
+                    value={dataAdmissao}
+                    onChange={(e) => setDataAdmissao(e.target.value)}
                   />
                 </div>
               </div>
@@ -279,9 +311,9 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
                   />
 
                   <div className={style.conteudoUpload}>
-                    {fotoPreview ? (
+                    {fotoPreviewUrl ? (
                       <div className={style.arquivoSelecionado}>
-                        <img src={fotoPreview} alt="Foto selecionada" className={style.avatarSelecionado} />
+                        <img src={fotoPreviewUrl} alt="Foto selecionada" className={style.avatarSelecionado} />
                         <p>{foto ? foto.name : 'Clique para trocar a foto'}</p>
                       </div>
                     ) : (
@@ -326,27 +358,27 @@ export default function ModalEditarFuncionario({ isOpen, fecharModal, funcionari
               <div className={style.gridRevisao}>
                 <div className={style.itemRevisao}>
                   <p>NOME</p>
-                  <span>{dados.nome || '—'}</span>
+                  <span>{nome || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>CARGO</p>
-                  <span>{dados.cargo || '—'}</span>
+                  <span>{cargo || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>E-MAIL</p>
-                  <span>{dados.email || '—'}</span>
+                  <span>{email || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>TELEFONE</p>
-                  <span>{dados.telefone || '—'}</span>
+                  <span>{telefone || '—'}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
                   <p>DATA DE ADMISSÃO</p>
-                  <span>{formatarDataAdmissao(dados.dataAdmissao)}</span>
+                  <span>{formatarDataAdmissao(dataAdmissao)}</span>
                 </div>
 
                 <div className={style.itemRevisao}>
