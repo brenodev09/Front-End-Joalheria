@@ -1,426 +1,1295 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import styles from '../../styles/User/meus-pedidos.module.css';
-import ResumoCards from '../../components/User/ResumoCards/ResumoCards';
-import FiltrosBarra from '../../components/User/FiltrosBarra/FiltrosBarra';
-import StatusBadge from '../../components/User/StatusBadge/StatusBadge';
-import PedidoDetalhes from '../../components/User/PedidoDetalhes/PedidoDetalhes';
-import { STATUS } from '../../pages/User/mockPedidos';
-import {api} from '../../services/api'; // ajuste o caminho conforme a estrutura real do seu projeto
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+import styles from "../../styles/User/meus-pedidos.module.css";
+
+import ResumoCards from "../../components/User/ResumoCards/ResumoCards";
+import FiltrosBarra from "../../components/User/FiltrosBarra/FiltrosBarra";
+import StatusBadge from "../../components/User/StatusBadge/StatusBadge";
+import PedidoDetalhes from "../../components/User/PedidoDetalhes/PedidoDetalhes";
+
+import { api } from "../../services/api";
+import { normalizarPedidoUsuario } from "./normalizarPedidoUsuario.js";
 
 gsap.registerPlugin(useGSAP);
 
-const FILTRO_PARA_STATUS = {
-  todos: null,
-  andamento: [STATUS.PROCESSANDO, STATUS.TRANSPORTE],
-  entregues: [STATUS.ENTREGUE],
-  cancelados: [STATUS.CANCELADO],
+/* =========================================================
+   STATUS DA INTERFACE
+========================================================= */
+
+const STATUS = {
+  PROCESSANDO: "processando",
+  TRANSPORTE: "transporte",
+  ENTREGUE: "entregue",
+  CANCELADO: "cancelado",
 };
 
-// Tons cíclicos usados só para variar a cor das miniaturas — puramente visual,
-// então preenchemos aqui caso a API não mande esse campo.
-const TONS = ['a', 'b', 'c', 'd', 'e'];
+/* =========================================================
+   FILTROS
+========================================================= */
 
-// A tabela `pedidos` usa status_pedido (pendente/pago/enviado/entregue/cancelado),
-// diferente dos status que a UI conhece — aqui é o "tradutor" entre os dois.
+const FILTRO_PARA_STATUS = {
+  todos: null,
+
+  andamento: [
+    STATUS.PROCESSANDO,
+    STATUS.TRANSPORTE,
+  ],
+
+  entregues: [
+    STATUS.ENTREGUE,
+  ],
+
+  cancelados: [
+    STATUS.CANCELADO,
+  ],
+};
+
+/* =========================================================
+   STATUS BANCO → INTERFACE
+========================================================= */
+
+/*
+ * Banco:
+ *
+ * pendente
+ * pago
+ * separacao
+ * processando
+ * enviado
+ * entregue
+ * cancelado
+ *
+ * Interface:
+ *
+ * processando
+ * transporte
+ * entregue
+ * cancelado
+ */
+
 const STATUS_DB_PARA_UI = {
   pendente: STATUS.PROCESSANDO,
+
   pago: STATUS.PROCESSANDO,
+
+  separacao: STATUS.PROCESSANDO,
+
+  processando: STATUS.PROCESSANDO,
+
   enviado: STATUS.TRANSPORTE,
+
+  transporte: STATUS.TRANSPORTE,
+
   entregue: STATUS.ENTREGUE,
+
   cancelado: STATUS.CANCELADO,
 };
 
-// Em que ponto da timeline (Confirmado/Preparando/Enviado/Entregue) cada
-// status_pedido do banco corresponde — a ProgressoEntrega agora calcula isso
-// sozinha a partir do status cru, então esse mapa não é mais necessário aqui.
+/* =========================================================
+   NORMALIZAR STATUS
+========================================================= */
 
-const LABEL_PAGAMENTO = {
-  cartao: 'Cartão de crédito',
-  pix: 'Pix',
-  boleto: 'Boleto',
-};
+function normalizarStatus(status) {
+  if (!status) {
+    return STATUS.PROCESSANDO;
+  }
 
-const LABEL_TIPO_ENTREGA = {
-  'padrão': 'Entrega padrão',
-  expressa: 'Entrega expressa',
-  retirada: 'Retirada na loja',
-};
+  const statusNormalizado = String(
+    status
+  )
+    .trim()
+    .toLowerCase();
 
-// URL base do backend. Configure VITE_API_URL no seu arquivo .env do
-// frontend (ex: VITE_API_URL=http://localhost:3000) usando a MESMA porta
-// definida na variável PORT do .env do backend. Sem essa variável, cai em
-// localhost:3000 como padrão.
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-
-// A coluna `imagem` já vem com o caminho (ex: "/uploads/colar.jpg"), então só
-// prefixamos com o host do backend — igual ao padrão já usado no restante do
-// projeto (ex: página de detalhe do produto).
-function montarUrlImagem(imagem) {
-  if (!imagem) return null;
-  if (imagem.startsWith('http://') || imagem.startsWith('https://')) return imagem;
-  const caminho = imagem.startsWith('/') ? imagem : `/${imagem}`;
-  return `${API_BASE_URL}${caminho}`;
+  return (
+    STATUS_DB_PARA_UI[
+      statusNormalizado
+    ] ?? STATUS.PROCESSANDO
+  );
 }
 
-const formatarMoeda = (valor) =>
-  Number(valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-const formatarData = (data) => {
-  if (!data) return '';
-  return new Date(data).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  });
-};
-
-// Converte a linha de `pedidos` (+ itens vindos do join no backend) no formato
-// que os componentes da página esperam. Campos que ainda não existem no banco
-// (endereço, rastreio, transportadora) ficam com fallback em vez de quebrar a tela.
-function normalizarPedido(pedidoApi) {
-  const itensBrutos = pedidoApi.itens ?? [];
-
-  return {
-    id: pedidoApi.id,
-    numero: `AZY-${String(pedidoApi.id).padStart(6, '0')}`,
-    status: STATUS_DB_PARA_UI[pedidoApi.status_pedido] ?? STATUS.PROCESSANDO,
-    // Valor cru (pendente/pago/enviado/entregue/cancelado) — é o que
-    // ProgressoEntrega usa pra calcular a etapa; "status" acima é só a
-    // versão traduzida pro StatusBadge/filtros da lista.
-    statusPedido: pedidoApi.status_pedido,
-    dataCompra: formatarData(pedidoApi.criado_em),
-    valorTotal: formatarMoeda(pedidoApi.total),
-    // Histórico real (historico_pedidos), já em ordem cronológica — é o que
-    // alimenta a lista de data/hora embaixo da barra de progresso.
-    timeline: pedidoApi.timeline ?? [],
-    itens: itensBrutos.map((item, index) => ({
-      id: item.produto_id,
-      nome: item.nome,
-      imagem: montarUrlImagem(item.imagem),
-      preco: formatarMoeda(item.preco_unitario),
-      qtd: item.quantidade,
-      tom: TONS[index % TONS.length],
-    })),
-    // Endereço de entrega salvo no pedido — não existe quando a entrega é
-    // retirada na loja, já que nesse caso o back-end não grava esses campos.
-    entrega: {
-      tipoLabel: LABEL_TIPO_ENTREGA[pedidoApi.tipo_entrega] ?? 'Entrega',
-      prazo: pedidoApi.prazo_entrega ?? null,
-      endereco: pedidoApi.tipo_entrega !== 'retirada' ? {
-        nome: pedidoApi.endereco_nome_destinatario,
-        telefone: pedidoApi.endereco_telefone,
-        rua: pedidoApi.endereco_rua,
-        numero: pedidoApi.endereco_numero,
-        complemento: pedidoApi.endereco_complemento,
-        bairro: pedidoApi.endereco_bairro,
-        cidade: pedidoApi.endereco_cidade,
-        estado: pedidoApi.endereco_estado,
-        cep: pedidoApi.endereco_cep,
-      } : null,
-    },
-    pagamento: {
-      metodo: LABEL_PAGAMENTO[pedidoApi.forma_pagamento] ?? pedidoApi.forma_pagamento ?? 'Não informado',
-      bandeira: pedidoApi.cartao_bandeira ?? null,
-      final: pedidoApi.cartao_final ?? null,
-      nomeTitular: pedidoApi.cartao_nome_titular ?? null,
-      parcelas: null,
-    },
-    // Rastreio e transportadora ainda não existem no banco.
-    rastreio: null,
-    transportadora: null,
-  };
-}
+/* =========================================================
+   COMPONENTE
+========================================================= */
 
 export default function MeusPedidos() {
-  const [filtroAtivo, setFiltroAtivo] = useState('todos');
-  const [busca, setBusca] = useState('');
-  const [pedidoAberto, setPedidoAberto] = useState(null);
-  const [pedidos, setPedidos] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  /* =========================================================
+     ESTADOS
+  ========================================================= */
 
-  const containerRef = useRef(null);
-  const headerRef = useRef(null);
-  const resumoRef = useRef(null);
-  const filtrosRef = useRef(null);
-  const listaRef = useRef(null);
+  const [
+    filtroAtivo,
+    setFiltroAtivo,
+  ] = useState("todos");
 
-  // Mapas de refs por pedido.id — substituem os refs "locais" que existiam
-  // quando cada card era um componente próprio.
-  const painelRefs = useRef({});
-  const conteudoRefs = useRef({});
-  const setaRefs = useRef({});
-  const pedidoAbertoAnteriorRef = useRef(null);
+  const [
+    busca,
+    setBusca,
+  ] = useState("");
+
+  const [
+    pedidoAberto,
+    setPedidoAberto,
+  ] = useState(null);
+
+  const [
+    pedidos,
+    setPedidos,
+  ] = useState([]);
+
+  const [
+    carregando,
+    setCarregando,
+  ] = useState(true);
+
+  const [
+    erro,
+    setErro,
+  ] = useState("");
+
+  /* =========================================================
+     REFS
+  ========================================================= */
+
+  const containerRef =
+    useRef(null);
+
+  const headerRef =
+    useRef(null);
+
+  const resumoRef =
+    useRef(null);
+
+  const filtrosRef =
+    useRef(null);
+
+  const listaRef =
+    useRef(null);
+
+  const painelRefs =
+    useRef({});
+
+  const conteudoRefs =
+    useRef({});
+
+  const setaRefs =
+    useRef({});
+
+  const pedidoAbertoAnteriorRef =
+    useRef(null);
+
+  /* =========================================================
+     BUSCAR PEDIDOS
+  ========================================================= */
+
+  async function carregarPedidos() {
+    try {
+      setCarregando(true);
+      setErro("");
+
+      const resposta =
+        await api.get(
+          "/pedidos/meus-pedidos"
+        );
+
+      /*
+       * O backend pode retornar:
+       *
+       * [
+       *   pedido,
+       *   pedido
+       * ]
+       *
+       * ou:
+       *
+       * {
+       *   pedidos: [...]
+       * }
+       */
+
+      const dados =
+        Array.isArray(
+          resposta.data
+        )
+          ? resposta.data
+          : Array.isArray(
+              resposta.data?.pedidos
+            )
+          ? resposta.data.pedidos
+          : [];
+
+      /*
+       * Normaliza todos os pedidos
+       * recebidos do backend.
+       */
+
+      const pedidosNormalizados =
+        dados
+          .filter(Boolean)
+          .map((pedido) => {
+            const normalizado =
+              normalizarPedidoUsuario(
+                pedido
+              );
+
+            return {
+              ...normalizado,
+
+              /*
+               * O normalizador mantém
+               * o status original do banco.
+               *
+               * Aqui transformamos para
+               * o status utilizado pela UI.
+               */
+
+              status:
+                normalizarStatus(
+                  normalizado.status
+                ),
+
+              /*
+               * Garantia de arrays para
+               * evitar erros no JSX.
+               */
+
+              itens:
+                Array.isArray(
+                  normalizado.itens
+                )
+                  ? normalizado.itens
+                  : [],
+
+              timeline:
+                Array.isArray(
+                  normalizado.timeline
+                )
+                  ? normalizado.timeline
+                  : [],
+            };
+          });
+
+      setPedidos(
+        pedidosNormalizados
+      );
+    } catch (error) {
+      console.error(
+        "Erro ao carregar pedidos:",
+        error
+      );
+
+      const mensagem =
+        error.response?.data
+          ?.erro ||
+        error.response?.data
+          ?.message ||
+        "Não foi possível carregar seus pedidos.";
+
+      setErro(mensagem);
+
+      setPedidos([]);
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  /* =========================================================
+     CARREGAMENTO INICIAL
+  ========================================================= */
 
   useEffect(() => {
-    async function carregarPedidos() {
-      try {
-        setCarregando(true);
-        const resposta = await api.get('/pedidos/meus-pedidos');
-        setPedidos(resposta.data.map(normalizarPedido));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setCarregando(false);
-      }
-    }
     carregarPedidos();
   }, []);
 
+  /* =========================================================
+     RESUMO
+  ========================================================= */
+
   const resumo = useMemo(() => {
+    const total =
+      pedidos.length;
+
+    const entregues =
+      pedidos.filter(
+        (pedido) =>
+          pedido.status ===
+          STATUS.ENTREGUE
+      ).length;
+
+    const transporte =
+      pedidos.filter(
+        (pedido) =>
+          pedido.status ===
+          STATUS.TRANSPORTE
+      ).length;
+
+    const cancelados =
+      pedidos.filter(
+        (pedido) =>
+          pedido.status ===
+          STATUS.CANCELADO
+      ).length;
+
     return {
-      total: pedidos.length,
-      entregues: pedidos.filter((p) => p.status === STATUS.ENTREGUE).length,
-      transporte: pedidos.filter((p) => p.status === STATUS.TRANSPORTE).length,
-      cancelados: pedidos.filter((p) => p.status === STATUS.CANCELADO).length,
+      total,
+      entregues,
+      transporte,
+      cancelados,
     };
   }, [pedidos]);
 
-  const pedidosFiltrados = useMemo(() => {
-    const statusPermitidos = FILTRO_PARA_STATUS[filtroAtivo];
-    const termo = busca.trim().toLowerCase();
+  /* =========================================================
+     FILTROS
+  ========================================================= */
 
-    return pedidos.filter((pedido) => {
-      const passaStatus = !statusPermitidos || statusPermitidos.includes(pedido.status);
-      if (!passaStatus) return false;
+  const pedidosFiltrados =
+    useMemo(() => {
+      const statusPermitidos =
+        FILTRO_PARA_STATUS[
+          filtroAtivo
+        ];
 
-      if (!termo) return true;
-      const numeroBate = pedido.numero.toLowerCase().includes(termo);
-      const itemBate = pedido.itens.some((item) => item.nome.toLowerCase().includes(termo));
-      return numeroBate || itemBate;
-    });
-  }, [pedidos, filtroAtivo, busca]);
+      const termo =
+        busca
+          .trim()
+          .toLowerCase();
 
-  // Entrada da página: fade + slide up em cascata do cabeçalho, resumo e filtros.
+      return pedidos.filter(
+        (pedido) => {
+          /*
+           * Filtro por status
+           */
+
+          const passaStatus =
+            !statusPermitidos ||
+            statusPermitidos.includes(
+              pedido.status
+            );
+
+          if (!passaStatus) {
+            return false;
+          }
+
+          /*
+           * Sem busca:
+           * retorna normalmente.
+           */
+
+          if (!termo) {
+            return true;
+          }
+
+          /*
+           * Busca pelo número
+           * do pedido.
+           */
+
+          const numeroPedido =
+            String(
+              pedido.numero ?? ""
+            ).toLowerCase();
+
+          const numeroBate =
+            numeroPedido.includes(
+              termo
+            );
+
+          /*
+           * Busca pelo nome
+           * dos produtos.
+           */
+
+          const itens =
+            Array.isArray(
+              pedido.itens
+            )
+              ? pedido.itens
+              : [];
+
+          const itemBate =
+            itens.some(
+              (item) =>
+                String(
+                  item.nome ?? ""
+                )
+                  .toLowerCase()
+                  .includes(termo)
+            );
+
+          return (
+            numeroBate ||
+            itemBate
+          );
+        }
+      );
+    }, [
+      pedidos,
+      filtroAtivo,
+      busca,
+    ]);
+
+  /* =========================================================
+     ANIMAÇÃO DE ENTRADA
+  ========================================================= */
+
   useGSAP(
     () => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      const timeline =
+        gsap.timeline({
+          defaults: {
+            ease: "power3.out",
+          },
+        });
 
-      tl.fromTo(headerRef.current, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 })
-        .fromTo(
-          resumoRef.current.querySelectorAll('[data-resumo-card]'),
-          { y: 18, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
-          '-=0.35'
-        )
-        .fromTo(filtrosRef.current, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.3');
+      /* -------------------------------------------------------
+         HEADER
+      ------------------------------------------------------- */
+
+      if (headerRef.current) {
+        timeline.fromTo(
+          headerRef.current,
+          {
+            y: 22,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+          }
+        );
+      }
+
+      /* -------------------------------------------------------
+         CARDS DE RESUMO
+      ------------------------------------------------------- */
+
+      if (resumoRef.current) {
+        const cards =
+          resumoRef.current.querySelectorAll(
+            "[data-resumo-card]"
+          );
+
+        if (cards.length) {
+          timeline.fromTo(
+            cards,
+            {
+              y: 18,
+              opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.08,
+            },
+            "-=0.35"
+          );
+        }
+      }
+
+      /* -------------------------------------------------------
+         FILTROS
+      ------------------------------------------------------- */
+
+      if (filtrosRef.current) {
+        timeline.fromTo(
+          filtrosRef.current,
+          {
+            y: 14,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.3"
+        );
+      }
     },
-    { scope: containerRef }
+    {
+      scope: containerRef,
+    }
   );
 
-  // Stagger dos cards de pedido — dispara no 1º carregamento vindo da API
-  // e também sempre que o filtro/busca muda o conjunto exibido.
+  /* =========================================================
+     ANIMAÇÃO DOS CARDS
+  ========================================================= */
+
   useGSAP(
     () => {
-      const cards = listaRef.current?.querySelectorAll('[data-pedido-card]');
-      if (!cards || !cards.length) return;
+      const cards =
+        listaRef.current?.querySelectorAll(
+          "[data-pedido-card]"
+        );
+
+      if (!cards?.length) {
+        return;
+      }
+
       gsap.fromTo(
         cards,
-        { y: 22, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out' }
+        {
+          y: 22,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out",
+        }
       );
     },
-    { scope: listaRef, dependencies: [pedidosFiltrados] }
+    {
+      scope: listaRef,
+      dependencies: [
+        pedidosFiltrados,
+      ],
+    }
   );
 
-  // Abre/fecha o painel de detalhes do pedido selecionado.
-  // Como pedidoAberto guarda um único id, o comportamento é de acordeão:
-  // ao abrir um novo pedido, o anterior é fechado automaticamente.
+  /* =========================================================
+     ABRIR / FECHAR DETALHES
+  ========================================================= */
+
   useGSAP(
     () => {
-      const idAnterior = pedidoAbertoAnteriorRef.current;
-      const idAtual = pedidoAberto;
+      const idAnterior =
+        pedidoAbertoAnteriorRef.current;
 
-      if (idAnterior && idAnterior !== idAtual) {
-        const painelAntigo = painelRefs.current[idAnterior];
-        const setaAntiga = setaRefs.current[idAnterior];
+      const idAtual =
+        pedidoAberto;
+
+      /* =====================================================
+         FECHAR PAINEL ANTERIOR
+      ===================================================== */
+
+      if (
+        idAnterior &&
+        idAnterior !== idAtual
+      ) {
+        const painelAntigo =
+          painelRefs.current[
+            idAnterior
+          ];
+
+        const setaAntiga =
+          setaRefs.current[
+            idAnterior
+          ];
+
         if (painelAntigo) {
-          gsap.to(painelAntigo, {
-            height: 0,
-            opacity: 0,
-            duration: 0.4,
-            ease: 'power2.inOut',
-            onComplete: () => gsap.set(painelAntigo, { display: 'none' }),
-          });
+          gsap.killTweensOf(
+            painelAntigo
+          );
+
+          gsap.to(
+            painelAntigo,
+            {
+              height: 0,
+              opacity: 0,
+              duration: 0.4,
+              ease: "power2.inOut",
+
+              onComplete: () => {
+                gsap.set(
+                  painelAntigo,
+                  {
+                    display:
+                      "none",
+                  }
+                );
+              },
+            }
+          );
         }
+
         if (setaAntiga) {
-          gsap.to(setaAntiga, { rotate: 0, duration: 0.4, ease: 'power2.inOut' });
+          gsap.killTweensOf(
+            setaAntiga
+          );
+
+          gsap.to(
+            setaAntiga,
+            {
+              rotate: 0,
+              duration: 0.4,
+              ease: "power2.inOut",
+            }
+          );
         }
       }
+
+      /* =====================================================
+         ABRIR PAINEL ATUAL
+      ===================================================== */
 
       if (idAtual) {
-        const painel = painelRefs.current[idAtual];
-        const conteudo = conteudoRefs.current[idAtual];
-        const seta = setaRefs.current[idAtual];
+        const painel =
+          painelRefs.current[
+            idAtual
+          ];
 
-        if (painel && conteudo) {
-          gsap.killTweensOf(painel);
-          gsap.set(painel, { display: 'block' });
-          const altura = conteudo.getBoundingClientRect().height;
-          gsap.fromTo(
-            painel,
-            { height: 0, opacity: 0 },
-            { height: altura, opacity: 1, duration: 0.55, ease: 'power3.out' }
+        const conteudo =
+          conteudoRefs.current[
+            idAtual
+          ];
+
+        const seta =
+          setaRefs.current[
+            idAtual
+          ];
+
+        if (
+          painel &&
+          conteudo
+        ) {
+          gsap.killTweensOf(
+            painel
           );
+
+          gsap.killTweensOf(
+            conteudo
+          );
+
+          gsap.set(
+            painel,
+            {
+              display: "block",
+              height: 0,
+              opacity: 0,
+              overflow:
+                "hidden",
+            }
+          );
+
+          /*
+           * Mede o conteúdo antes
+           * da animação.
+           */
+
+          const altura =
+            conteudo.getBoundingClientRect()
+              .height;
+
+          gsap.to(
+            painel,
+            {
+              height: altura,
+              opacity: 1,
+              duration: 0.55,
+              ease: "power3.out",
+            }
+          );
+
           gsap.fromTo(
             conteudo,
-            { y: -8, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.08 }
+            {
+              y: -8,
+              opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              ease: "power2.out",
+              delay: 0.08,
+            }
           );
         }
-        if (seta) gsap.to(seta, { rotate: 180, duration: 0.4, ease: 'power2.inOut' });
+
+        if (seta) {
+          gsap.killTweensOf(
+            seta
+          );
+
+          gsap.to(
+            seta,
+            {
+              rotate: 180,
+              duration: 0.4,
+              ease: "power2.inOut",
+            }
+          );
+        }
       }
 
-      pedidoAbertoAnteriorRef.current = idAtual;
+      pedidoAbertoAnteriorRef.current =
+        idAtual;
     },
-    { dependencies: [pedidoAberto], scope: containerRef }
+    {
+      dependencies: [
+        pedidoAberto,
+      ],
+      scope: containerRef,
+    }
   );
 
+  /* =========================================================
+     RENDER
+  ========================================================= */
+
   return (
-    <div className={styles.pagina} ref={containerRef}>
-      <div className={styles.container}>
-        <header className={styles.header} ref={headerRef}>
-          {/* <span className={styles.eyebrow}>AZORY · Central da conta</span> */}
-          <h1 className={styles.titulo}>Meus Pedidos</h1>
-          <p className={styles.descricao}>
-            Acompanhe o preparo, o envio e a entrega de cada peça adquirida na AZORY.
+    <div
+      className={styles.pagina}
+      ref={containerRef}
+    >
+      <div
+        className={styles.container}
+      >
+        {/* ===================================================
+            HEADER
+        =================================================== */}
+
+        <header
+          className={styles.header}
+          ref={headerRef}
+        >
+          <h1
+            className={styles.titulo}
+          >
+            Meus Pedidos
+          </h1>
+
+          <p
+            className={
+              styles.descricao
+            }
+          >
+            Acompanhe o preparo, o
+            envio e a entrega de cada
+            peça adquirida na AZORY.
           </p>
         </header>
 
-        <div ref={resumoRef}>
-          <ResumoCards resumo={resumo} className={styles.secao} />
-        </div>
+        {/* ===================================================
+            RESUMO
+        =================================================== */}
 
-        <div ref={filtrosRef}>
-          <FiltrosBarra
-            filtroAtivo={filtroAtivo}
-            onFiltroChange={setFiltroAtivo}
-            busca={busca}
-            onBuscaChange={setBusca}
+        <div ref={resumoRef}>
+          <ResumoCards
+            resumo={resumo}
             className={styles.secao}
           />
         </div>
 
-        <section className={styles.lista} ref={listaRef}>
+        {/* ===================================================
+            FILTROS
+        =================================================== */}
+
+        <div ref={filtrosRef}>
+          <FiltrosBarra
+            filtroAtivo={
+              filtroAtivo
+            }
+            onFiltroChange={
+              setFiltroAtivo
+            }
+            busca={busca}
+            onBuscaChange={
+              setBusca
+            }
+            className={
+              styles.secao
+            }
+          />
+        </div>
+
+        {/* ===================================================
+            LISTA
+        =================================================== */}
+
+        <section
+          className={styles.lista}
+          ref={listaRef}
+        >
+          {/* =================================================
+              CARREGANDO
+          ================================================= */}
+
           {carregando ? (
-            <div className={styles.carregando}>
-              <span className={styles.carregandoIcone}>◇</span>
-              <p className={styles.carregandoTexto}>Carregando seus pedidos…</p>
+            <div
+              className={
+                styles.carregando
+              }
+            >
+              <span
+                className={
+                  styles.carregandoIcone
+                }
+              >
+                ◇
+              </span>
+
+              <p
+                className={
+                  styles.carregandoTexto
+                }
+              >
+                Carregando seus
+                pedidos…
+              </p>
             </div>
-          ) : pedidosFiltrados.length > 0 ? (
-            pedidosFiltrados.map((pedido) => {
-              const aberto = pedidoAberto === pedido.id;
-              const qtdItens = pedido.itens.length;
-              const multiplasPecas = qtdItens > 1;
-              // Mostra até 3 linhas (imagem + nome). Se houver mais peças que isso,
-              // a 3ª linha vira um resumo "+N peças" em vez de mais uma imagem.
-              const limiteVisivel = 3;
-              const mostrarResumo = qtdItens > limiteVisivel;
-              const itensVisiveis = mostrarResumo
-                ? pedido.itens.slice(0, limiteVisivel - 1)
-                : pedido.itens;
-              const itensRestantes = qtdItens - itensVisiveis.length;
+          ) : erro ? (
+            /* ===============================================
+               ERRO
+            =============================================== */
 
-              return (
-                // Card do pedido — antes era o componente PedidoCard, agora vive
-                // direto aqui dentro do .map().
-                <article
-                  key={pedido.id}
-                  className={`${styles.card} ${aberto ? styles.cardAberto : ''}`}
-                  data-pedido-card
-                >
-                  <div className={styles.cabecalho}>
-                    <div className={styles.identificacao}>
-                      <span className={styles.numeroPedido}>{pedido.numero}</span>
-                      <span className={styles.dataCompra}>Comprado em {pedido.dataCompra}</span>
-                    </div>
-                    <StatusBadge status={pedido.status} />
-                  </div>
+            <div
+              className={
+                styles.vazio
+              }
+            >
+              <span
+                className={
+                  styles.vazioIcone
+                }
+              >
+                ◇
+              </span>
 
-                  <div className={styles.corpo}>
-                    <div className={styles.miniaturasGrupo}>
-                      {itensVisiveis.map((item) => (
-                        <div key={item.id} className={styles.itemLinha}>
-                          <span
-                            className={`${styles.miniatura} ${styles[`tom-${item.tom}`]} ${
-                              !multiplasPecas ? styles.miniaturaUnica : ''
-                            }`}
-                          >
-                            {/* Ícone de fallback — some por trás da foto real quando ela carrega */}
-                            <svg viewBox="0 0 24 24" fill="none" className={styles.miniaturaFallback}>
-                              <path d="M12 3 4 9l8 12 8-12-8-6Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
-                              <path d="M4 9h16M9 9l3 12 3-12" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
-                            </svg>
-                            {item.imagem && (
-                              <img
-                                src={item.imagem}
-                                alt={item.nome}
-                                className={styles.miniaturaImg}
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                }}
-                              />
-                            )}
-                          </span>
-                          <span className={styles.itemNomeCard}>{item.nome}</span>
-                        </div>
-                      ))}
+              <p
+                className={
+                  styles.vazioTitulo
+                }
+              >
+                Não foi possível
+                carregar seus
+                pedidos
+              </p>
 
-                      {mostrarResumo && (
-                        <div className={styles.itemLinha}>
-                          <span className={styles.maisTexto}>
-                            + {itensRestantes} {itensRestantes === 1 ? 'peça' : 'peças'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+              <p
+                className={
+                  styles.vazioTexto
+                }
+              >
+                {erro}
+              </p>
 
-                    <div className={styles.acoes}>
-                      <div className={styles.valorBloco}>
-                        <span className={styles.valorLabel}>
-                          Total ({qtdItens} {qtdItens === 1 ? 'peça' : 'peças'})
+              <button
+                type="button"
+                className={
+                  styles.botaoDetalhes
+                }
+                onClick={
+                  carregarPedidos
+                }
+              >
+                Tentar novamente
+              </button>
+            </div>
+          ) : pedidosFiltrados.length >
+            0 ? (
+            /* ===============================================
+               PEDIDOS
+            =============================================== */
+
+            pedidosFiltrados.map(
+              (pedido) => {
+                const aberto =
+                  pedidoAberto ===
+                  pedido.id;
+
+                const itens =
+                  Array.isArray(
+                    pedido.itens
+                  )
+                    ? pedido.itens
+                    : [];
+
+                const qtdItens =
+                  itens.length;
+
+                const multiplasPecas =
+                  qtdItens > 1;
+
+                const limiteVisivel = 3;
+
+                const mostrarResumo =
+                  qtdItens >
+                  limiteVisivel;
+
+                /*
+                 * Mostra no máximo 2 itens
+                 * quando existem mais de 3,
+                 * deixando o "+ X peças".
+                 */
+
+                const itensVisiveis =
+                  mostrarResumo
+                    ? itens.slice(
+                        0,
+                        limiteVisivel -
+                          1
+                      )
+                    : itens;
+
+                const itensRestantes =
+                  qtdItens -
+                  itensVisiveis.length;
+
+                return (
+                  <article
+                    key={
+                      pedido.id
+                    }
+                    className={`
+                      ${styles.card}
+                      ${
+                        aberto
+                          ? styles.cardAberto
+                          : ""
+                      }
+                    `}
+                    data-pedido-card
+                  >
+                    {/* ===================================
+                        CABEÇALHO
+                    =================================== */}
+
+                    <div
+                      className={
+                        styles.cabecalho
+                      }
+                    >
+                      <div
+                        className={
+                          styles.identificacao
+                        }
+                      >
+                        <span
+                          className={
+                            styles.numeroPedido
+                          }
+                        >
+                          {
+                            pedido.numero
+                          }
                         </span>
-                        <span className={styles.valorTotal}>{pedido.valorTotal}</span>
+
+                        <span
+                          className={
+                            styles.dataCompra
+                          }
+                        >
+                          Comprado em{" "}
+                          {
+                            pedido.dataCompra
+                          }
+                        </span>
                       </div>
 
-                      <button
-                        type="button"
-                        className={` ${styles.botaoDetalhes} btnPadrao `}
-                        onClick={() => setPedidoAberto(aberto ? null : pedido.id)}
-                        aria-expanded={aberto}
-                      >
-                        Ver detalhes
-                        <svg
-                          ref={(el) => (setaRefs.current[pedido.id] = el)}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          className={styles.seta}
-                        >
-                          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
+                      <StatusBadge
+                        status={
+                          pedido.status
+                        }
+                      />
                     </div>
-                  </div>
 
-                  <div
-                    className={styles.painel}
-                    ref={(el) => (painelRefs.current[pedido.id] = el)}
-                    style={{ display: 'none', height: 0, overflow: 'hidden' }}
-                  >
-                    <div ref={(el) => (conteudoRefs.current[pedido.id] = el)}>
-                      <PedidoDetalhes pedido={pedido} />
+                    {/* ===================================
+                        CORPO
+                    =================================== */}
+
+                    <div
+                      className={
+                        styles.corpo
+                      }
+                    >
+                      {/* ---------------------------------
+                          MINIATURAS
+                      --------------------------------- */}
+
+                      <div
+                        className={
+                          styles.miniaturasGrupo
+                        }
+                      >
+                        {itensVisiveis.map(
+                          (
+                            item,
+                            index
+                          ) => (
+                            <div
+                              key={`${pedido.id}-${item.id}-${index}`}
+                              className={
+                                styles.itemLinha
+                              }
+                            >
+                              <span
+                                className={`
+                                  ${styles.miniatura}
+                                  ${
+                                    styles[
+                                      `tom-${item.tom}`
+                                    ] ??
+                                    ""
+                                  }
+                                  ${
+                                    !multiplasPecas
+                                      ? styles.miniaturaUnica
+                                      : ""
+                                  }
+                                `}
+                              >
+                                {/* FALLBACK */}
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  className={
+                                    styles.miniaturaFallback
+                                  }
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    d="M12 3 4 9l8 12 8-12-8-6Z"
+                                    stroke="currentColor"
+                                    strokeWidth="1.1"
+                                    strokeLinejoin="round"
+                                  />
+
+                                  <path
+                                    d="M4 9h16M9 9l3 12 3-12"
+                                    stroke="currentColor"
+                                    strokeWidth="1.1"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+
+                                {/* IMAGEM */}
+                                {item.imagem && (
+                                  <img
+                                    src={
+                                      item.imagem
+                                    }
+                                    alt={
+                                      item.nome ??
+                                      "Produto"
+                                    }
+                                    className={
+                                      styles.miniaturaImg
+                                    }
+                                    onError={(
+                                      event
+                                    ) => {
+                                      event.currentTarget.style.display =
+                                        "none";
+                                    }}
+                                  />
+                                )}
+                              </span>
+
+                              <span
+                                className={
+                                  styles.itemNomeCard
+                                }
+                              >
+                                {
+                                  item.nome
+                                }
+                              </span>
+                            </div>
+                          )
+                        )}
+
+                        {/* ---------------------------------
+                            MAIS ITENS
+                        --------------------------------- */}
+
+                        {mostrarResumo && (
+                          <div
+                            className={
+                              styles.itemLinha
+                            }
+                          >
+                            <span
+                              className={
+                                styles.maisTexto
+                              }
+                            >
+                              +{" "}
+                              {
+                                itensRestantes
+                              }{" "}
+                              {itensRestantes ===
+                              1
+                                ? "peça"
+                                : "peças"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* ---------------------------------
+                          AÇÕES / VALOR
+                      --------------------------------- */}
+
+                      <div
+                        className={
+                          styles.acoes
+                        }
+                      >
+                        <div
+                          className={
+                            styles.valorBloco
+                          }
+                        >
+                          <span
+                            className={
+                              styles.valorLabel
+                            }
+                          >
+                            Total (
+                            {
+                              qtdItens
+                            }{" "}
+                            {qtdItens ===
+                            1
+                              ? "peça"
+                              : "peças"}
+                            )
+                          </span>
+
+                          <span
+                            className={
+                              styles.valorTotal
+                            }
+                          >
+                            {
+                              pedido.valorTotal
+                            }
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className={`${styles.botaoDetalhes} btnPadrao`}
+                          onClick={() =>
+                            setPedidoAberto(
+                              aberto
+                                ? null
+                                : pedido.id
+                            )
+                          }
+                          aria-expanded={
+                            aberto
+                          }
+                          aria-controls={`pedido-detalhes-${pedido.id}`}
+                        >
+                          {aberto
+                            ? "Ocultar detalhes"
+                            : "Ver detalhes"}
+
+                          <svg
+                            ref={(el) => {
+                              setaRefs.current[
+                                pedido.id
+                              ] = el;
+                            }}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className={
+                              styles.seta
+                            }
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M6 9l6 6 6-6"
+                              stroke="currentColor"
+                              strokeWidth="1.6"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              );
-            })
+
+                    {/* ===================================
+                        DETALHES
+                    =================================== */}
+
+                    <div
+                      id={`pedido-detalhes-${pedido.id}`}
+                      className={
+                        styles.painel
+                      }
+                      ref={(el) => {
+                        painelRefs.current[
+                          pedido.id
+                        ] = el;
+                      }}
+                      style={{
+                        display:
+                          "none",
+                        height: 0,
+                        overflow:
+                          "hidden",
+                      }}
+                    >
+                      <div
+                        ref={(el) => {
+                          conteudoRefs.current[
+                            pedido.id
+                          ] = el;
+                        }}
+                      >
+                        <PedidoDetalhes
+                          pedido={
+                            pedido
+                          }
+                        />
+                      </div>
+                    </div>
+                  </article>
+                );
+              }
+            )
           ) : (
-            <div className={styles.vazio}>
-              <span className={styles.vazioIcone}>◇</span>
-              <p className={styles.vazioTitulo}>Nenhum pedido encontrado</p>
-              <p className={styles.vazioTexto}>
-                Ajuste os filtros ou o termo de busca para encontrar o que procura.
+            /* ===============================================
+               NENHUM PEDIDO
+            =============================================== */
+
+            <div
+              className={
+                styles.vazio
+              }
+            >
+              <span
+                className={
+                  styles.vazioIcone
+                }
+              >
+                ◇
+              </span>
+
+              <p
+                className={
+                  styles.vazioTitulo
+                }
+              >
+                Nenhum pedido
+                encontrado
+              </p>
+
+              <p
+                className={
+                  styles.vazioTexto
+                }
+              >
+                {pedidos.length ===
+                0
+                  ? "Você ainda não realizou nenhum pedido."
+                  : "Ajuste os filtros ou o termo de busca para encontrar o que procura."}
               </p>
             </div>
           )}

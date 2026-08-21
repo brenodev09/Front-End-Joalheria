@@ -1,53 +1,237 @@
-// Converte cada item de GET /pedidos/meus-pedidos (pedido + itens + timeline,
-// direto do banco) pro formato que PedidoDetalhes.jsx espera. Sem mock —
-// tudo calculado a partir do que a API manda.
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:3000";
 
 const TIPO_ENTREGA_LABELS = {
-  'padrão': 'Entrega padrão',
-  expressa: 'Entrega expressa',
-  retirada: 'Retirada na loja',
+  padrão: "Entrega padrão",
+  expressa: "Entrega expressa",
+  retirada: "Retirada na loja",
 };
 
 const FORMA_PAGAMENTO_LABELS = {
-  cartao: 'Cartão de crédito',
-  pix: 'Pix',
-  boleto: 'Boleto',
+  cartao: "Cartão de crédito",
+  pix: "Pix",
+  boleto: "Boleto",
 };
 
+const TONS = [
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+];
+
 const formatarMoeda = (valor) =>
-  Number(valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  Number(valor ?? 0).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+    }
+  );
 
-// Só pra variar o tom do fundo de cada thumb (a/b/c/d/e) — puramente
-// decorativo, não vem do banco.
-const TONS = ['a', 'b', 'c', 'd', 'e'];
+const formatarData = (data) => {
+  if (!data) return "";
 
-export function normalizarPedidoUsuario(pedidoApi) {
+  const dataConvertida =
+    new Date(data);
+
+  if (
+    Number.isNaN(
+      dataConvertida.getTime()
+    )
+  ) {
+    return "";
+  }
+
+  return dataConvertida.toLocaleDateString(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }
+  );
+};
+
+function montarUrlImagem(
+  imagem
+) {
+  if (!imagem) {
+    return null;
+  }
+
+  if (
+    imagem.startsWith(
+      "http://"
+    ) ||
+    imagem.startsWith(
+      "https://"
+    )
+  ) {
+    return imagem;
+  }
+
+  return `${API_BASE_URL}${
+    imagem.startsWith("/")
+      ? imagem
+      : `/${imagem}`
+  }`;
+}
+
+export function normalizarPedidoUsuario(
+  pedidoApi
+) {
+  const itens =
+    Array.isArray(
+      pedidoApi?.itens
+    )
+      ? pedidoApi.itens
+      : [];
+
   return {
-    numero: `AZY-${String(pedidoApi.id).padStart(6, '0')}`,
-    status: pedidoApi.status_pedido,
-    itens: (pedidoApi.itens ?? []).map((item, index) => ({
-      id: item.produto_id,
-      nome: item.nome,
-      imagem: item.imagem ? `http://localhost:3000${item.imagem}` : null,
-      qtd: item.quantidade,
-      preco: formatarMoeda(item.subtotal),
-      tom: TONS[index % TONS.length],
-    })),
+    id: pedidoApi.id,
+
+    numero: `AZY-${String(
+      pedidoApi.id
+    ).padStart(6, "0")}`,
+
+    status:
+      pedidoApi.status_pedido,
+
+    statusPedido:
+      pedidoApi.status_pedido,
+
+    dataCompra:
+      formatarData(
+        pedidoApi.criado_em
+      ),
+
+    valorTotal:
+      formatarMoeda(
+        pedidoApi.total
+      ),
+
+    timeline:
+      Array.isArray(
+        pedidoApi.timeline
+      )
+        ? pedidoApi.timeline
+        : [],
+
+    itens: itens.map(
+      (item, index) => ({
+        id: item.produto_id,
+
+        nome:
+          item.nome ??
+          "Produto",
+
+        imagem:
+          montarUrlImagem(
+            item.imagem
+          ),
+
+        preco:
+          formatarMoeda(
+            item.preco_unitario ??
+              item.subtotal
+          ),
+
+        quantidade:
+          Number(
+            item.quantidade ?? 0
+          ),
+
+        tom:
+          TONS[
+            index %
+              TONS.length
+          ],
+      })
+    ),
+
     entrega: {
-      tipoLabel: TIPO_ENTREGA_LABELS[pedidoApi.tipo_entrega] ?? pedidoApi.tipo_entrega,
-      prazo: pedidoApi.prazo_entrega,
+      tipo:
+        pedidoApi.tipo_entrega,
+
+      tipoLabel:
+        TIPO_ENTREGA_LABELS[
+          pedidoApi.tipo_entrega
+        ] ??
+        pedidoApi.tipo_entrega ??
+        "Entrega",
+
+      prazo:
+        pedidoApi.prazo_entrega ??
+        null,
+
+      endereco:
+        pedidoApi.tipo_entrega !==
+        "retirada"
+          ? {
+              nome:
+                pedidoApi.endereco_nome_destinatario,
+
+              telefone:
+                pedidoApi.endereco_telefone,
+
+              rua:
+                pedidoApi.endereco_rua,
+
+              numero:
+                pedidoApi.endereco_numero,
+
+              complemento:
+                pedidoApi.endereco_complemento,
+
+              bairro:
+                pedidoApi.endereco_bairro,
+
+              cidade:
+                pedidoApi.endereco_cidade,
+
+              estado:
+                pedidoApi.endereco_estado,
+
+              cep:
+                pedidoApi.endereco_cep,
+            }
+          : null,
     },
-    // Não existe rastreio/transportadora no banco ainda — fica undefined até
-    // isso ser adicionado (o componente já trata esse caso mostrando o aviso
-    // "fica disponível assim que o pedido é enviado").
-    rastreio: undefined,
-    transportadora: undefined,
+
     pagamento: {
-      metodo: FORMA_PAGAMENTO_LABELS[pedidoApi.forma_pagamento] ?? pedidoApi.forma_pagamento,
-      // bandeira/final/parcelas também não existem no banco — não são
-      // exibidos (o JSX já só renderiza se vierem preenchidos).
+      metodo:
+        FORMA_PAGAMENTO_LABELS[
+          pedidoApi.forma_pagamento
+        ] ??
+        pedidoApi.forma_pagamento ??
+        "Não informado",
+
+      bandeira:
+        pedidoApi.cartao_bandeira ??
+        null,
+
+      final:
+        pedidoApi.cartao_final ??
+        null,
+
+      nomeTitular:
+        pedidoApi.cartao_nome_titular ??
+        null,
+
+      parcelas:
+        pedidoApi.parcelas ??
+        null,
     },
-    valorTotal: formatarMoeda(pedidoApi.total),
-    timeline: pedidoApi.timeline ?? [],
+
+    rastreio:
+      pedidoApi.rastreio ??
+      null,
+
+    transportadora:
+      pedidoApi.transportadora ??
+      null,
   };
 }
