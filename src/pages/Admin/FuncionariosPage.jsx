@@ -6,8 +6,9 @@ import BarraFiltros from '../../components/Admin/Funcionarios2/BarraFiltros/Barr
 import TabelaFuncionarios from '../../components/Admin/Funcionarios2/TabelaFuncionarios/TabelaFuncionarios';
 import ModalAdicionarFuncionario from '../../components/Admin/Modais/ModalAddFuncionario/ModalAddFuncionario';
 import ModalEditarFuncionario from '../../components/Admin/Modais/ModalEditarFuncionario/ModalEditarFuncionario';
+import ModalExcluirFuncionario from "../../components/Admin/Modais/ModalDeletarFuncionario"
 import PaginacaoAdmin from '../../components/Admin/PaginacaoAdmin/PaginacaoAdmin';
-import {api} from "../../services/api"
+import { api } from "../../services/api"
 
 const ITENS_POR_PAGINA = 5;
 
@@ -88,6 +89,7 @@ export default function GestaoFuncionarios() {
 
   const [modalAdicionarAberto, setModalAdicionarAberto] = useState(false);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
+  const [modalDeletarAberto, setModalDeletarAberto] = useState(false)
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
   const [erro, setErro] = useState("")
 
@@ -97,16 +99,16 @@ export default function GestaoFuncionarios() {
   useEffect(() => {
     setCarregando(true);
 
-    api.get("/funcionarios/funcionarios-cadastrados")  .then((resposta) => {
-        setFuncionarios(resposta.data);
-      }).catch(() => {
-        setErro("Erro ao exibir os funcionários cadastrados");
-      }).finally(() => {
-        setCarregando(false);
-      });
+    api.get("/funcionarios/funcionarios-cadastrados").then((resposta) => {
+      setFuncionarios(resposta.data);
+    }).catch(() => {
+      setErro("Erro ao exibir os funcionários cadastrados");
+    }).finally(() => {
+      setCarregando(false);
+    });
 
   }, []);
-  
+
   const cargosDisponiveis = useMemo(
     () => [...new Set(funcionarios.map((f) => f.cargo))].sort(),
     [funcionarios]
@@ -179,10 +181,15 @@ export default function GestaoFuncionarios() {
     setModalEditarAberto(true);
   }
 
-  function excluirFuncionario(funcionario) {
-    const confirmou = window.confirm(`Remover ${funcionario.nome} da equipe?`);
-    if (!confirmou) return;
-    setFuncionarios((atual) => atual.filter((f) => f.id !== funcionario.id));
+  function abrirExclusao(funcionario) {
+    setFuncionarioSelecionado(funcionario);
+    setModalDeletarAberto(true);
+  }
+
+  // Chamado pelo ModalExcluirFuncionario depois que a exclusão foi
+  // confirmada com sucesso na API.
+  function removerFuncionarioDaLista(id) {
+    setFuncionarios((atual) => atual.filter((f) => f.id !== id));
   }
 
   return (
@@ -253,7 +260,7 @@ export default function GestaoFuncionarios() {
           funcionarios={funcionariosDaPagina}
           carregando={carregando}
           onEditar={abrirEdicao}
-          onExcluir={excluirFuncionario}
+          onExcluir={abrirExclusao}
         />
 
         <PaginacaoAdmin
@@ -277,6 +284,13 @@ export default function GestaoFuncionarios() {
         funcionario={funcionarioSelecionado}
         cargosDisponiveis={cargosDisponiveis}
         aoSalvar={atualizarFuncionario}
+      />
+
+      <ModalExcluirFuncionario
+        isOpen={modalDeletarAberto}
+        fecharModal={() => setModalDeletarAberto(false)}
+        funcionario={funcionarioSelecionado}
+        onExcluir={removerFuncionarioDaLista}
       />
     </div>
   );
