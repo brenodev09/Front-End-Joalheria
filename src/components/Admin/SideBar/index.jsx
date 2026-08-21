@@ -90,6 +90,17 @@ export default function Sidebar() {
         <img width="27" height="27" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff"/>
           <span className={styles.textoNav}>Funcionários</span>
         </NavLink>
+        <NavLink
+          to="/admin/cupons"
+          end
+          className={({ isActive }) =>
+            `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
+          }
+        >
+        <img width="27" height="27" src="https://img.icons8.com/windows/32/ffffff/discount-ticket.png" alt="discount-ticket"/>
+          <span className={styles.textoNav}>Cupons</span>
+        </NavLink>
+
 
         <NavLink to="/admin/conta" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
