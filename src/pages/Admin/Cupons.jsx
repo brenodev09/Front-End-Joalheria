@@ -4,7 +4,8 @@ import styles from '../../styles/Admin/cupons.module.css';
 
 import BarraFiltros from '../../components/Admin/Cupons/BarraFiltros/BarraFiltros';
 import TabelaCupons from '../../components/Admin/Cupons/TabelaCupons/TabelaCupons';
-// import TabelaCupons from "../../components/Admin/Cupons/TabelaCupons/TabelaCupons"
+import ModalAddCupom from '../../components/Admin/Modais/ModalAddCupom/ModalAddCupom';
+import ModalEditarCupom from '../../components/Admin/Modais/ModalEditarCupom/ModalEditarCupom';
 import PaginacaoAdmin from '../../components/Admin/PaginacaoAdmin/PaginacaoAdmin';
 
 const ITENS_POR_PAGINA = 5;
@@ -81,6 +82,10 @@ export default function GestaoCupons() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [cupons] = useState(CUPONS_MOCK);
 
+  const [modalAdicionarAberto, setModalAdicionarAberto] = useState(false);
+  const [modalEditarAberto, setModalEditarAberto] = useState(false);
+  const [cupomSelecionado, setCupomSelecionado] = useState(null);
+
   const tiposDisponiveis = useMemo(
     () => [...new Set(cupons.map((c) => c.tipo))].sort(),
     [cupons]
@@ -127,6 +132,11 @@ export default function GestaoCupons() {
     return cuponsFiltrados.slice(inicio, inicio + ITENS_POR_PAGINA);
   }, [cuponsFiltrados, paginaAtual]);
 
+  function abrirEdicao(cupom) {
+    setCupomSelecionado(cupom);
+    setModalEditarAberto(true);
+  }
+
   return (
     <div className={styles.pagina}>
       <div className={styles.container}>
@@ -141,7 +151,10 @@ export default function GestaoCupons() {
             <p>Gerencie os cupons cadastrados na loja</p>
           </div>
 
-          <button className={styles.addFuncionario}>
+          <button
+            className={styles.addFuncionario}
+            onClick={() => setModalAdicionarAberto(true)}
+          >
             <img
               width="20"
               height="20"
@@ -188,7 +201,10 @@ export default function GestaoCupons() {
           tiposDisponiveis={tiposDisponiveis}
         />
 
-        <TabelaCupons cupons={cuponsDaPagina} />
+        <TabelaCupons
+          cupons={cuponsDaPagina}
+          onEditar={abrirEdicao}
+        />
 
         <PaginacaoAdmin
           paginaAtual={paginaAtual}
@@ -197,6 +213,17 @@ export default function GestaoCupons() {
           onPaginaChange={setPaginaAtual}
         />
       </div>
+
+      <ModalAddCupom
+        isOpen={modalAdicionarAberto}
+        fecharModal={() => setModalAdicionarAberto(false)}
+      />
+
+      <ModalEditarCupom
+        isOpen={modalEditarAberto}
+        fecharModal={() => setModalEditarAberto(false)}
+        cupom={cupomSelecionado}
+      />
     </div>
   );
 }
