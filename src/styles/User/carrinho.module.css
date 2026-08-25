@@ -655,6 +655,19 @@
   color: rgba(245, 245, 245, 0.65);
 }
 
+.prazoPagamento {
+  padding: 12px 18px;
+  border: 1px solid var(--dourado);
+  color: var(--dourado);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+.prazoPagamento strong {
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+}
+
 .confirmacaoTotal {
   margin-top: 12px;
   font-size: 13px;
@@ -747,6 +760,22 @@
   display: flex;
   margin: 20px 0 4px;
   border: 1px solid rgba(245, 245, 245, 0.2);
+}
+
+.cupomArea {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cupomLabel {
+  color: rgba(245, 245, 245, 0.72);
+  font-size: 12px;
+}
+
+.cupomOu {
+  color: rgba(245, 245, 245, 0.42);
+  font-size: 11px;
 }
 
 .cupomInput {

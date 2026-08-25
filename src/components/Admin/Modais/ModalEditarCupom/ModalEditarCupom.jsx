@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import style from "./ModalEditarCupom.module.css";
 
-const TIPOS_DESCONTO = ["Percentual", "Valor fixo", "Frete grátis"];
+const TIPOS_DESCONTO = ["Percentual", "Valor fixo"];
+
+function formatarDataMySql(data) {
+    return data.toISOString().slice(0, 19).replace("T", " ");
+}
 
 export default function ModalEditarCupom({
     isOpen,
     fecharModal,
     cupom,
+    onSalvar,
 }) {
     const [etapa, setEtapa] = useState(1);
 
@@ -74,14 +79,27 @@ export default function ModalEditarCupom({
         setEtapa(2);
     }
 
-    function salvarCupom() {
+    async function salvarCupom() {
         if (!usoMaximo || !validadeDias) {
             mostrarErro("Preencha o limite de usos e a validade.");
             return;
         }
 
-        // TODO: integrar com a API para atualizar o cupom.
-        fecharModal();
+        try {
+            await onSalvar?.(cupom.id, {
+                codigo: nome.trim().toUpperCase(),
+                tipo: tipo === "Percentual" ? "percentual" : "fixo",
+                valor: Number(valor),
+                valor_minimo: Number(valorMinimo || 0),
+                quantidade_uso: Number(usoMaximo),
+                ativo,
+                data_inicio: cupom.data_inicio || formatarDataMySql(new Date()),
+                data_fim: formatarDataMySql(new Date(Date.now() + Number(validadeDias) * 86400000)),
+            });
+            fecharModal();
+        } catch (error) {
+            mostrarErro(error.response?.data?.erro || "Não foi possível atualizar o cupom.");
+        }
     }
 
     if (!isOpen) return null;

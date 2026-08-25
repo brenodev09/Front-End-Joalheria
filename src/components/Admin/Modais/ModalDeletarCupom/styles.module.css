@@ -1,0 +1,170 @@
+.sobreposicao {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 7, 5, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.sobreposicaoAberta {
+  animation: fadeInOverlay 0.28s ease forwards;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 35rem;
+  padding: 38px 32px 28px;
+  text-align: center;
+  background: linear-gradient(180deg, #161412 0%, #100f0d 100%);
+  border: 1px solid rgba(212, 175, 92, 0.18);
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.modalAberto {
+  animation: entradaModal 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes entradaModal {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.botaoFechar {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 22px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.botaoFechar:hover {
+  color: #efe2c0;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.icone {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(196, 64, 64, 0.12);
+  border: 1px solid rgba(196, 64, 64, 0.28);
+  border-radius: 50%;
+}
+
+.titulo {
+  margin: 0 0 12px;
+  color: #f3ead8;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.mensagem {
+  margin: 0 0 20px;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.nomeDestaque {
+  color: #e8cf94;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+}
+
+.avisoProdutos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding: 12px 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  text-align: left;
+  background: rgba(212, 175, 92, 0.07);
+  border: 1px solid rgba(212, 175, 92, 0.22);
+  border-radius: 8px;
+}
+
+.avisoIcone {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: #e8cf94;
+  font-family: Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  background: rgba(212, 175, 92, 0.18);
+  border-radius: 50%;
+}
+
+.acoes {
+  display: flex;
+  gap: 12px;
+}
+
+.botaoCancelar,
+.btnExcluir {
+  flex: 1;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.botaoCancelar {
+  color: rgba(255, 255, 255, 0.75);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.botaoCancelar:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.btnExcluir {
+  color: #fff;
+  background: #750707;
+  border: 1px solid #750707;
+}
+
+.btnExcluir:hover {
+  background: #8f0b0b;
+  box-shadow: 0 0 22px rgba(255, 159, 159, 0.1);
+}
+
+@media (max-width: 480px) {
+  .modal { padding: 32px 22px 22px; }
+  .acoes { flex-direction: column-reverse; }
+}

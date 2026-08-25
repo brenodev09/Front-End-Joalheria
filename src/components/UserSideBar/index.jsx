@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/authContext"
+import { api } from "../../services/api"
 import style from "./styles.module.css"
 
 // ─── Ícones SVG inline para não depender de biblioteca externa ───────────────
@@ -29,6 +30,13 @@ const IcoCarrinho = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
         <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+    </svg>
+)
+
+const IcoCupons = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 12a2 2 0 0 0 0-4V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3Z" />
+        <path d="M9 7h6M9 17h6M9 12h.01" />
     </svg>
 )
 
@@ -100,6 +108,10 @@ export default function SideBar({ isOpen, fecharSideBar }) {
     const navegar = useNavigate()
     const [erro, setErro] = useState("")
     const [carregando, setCarregando] = useState(false)
+    const [cupons, setCupons] = useState([])
+    const [cuponsAberto, setCuponsAberto] = useState(false)
+    const [carregandoCupons, setCarregandoCupons] = useState(false)
+    const [erroCupons, setErroCupons] = useState("")
     const { usuario } = useAuth()
     const { logout } = useAuth()
 
@@ -121,7 +133,7 @@ export default function SideBar({ isOpen, fecharSideBar }) {
             // Chame seu logout aqui, ex: await logout()
             await logout()
             navegar("/")
-        } catch (e) {
+        } catch {
             setErro("Erro ao sair. Tente novamente.")
         } finally {
             setCarregando(false)
@@ -131,6 +143,42 @@ export default function SideBar({ isOpen, fecharSideBar }) {
     function navegar_e_fechar(rota) {
         fecharSideBar()
         navegar(rota)
+    }
+
+    async function carregarCupons() {
+        try {
+            setCarregandoCupons(true)
+            setErroCupons("")
+            const token = localStorage.getItem("token")
+            const resposta = await api.get("/cupons/disponiveis", {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                params: { limite: 1000 },
+            })
+            const dados = Array.isArray(resposta.data)
+                ? resposta.data
+                : resposta.data?.cupons
+                    || resposta.data?.dados
+                    || resposta.data?.data
+                    || resposta.data?.rows
+                    || []
+            setCupons(dados)
+        } catch (error) {
+            console.error("Erro ao carregar cupons:", error)
+            setErroCupons("Não foi possível carregar seus cupons.")
+        } finally {
+            setCarregandoCupons(false)
+        }
+    }
+
+    async function resgatarCupom(cupom) {
+        try {
+            setCarregandoCupons(true)
+            await api.post(`/cupons/${cupom.id}/resgatar`)
+            await carregarCupons()
+        } catch (error) {
+            setErroCupons(error.response?.data?.erro || "Não foi possível resgatar o cupom.")
+            setCarregandoCupons(false)
+        }
     }
 
     return (
@@ -243,6 +291,14 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                                 rotulo="Carrinho"
                                 onClick={() => navegar_e_fechar("/carrinho")}
                             />
+                            <ItemMenu
+                                icone={<IcoCupons />}
+                                rotulo="Cupons"
+                                onClick={() => {
+                                    setCuponsAberto((aberto) => !aberto)
+                                    if (!cuponsAberto) carregarCupons()
+                                }}
+                            />
                         </ul>
                     )}
 
@@ -262,6 +318,46 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                     </button>
                 </footer>
             </aside>
+
+            {!ehAdmin && cuponsAberto && (
+                <div className={style.modalCuponsOverlay} onClick={() => setCuponsAberto(false)}>
+                    <section className={style.modalCupons} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="titulo-cupons">
+                        <header className={style.cabecalhoCupons}>
+                            <div>
+                                <span className={style.rotuloCupons}>BENEFÍCIOS AZORY</span>
+                                <h2 id="titulo-cupons">Cupons</h2>
+                                <p>Resgate uma oferta para usar na sua próxima compra.</p>
+                            </div>
+                            <div className={style.acoesCupons}>
+                                <button type="button" onClick={carregarCupons} aria-label="Atualizar cupons">↻</button>
+                                <button type="button" onClick={() => setCuponsAberto(false)} aria-label="Fechar cupons">×</button>
+                            </div>
+                        </header>
+                        {carregandoCupons && <p className={style.estadoCupons}>Carregando cupons...</p>}
+                        {!carregandoCupons && erroCupons && <p className={style.estadoCupons}>{erroCupons}</p>}
+                        {!carregandoCupons && !erroCupons && cupons.length === 0 && <p className={style.estadoCupons}>Nenhum cupom cadastrado.</p>}
+                        {!carregandoCupons && cupons.length > 0 && (
+                            <div className={style.listaCuponsModal}>
+                                {cupons.map((cupom) => {
+                                    const resgatado = cupom.resgatado || cupom.resgatado_em;
+                                    const disponivel = cupom.disponivel ?? cupom.pode_resgatar ?? false;
+                                    return (
+                                        <article className={`${style.cardCupom} ${!disponivel ? style.cupomIndisponivel : ""}`} key={cupom.id || cupom.codigo}>
+                                            <div>
+                                                <strong>{cupom.codigo}</strong>
+                                                <span>{cupom.tipo === "percentual" ? `${cupom.valor}% de desconto` : `R$ ${Number(cupom.valor || 0).toFixed(2).replace(".", ",")}`}</span>
+                                                {cupom.valor_minimo > 0 && <small>Pedido mínimo: R$ {Number(cupom.valor_minimo).toFixed(2).replace(".", ",")}</small>}
+                                                {!disponivel && <small>{cupom.motivo_indisponibilidade || "Indisponível para esta conta"}</small>}
+                                            </div>
+                                            {resgatado ? <span className={style.cupomResgatado}>Resgatado</span> : disponivel ? <button type="button" className={style.btnResgatar} onClick={() => resgatarCupom(cupom)} disabled={carregandoCupons}>Resgatar</button> : <span className={style.cupomBloqueado}>Indisponível</span>}
+                                        </article>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </section>
+                </div>
+            )}
         </>
     )
 }

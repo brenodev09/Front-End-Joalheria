@@ -12,6 +12,8 @@ gsap.registerPlugin(useGSAP);
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+const PRAZO_PAGAMENTO_MINUTOS = 30;
+
 export default function Carrinho() {
   const containerRef = useRef(null);
 
@@ -31,6 +33,8 @@ export default function Carrinho() {
 
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [pedidoConfirmado, setPedidoConfirmado] = useState(false);
+  const [pagamentoExpirado, setPagamentoExpirado] = useState(false);
+  const [segundosRestantes, setSegundosRestantes] = useState(0);
 
   /* =========================================================
      ENTREGA
@@ -78,6 +82,8 @@ export default function Carrinho() {
   ========================================================= */
 
   const [cupom, setCupom] = useState("");
+  const [cuponsDisponiveis, setCuponsDisponiveis] = useState([]);
+  const [carregandoCupons, setCarregandoCupons] = useState(false);
   const [desconto, setDesconto] = useState(0);
   const [cupomAplicado, setCupomAplicado] = useState(null);
   const [erroCupom, setErroCupom] = useState("");
@@ -100,14 +106,75 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
     useState("");
 
   const pollingPixRef = useRef(null);
+  const expiracaoPagamentoRef = useRef(null);
+
+  useEffect(() => {
+    async function carregarCuponsDisponiveis() {
+      try {
+        setCarregandoCupons(true);
+        const token = localStorage.getItem("token");
+        const resposta = await api.get("/cupons/resgatados", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const dados = Array.isArray(resposta.data)
+          ? resposta.data
+          : resposta.data?.cupons || [];
+        setCuponsDisponiveis(dados);
+      } catch (error) {
+        console.error("Erro ao carregar cupons disponíveis:", error);
+        setCuponsDisponiveis([]);
+      } finally {
+        setCarregandoCupons(false);
+      }
+    }
+
+    carregarCuponsDisponiveis();
+  }, []);
 
   useEffect(() => {
     return () => {
       if (pollingPixRef.current) {
         clearInterval(pollingPixRef.current);
       }
+      if (expiracaoPagamentoRef.current) {
+        clearInterval(expiracaoPagamentoRef.current);
+      }
     };
   }, []);
+
+  function iniciarPrazoPagamento(pedidoId, expiraEm) {
+    const prazo = expiraEm
+      ? new Date(expiraEm).getTime()
+      : Date.now() + PRAZO_PAGAMENTO_MINUTOS * 60 * 1000;
+
+    const atualizarPrazo = async () => {
+      const restante = Math.max(0, Math.ceil((prazo - Date.now()) / 1000));
+      setSegundosRestantes(restante);
+
+      if (restante > 0) return;
+
+      clearInterval(expiracaoPagamentoRef.current);
+      expiracaoPagamentoRef.current = null;
+      clearInterval(pollingPixRef.current);
+      pollingPixRef.current = null;
+      setPagamentoExpirado(true);
+
+      try {
+        await api.patch(`/pedidos/${pedidoId}/cancelar`);
+      } catch (error) {
+        console.error("Erro ao cancelar pedido expirado:", error);
+      }
+    };
+
+    atualizarPrazo();
+    expiracaoPagamentoRef.current = setInterval(atualizarPrazo, 1000);
+  }
+
+  function formatarPrazoPagamento() {
+    const minutos = Math.floor(segundosRestantes / 60);
+    const segundos = String(segundosRestantes % 60).padStart(2, "0");
+    return `${String(minutos).padStart(2, "0")}:${segundos}`;
+  }
 
   /* =========================================================
      CONFIGURAÇÕES
@@ -594,6 +661,9 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
         ) {
           clearInterval(pollingPixRef.current);
           pollingPixRef.current = null;
+          clearInterval(expiracaoPagamentoRef.current);
+          expiracaoPagamentoRef.current = null;
+          setSegundosRestantes(0);
           setPedidoConfirmado(true);
         }
       } catch (error) {
@@ -712,6 +782,19 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
         resposta.data?.pedidoId ??
         resposta.data?.id;
 
+      const statusPagamento = String(
+        resposta.data?.statusPagamento ??
+          resposta.data?.status_pagamento ??
+          resposta.data?.status ??
+          ""
+      ).toLowerCase();
+      const pagamentoAprovado = [
+        "aprovado",
+        "aprovada",
+        "pago",
+        "paga",
+      ].includes(statusPagamento);
+
       if (formaPagamento === "pix" && pag) {
         setPixQr(
           pag.qrCodeBase64 ??
@@ -727,7 +810,17 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
             pag.copia_cola ??
             ""
         );
+      }
+
+      if (!pagamentoAprovado) {
         iniciarPollingPix(pedidoId);
+      }
+
+      if (!pagamentoAprovado) {
+        iniciarPrazoPagamento(
+          pedidoId,
+          resposta.data?.expiraEm ?? resposta.data?.expira_em
+        );
       }
 
       console.log(
@@ -751,7 +844,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
        * Mostra a confirmação antes de atualizar o carrinho.
        * O backend pode esvaziá-lo após criar o pedido.
        */
-      setPedidoConfirmado(true);
+      setPedidoConfirmado(pagamentoAprovado);
 
       /*
        * Atualiza o contexto do carrinho em segundo plano.
@@ -966,7 +1059,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
             CONFIRMAÇÃO
         =================================================== */}
 
-        {pedidoConfirmado ? (
+        {codigoPedido ? (
           <div
             className={
               estilos.confirmacaoWrapper
@@ -977,7 +1070,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                 estilos.confirmacaoIcone
               }
             >
-              ✓
+              {pagamentoExpirado ? "!" : pedidoConfirmado ? "✓" : "..."}
             </span>
 
             <h1
@@ -985,7 +1078,11 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                 estilos.titulo
               }
             >
-              Pedido Confirmado
+                {pagamentoExpirado
+                  ? "Pedido cancelado"
+                  : pedidoConfirmado
+                  ? "Pedido confirmado"
+                  : "Aguardando pagamento"}
             </h1>
 
             <p
@@ -993,17 +1090,27 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                 estilos.confirmacaoTexto
               }
             >
-              Obrigado por escolher a
-              Azory. Seu pedido{" "}
+              {pagamentoExpirado
+                ? "O prazo para pagamento terminou. Seu pedido"
+                : pedidoConfirmado
+                ? "Obrigado por escolher a Azory. Seu pedido"
+                : "Seu pedido foi registrado. Efetue o pagamento em até"}{" "}
               <strong>
                 #AZ-
                 {codigoPedido}
-              </strong>{" "}
-              foi registrado com
-              sucesso.
+              </strong>
+              {!pagamentoExpirado && !pedidoConfirmado && (
+                <> para evitar o cancelamento automático.</>
+              )}
             </p>
 
-            {formaPagamento ===
+            {!pagamentoExpirado && !pedidoConfirmado && (
+              <p className={estilos.prazoPagamento}>
+                Tempo restante: <strong>{formatarPrazoPagamento()}</strong>
+              </p>
+            )}
+
+            {pedidoConfirmado && formaPagamento ===
               "cartao" && (
               <p
                 className={
@@ -1017,7 +1124,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
               </p>
             )}
 
-            {formaPagamento ===
+            {!pagamentoExpirado && formaPagamento ===
               "pix" && (
               <>
                 <p
@@ -1065,7 +1172,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
               </>
             )}
 
-            {formaPagamento ===
+            {!pagamentoExpirado && formaPagamento ===
               "boleto" && (
               <p
                 className={
@@ -2225,55 +2332,66 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                   {etapaAtual === 1 && (
                     <>
                       {!cupomAplicado ? (
-                        <div
-                          className={
-                            estilos.cupomWrapper
-                          }
-                        >
-                          <input
-                            type="text"
-                            placeholder="Código do cupom"
-                            className={
-                              estilos.cupomInput
-                            }
-                            value={cupom}
-                            onChange={(
-                              event
-                            ) =>
-                              setCupom(
-                                event
-                                  .target
-                                  .value
-                              )
-                            }
-                            onKeyDown={(
-                              event
-                            ) => {
-                              if (
-                                event.key ===
-                                "Enter"
-                              ) {
-                                aplicarCupom();
-                              }
-                            }}
-                          />
-
-                          <button
-                            type="button"
-                            onClick={
-                              aplicarCupom
-                            }
-                            className={
-                              estilos.cupomBotao
-                            }
-                            disabled={
-                              aplicandoCupom
-                            }
-                          >
-                            {aplicandoCupom
-                              ? "..."
-                              : "Aplicar"}
-                          </button>
+                        <div className={estilos.cupomArea}>
+                          <label className={estilos.cupomLabel} htmlFor="cupom-disponivel">
+                            Cupons disponíveis para você
+                          </label>
+                          <div className={estilos.cupomWrapper}>
+                            <select
+                              id="cupom-disponivel"
+                              className={estilos.cupomInput}
+                              value={cupom}
+                              onChange={(event) => setCupom(event.target.value)}
+                              disabled={carregandoCupons || aplicandoCupom}
+                            >
+                              <option value="">
+                                {carregandoCupons
+                                  ? "Carregando cupons..."
+                                  : cuponsDisponiveis.length > 0
+                                  ? "Selecione um cupom"
+                                  : "Nenhum cupom disponível"}
+                              </option>
+                              {cuponsDisponiveis.map((cupomDisponivel) => (
+                                <option
+                                  key={cupomDisponivel.id || cupomDisponivel.codigo}
+                                  value={cupomDisponivel.codigo}
+                                >
+                                  {cupomDisponivel.codigo} - {cupomDisponivel.tipo === "percentual"
+                                    ? `${cupomDisponivel.valor}% de desconto`
+                                    : `R$ ${Number(cupomDisponivel.valor || 0).toFixed(2).replace(".", ",")}`}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={aplicarCupom}
+                              className={estilos.cupomBotao}
+                              disabled={!cupom || aplicandoCupom || carregandoCupons}
+                            >
+                              {aplicandoCupom ? "..." : "Aplicar"}
+                            </button>
+                          </div>
+                          <span className={estilos.cupomOu}>ou informe o código manualmente</span>
+                          <div className={estilos.cupomWrapper}>
+                            <input
+                              type="text"
+                              placeholder="Código do cupom"
+                              className={estilos.cupomInput}
+                              value={cupom}
+                              onChange={(event) => setCupom(event.target.value.toUpperCase())}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") aplicarCupom();
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={aplicarCupom}
+                              className={estilos.cupomBotao}
+                              disabled={!cupom || aplicandoCupom}
+                            >
+                              {aplicandoCupom ? "..." : "Aplicar"}
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div

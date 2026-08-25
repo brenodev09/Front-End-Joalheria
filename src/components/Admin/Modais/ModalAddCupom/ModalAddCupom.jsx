@@ -1,11 +1,16 @@
 import { useState } from "react";
 import style from "./ModalAddCupom.module.css";
 
-const TIPOS_DESCONTO = ["Percentual", "Valor fixo", "Frete grátis"];
+const TIPOS_DESCONTO = ["Percentual", "Valor fixo"];
+
+function formatarDataMySql(data) {
+    return data.toISOString().slice(0, 19).replace("T", " ");
+}
 
 export default function ModalAddCupom({
     isOpen,
     fecharModal,
+    onSalvar,
 }) {
     const [etapa, setEtapa] = useState(1);
 
@@ -69,15 +74,28 @@ export default function ModalAddCupom({
         setEtapa(2);
     }
 
-    function salvarCupom() {
+    async function salvarCupom() {
         if (!usoMaximo || !validadeDias) {
             mostrarErro("Preencha o limite de usos e a validade.");
             return;
         }
 
-        // TODO: integrar com a API para criar o cupom.
-        limparFormulario();
-        fecharModal();
+        try {
+            await onSalvar?.({
+                codigo: nome.trim().toUpperCase(),
+                tipo: tipo === "Percentual" ? "percentual" : "fixo",
+                valor: Number(valor),
+                valor_minimo: Number(valorMinimo || 0),
+                quantidade_uso: Number(usoMaximo),
+                ativo,
+                data_inicio: formatarDataMySql(new Date()),
+                data_fim: formatarDataMySql(new Date(Date.now() + Number(validadeDias) * 86400000)),
+            });
+            limparFormulario();
+            fecharModal();
+        } catch (error) {
+            mostrarErro(error.response?.data?.erro || "Não foi possível criar o cupom.");
+        }
     }
 
     if (!isOpen) return null;

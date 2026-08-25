@@ -13,7 +13,6 @@ export function CarrinhoProvider({ children }) {
   const [sidebarAberta, setSidebarAberta] = useState(false);
   const [carregando, setCarregando] = useState(false);
 
-  // produto usado pelo toast futuramente
   const [produtoAdicionado, setProdutoAdicionado] = useState(null);
 
   /*

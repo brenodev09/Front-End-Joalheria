@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from '../../styles/Admin/cupons.module.css';
+import { api } from '../../services/api';
 
 import BarraFiltros from '../../components/Admin/Cupons/BarraFiltros/BarraFiltros';
 import TabelaCupons from '../../components/Admin/Cupons/TabelaCupons/TabelaCupons';
 import ModalAddCupom from '../../components/Admin/Modais/ModalAddCupom/ModalAddCupom';
 import ModalEditarCupom from '../../components/Admin/Modais/ModalEditarCupom/ModalEditarCupom';
+import ModalDeletarCupom from '../../components/Admin/Modais/ModalDeletarCupom';
 import PaginacaoAdmin from '../../components/Admin/PaginacaoAdmin/PaginacaoAdmin';
 
 const ITENS_POR_PAGINA = 5;
@@ -62,29 +64,97 @@ const variantesEntrada = {
   visivel: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
 };
 
-// Dados de exemplo apenas para visualização — troque pelo fetch real
-// (ex.: GET /cupons) quando o endpoint estiver pronto.
-const CUPONS_MOCK = [
-  { id: 1, nome: 'BEMVINDO10', tipo: 'Percentual', valor: '10%', usos: '32/100', expira: '30 dias', status: STATUS_CUPOM.ATIVO },
-  { id: 2, nome: 'FRETEGRATIS', tipo: 'Frete grátis', valor: 'Grátis', usos: '78/200', expira: '15 dias', status: STATUS_CUPOM.ATIVO },
-  { id: 3, nome: 'VERAO25', tipo: 'Percentual', valor: '25%', usos: '40/40', expira: 'Expirado', status: STATUS_CUPOM.INATIVO },
-  { id: 4, nome: 'PRIMEIRA20', tipo: 'Valor fixo', valor: 'R$ 20,00', usos: '5/50', expira: '60 dias', status: STATUS_CUPOM.ATIVO },
-  { id: 5, nome: 'BLACKFRIDAY', tipo: 'Percentual', valor: '40%', usos: '20/40', expira: '5 dias', status: STATUS_CUPOM.ATIVO },
-  { id: 6, nome: 'NATAL15', tipo: 'Percentual', valor: '15%', usos: '0/100', expira: '90 dias', status: STATUS_CUPOM.INATIVO },
-  { id: 7, nome: 'CLUBEAZORY', tipo: 'Valor fixo', valor: 'R$ 50,00', usos: '12/30', expira: '45 dias', status: STATUS_CUPOM.ATIVO },
-  { id: 8, nome: 'FIDELIDADE', tipo: 'Percentual', valor: '5%', usos: '9/9', expira: 'Expirado', status: STATUS_CUPOM.INATIVO },
-];
+function normalizarCupom(cupom) {
+  const tipo = cupom.tipo === 'percentual' ? 'Percentual' : 'Valor fixo';
+  const dataFim = cupom.data_fim ? new Date(cupom.data_fim) : null;
+  const diasRestantes = dataFim
+    ? Math.max(0, Math.ceil((dataFim.getTime() - Date.now()) / 86400000))
+    : null;
+
+  return {
+    ...cupom,
+    nome: cupom.codigo,
+    tipo,
+    valor: Number(cupom.valor || 0),
+    valorFormatado: tipo === 'Percentual'
+      ? `${Number(cupom.valor || 0)}%`
+      : `R$ ${Number(cupom.valor || 0).toFixed(2).replace('.', ',')}`,
+    usoMaximo: cupom.quantidade_uso ?? '',
+    valorMinimo: cupom.valor_minimo ?? 0,
+    usos: `${cupom.usado || 0}/${cupom.quantidade_uso ?? '∞'}`,
+    expira: dataFim ? (diasRestantes > 0 ? `${diasRestantes} dias` : 'Expirado') : 'Sem expiração',
+    validadeDias: diasRestantes || 1,
+    status: cupom.ativo ? STATUS_CUPOM.ATIVO : STATUS_CUPOM.INATIVO,
+  };
+}
 
 export default function GestaoCupons() {
   const [busca, setBusca] = useState('');
   const [statusFiltro, setStatusFiltro] = useState('todos');
   const [tipoFiltro, setTipoFiltro] = useState('todos');
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const [cupons] = useState(CUPONS_MOCK);
+  const [cupons, setCupons] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
 
   const [modalAdicionarAberto, setModalAdicionarAberto] = useState(false);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
   const [cupomSelecionado, setCupomSelecionado] = useState(null);
+  const [modalExcluirAberto, setModalExcluirAberto] = useState(false);
+
+  async function carregarCupons() {
+    try {
+      setCarregando(true);
+      setErro('');
+      const resposta = await api.get('/cupons');
+      const dados = Array.isArray(resposta.data) ? resposta.data : resposta.data?.cupons || [];
+      setCupons(dados.map(normalizarCupom));
+    } catch (error) {
+      setErro(error.response?.data?.erro || 'Não foi possível carregar os cupons.');
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  useEffect(() => {
+    carregarCupons();
+  }, []);
+
+  async function adicionarCupom(dados) {
+    await api.post('/cupons', dados);
+    await carregarCupons();
+  }
+
+  async function editarCupom(id, dados) {
+    await api.put(`/cupons/${id}`, dados);
+    await carregarCupons();
+  }
+
+  function abrirExclusao(cupom) {
+    setCupomSelecionado(cupom);
+    setModalExcluirAberto(true);
+  }
+
+  async function excluirCupom() {
+    if (!cupomSelecionado) return;
+    try {
+      await api.delete(`/cupons/${cupomSelecionado.id}`);
+      setModalExcluirAberto(false);
+      setCupomSelecionado(null);
+      await carregarCupons();
+    } catch (error) {
+      setErro(error.response?.data?.erro || 'Não foi possível excluir o cupom.');
+    }
+  }
+
+  async function alternarStatus(cupom) {
+    try {
+      await api.patch(`/cupons/${cupom.id}/status`, { ativo: cupom.status !== STATUS_CUPOM.ATIVO });
+      await carregarCupons();
+    } catch (error) {
+      setErro(error.response?.data?.erro || 'Não foi possível alterar o status do cupom.');
+    }
+  }
 
   const tiposDisponiveis = useMemo(
     () => [...new Set(cupons.map((c) => c.tipo))].sort(),
@@ -201,10 +271,13 @@ export default function GestaoCupons() {
           tiposDisponiveis={tiposDisponiveis}
         />
 
-        <TabelaCupons
+        {erro && <p role="alert">{erro}</p>}
+        {carregando ? <p>Carregando cupons...</p> : <TabelaCupons
           cupons={cuponsDaPagina}
           onEditar={abrirEdicao}
-        />
+          onExcluir={abrirExclusao}
+          onAlternarStatus={alternarStatus}
+        />}
 
         <PaginacaoAdmin
           paginaAtual={paginaAtual}
@@ -217,12 +290,24 @@ export default function GestaoCupons() {
       <ModalAddCupom
         isOpen={modalAdicionarAberto}
         fecharModal={() => setModalAdicionarAberto(false)}
+        onSalvar={adicionarCupom}
       />
 
       <ModalEditarCupom
         isOpen={modalEditarAberto}
         fecharModal={() => setModalEditarAberto(false)}
         cupom={cupomSelecionado}
+        onSalvar={editarCupom}
+      />
+
+      <ModalDeletarCupom
+        aberto={modalExcluirAberto}
+        cupom={cupomSelecionado}
+        aoFechar={() => {
+          setModalExcluirAberto(false);
+          setCupomSelecionado(null);
+        }}
+        aoConfirmar={excluirCupom}
       />
     </div>
   );

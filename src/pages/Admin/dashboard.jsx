@@ -66,6 +66,7 @@ export default function Dashboard() {
 
   }
 
+
   if (carregando) {
     return <p className={style.carregando}>Carregando dados do dashboard...</p>
   }
@@ -397,7 +398,6 @@ export default function Dashboard() {
             </ResponsiveContainer>
 
           </div>
-
 
           {/* <div className={style.cardRecentes}>
             <div className={style.cabecalhoRecentes}>

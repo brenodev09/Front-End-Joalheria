@@ -1,0 +1,176 @@
+.pagina {
+  width: 100%;
+  padding-top: 4rem;
+}
+
+.cabecalhoPagina {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.rotulo {
+  margin: 0 0 8px;
+  color: #c9a84c;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+}
+
+.cabecalhoPagina h1 {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 2.4rem;
+}
+
+.subtitulo,
+.tituloPainel p {
+  margin: 8px 0 0;
+  color: #9b9b9b;
+  font-size: 0.9rem;
+}
+
+.atualizar,
+.estadoErro button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border: 1px solid rgba(201, 168, 76, 0.45);
+  color: #c9a84c;
+  background: transparent;
+  cursor: pointer;
+}
+
+.atualizar:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.painel {
+  padding: 26px 30px;
+  background: #151515;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: 10px;
+}
+
+.tituloPainel {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding-bottom: 22px;
+}
+
+.iconeTitulo {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #c9a84c;
+  border: 1px solid rgba(201, 168, 76, 0.45);
+  border-radius: 50%;
+}
+
+.tituloPainel h2 {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 1.08rem;
+  font-weight: 500;
+}
+
+.lista {
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.atividade {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 19px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.iconeAtividade {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.sucesso { color: #6fcf97; background: rgba(111, 207, 151, 0.1); }
+.pendente { color: #d4af37; background: rgba(212, 175, 55, 0.1); }
+.cancelado { color: #ff6b6b; background: rgba(255, 107, 107, 0.1); }
+
+.conteudo {
+  min-width: 0;
+  flex: 1;
+}
+
+.linhaTitulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.linhaTitulo h3 {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 0.96rem;
+  font-weight: 500;
+}
+
+.linhaTitulo time,
+.pedido {
+  color: #858585;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.conteudo p {
+  margin: 6px 0 8px;
+  color: #c8c8c8;
+  font-size: 0.9rem;
+}
+
+.estado,
+.estadoErro {
+  padding: 32px 0 10px;
+  color: #969696;
+  text-align: center;
+}
+
+.estadoErro button {
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .pagina {
+    padding: 24px 16px;
+  }
+
+  .cabecalhoPagina {
+    flex-direction: column;
+  }
+
+  .cabecalhoPagina h1 {
+    font-size: 1.9rem;
+  }
+
+  .painel {
+    padding: 20px;
+  }
+
+  .linhaTitulo {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .linhaTitulo time {
+    white-space: normal;
+  }
+}

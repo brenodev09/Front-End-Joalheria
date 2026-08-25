@@ -59,6 +59,11 @@
   color: #111111;
 }
 
+.iconeNotificacao {
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
 
 /* .iconeNav {
   width: 20px;

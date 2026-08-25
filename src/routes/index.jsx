@@ -17,6 +17,7 @@ import InfoConta from "../pages/Admin/infoConta.jsx";
 import Pedidos from "../pages/Admin/GestaoPedidos.jsx"
 import Funcionarios from "../pages/Admin/FuncionariosPage.jsx"
 import Cupons from "../pages/Admin/Cupons.jsx"
+import Notificacoes from "../pages/Admin/Notificacoes.jsx"
 
 // paginas do usuario
 import UserLayout from "../Layouts/UserLayout.jsx";
@@ -55,6 +56,7 @@ export default function Rotas() {
                 <Route element={<RotasAdmin />}>
                     <Route path="/admin" element={<AdminLayout />}>
                         <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="notificacoes" element={<Notificacoes />} />
                         <Route path="categorias" element={<Categorias />} />
                         <Route path="produtos" element={<Produtos />} />
                         <Route path="materiais" element={<Materiais />} />

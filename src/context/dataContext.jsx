@@ -35,6 +35,7 @@ export default function useDashboard() {
                 setAlertasEstoque(alertas.data)
                 setProdutosRecentes(produtosRecentes.data)
                 setVendas(vendas.data)
+
             } catch (error) {
 
                 console.error("Erro dashboard:", error.response?.data || error)

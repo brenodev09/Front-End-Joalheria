@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Power, Trash2 } from 'lucide-react';
 import styles from './TabelaCupons.module.css';
 
 const variantesLista = {
@@ -14,7 +14,7 @@ const variantesLinha = {
 
 // Componente 100% de apresentação: quem busca/filtra/pagina os cupons é a
 // página (Cupons.jsx). Aqui só recebemos a "fatia" já pronta pra exibir.
-export default function TabelaCupons({ cupons, onEditar, onExcluir }) {
+export default function TabelaCupons({ cupons, onEditar, onExcluir, onAlternarStatus }) {
   return (
     <div className={styles.envoltorio}>
       <div className={styles.cabecalhoTabela}>
@@ -45,7 +45,7 @@ export default function TabelaCupons({ cupons, onEditar, onExcluir }) {
               </span>
 
               <span className={styles.colunaValor} data-rotulo="Valor">
-                {cupom.valor}
+                {cupom.valorFormatado ?? cupom.valor}
               </span>
 
               <span className={styles.colunaUsos} data-rotulo="Usos">
@@ -77,6 +77,13 @@ export default function TabelaCupons({ cupons, onEditar, onExcluir }) {
                     onClick={() => onExcluir?.(cupom)}
                   >
                     <Trash2 size={15} />
+                  </button>
+
+                  <button
+                    title={cupom.status === 'ativo' ? 'Desativar' : 'Ativar'}
+                    onClick={() => onAlternarStatus?.(cupom)}
+                  >
+                    <Power size={15} />
                   </button>
                 </div>
               </span>

@@ -29,7 +29,7 @@
   padding: 0 4px;
   background: var(--azory-surface);
   border: 1px solid var(--azory-hairline);
-  border-radius: 8px;
+  border-radius: 1px;
   color: var(--azory-text-muted);
   font-family: var(--azory-font-body);
   font-size: 12.5px;

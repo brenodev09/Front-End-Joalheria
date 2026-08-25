@@ -394,6 +394,7 @@
   .card {
     min-width: 160px;
   }
+
 }
 
 @media (max-width: 400px) {

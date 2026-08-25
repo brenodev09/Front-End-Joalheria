@@ -8,7 +8,8 @@ import {
   ShoppingBag,
   Tags,
   Gem,
-  User
+  User,
+  Bell
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -45,6 +46,11 @@ export default function Sidebar() {
             height="28"
             src="https://img.icons8.com/external-sbts2018-outline-sbts2018/58/ffffff/external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018.png" alt="external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018" />
           <span className={styles.textoNav}>Pedidos</span>
+        </NavLink>
+
+        <NavLink to="/admin/notificacoes" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
+          <Bell className={styles.iconeNotificacao} size={27} strokeWidth={1.7} />
+          <span className={styles.textoNav}>Notificações</span>
         </NavLink>
 
         <NavLink to="/admin/categorias" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
