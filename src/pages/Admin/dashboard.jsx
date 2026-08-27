@@ -93,6 +93,28 @@ export default function Dashboard() {
     .reduce((acc, p) => acc + p.totalNumero, 0);
 
 
+  const faturamentoCategorias = metricas.faturamentoCategorias || []
+  const totalFaturamentoCategorias = faturamentoCategorias.reduce((acc, item) => acc + item.faturamento, 0)
+
+  const dadosCategoriasPizza = metricas.faturamentoCategorias?.map(item => ({
+    ...item,
+    percentual: ((item.faturamento / totalFaturamentoCategorias) * 100).toFixed(1)
+  }))
+
+
+
+
+  const CORES_CATEGORIAS = [
+    "#D4AF37", // dourado
+    "#00C2A8", // turquesa
+    "#FF6B6B", // coral
+    "#4D96FF", // azul
+    "#9D4EDD", // roxo
+    "#F77F00", // laranja
+    "#2EC4B6", // verde água
+    "#EF476F"  // rosa
+  ]
+
 
   if (carregando) {
     return <p className={style.carregando}>Carregando dados do dashboard...</p>
@@ -112,7 +134,7 @@ export default function Dashboard() {
           <p className={style.saudacaoRotulo}>
             PAINEL DE CONTROLE - AZORY JOALHERIA
           </p>
-          <h1 className={style.saudacaoTitulo}>Olá, {usuario.nome}.</h1>
+          <h1 className={style.saudacaoTitulo}>Olá, {usuario.nome}</h1>
           <p className={style.saudacaoSubtitulo}>
             Todas as informações do seu sistema centralizadas em um único
             painel.
@@ -535,7 +557,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ))
-              ))}
+                ))}
             </div>
           </div>
 
@@ -565,6 +587,129 @@ export default function Dashboard() {
               )}
 
             </div>
+          </div>
+
+          <div className={style.cardGrafico}>
+
+            <div className={style.cabecalhoGrafico}>
+              <span>FATURAMENTO POR CATEGORIA</span>
+
+              <p>
+                Descubra quais categorias geram mais receita
+              </p>
+            </div>
+
+            <div className={style.graficoCategorias}>
+
+              <div className={style.graficoPizza}>
+
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+
+                    <Pie
+                      data={dadosCategoriasPizza}
+                      dataKey="faturamento"
+                      nameKey="categoria"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={75}
+                      outerRadius={115}
+                      paddingAngle={4}
+                      cornerRadius={8}
+                      stroke="transparent"
+                    >
+                      {dadosCategoriasPizza.map((item, index) => (
+                        <Cell
+                          key={item.id}
+                          fill={
+                            CORES_CATEGORIAS[
+                            index % CORES_CATEGORIAS.length
+                            ]
+                          }
+                        />
+                      ))}
+                    </Pie>
+
+                    <Tooltip
+                      position={undefined}
+                      cursor={false}
+                      wrapperStyle={{
+                        zIndex: 9999
+                      }}
+                      formatter={(valor) => [
+                        formatarMoeda(valor),
+                        "Faturamento"
+                      ]}
+                      contentStyle={{
+                        backgroundColor: "#141414",
+                        border: "1px solid #C9A84C",
+                        borderRadius: "8px",
+                        color: "#fff"
+                      }}
+                    />
+
+                  </PieChart>
+                </ResponsiveContainer>
+
+                <div className={style.centroPizza}>
+                  <span className={style.textoCentro}>
+                    TOTAL
+                  </span>
+
+                  <strong className={style.valorCentro}>
+                    {formatarMoeda(totalFaturamentoCategorias)}
+                  </strong>
+                </div>
+
+              </div>
+
+              <div className={style.legendaCategorias}>
+
+                {dadosCategoriasPizza.map((categoria, index) => (
+
+                  <div
+                    key={categoria.id}
+                    className={style.itemCategoria}
+                  >
+
+                    <div className={style.infoCategoria}>
+
+                      <span
+                        className={style.corCategoria}
+                        style={{
+                          background:
+                            CORES_CATEGORIAS[
+                            index % CORES_CATEGORIAS.length
+                            ]
+                        }}
+                      />
+
+                      <div>
+                        <p className={style.nomeCategoria}>
+                          {categoria.categoria}
+                        </p>
+
+                        <span className={style.valorCategoria}>
+                          {formatarMoeda(categoria.faturamento)}
+                        </span>
+                      </div>
+
+                    </div>
+
+                    <div className={style.dadosCategoria}>
+                      <span className={style.percentualCategoria}>
+                        {categoria.percentual}%
+                      </span>
+                    </div>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+            </div>
+
           </div>
         </section>
       </main>
