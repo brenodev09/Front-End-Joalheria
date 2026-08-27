@@ -7,7 +7,13 @@ import BarraFiltros from '../../components/Admin/BarraFiltros/BarraFiltros';
 import TabelaPedidos from '../../components/Admin/TabelaPedidos/TabelaPedidos';
 import ModalDetalhesPedido from '../../components/Admin/ModalDetalhesPedido/ModalDetalhesPedido';
 import PaginacaoAdmin from '../../components/Admin/PaginacaoAdmin/PaginacaoAdmin';
-import { STATUS_PEDIDO } from './mockPedidosAdmin';
+import {
+  STATUS_PEDIDO,
+  formatarMoeda,
+  estaNoPeriodo,
+  normalizarPedidoAdmin,
+  normalizarDetalhePedido,
+} from './utilitariosPedidosAdmin.js';
 import { api } from '../../services/api';
 
 const ITENS_POR_PAGINA = 5;
@@ -55,118 +61,6 @@ const variantesCard = {
   oculto: { opacity: 0, y: 18 },
   visivel: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
 };
-
-function converterDataBr(dataStr) {
-  const [dataParte] = dataStr.split(' ');
-  const [dia, mes, ano] = dataParte.split('/').map(Number);
-  return new Date(ano, mes - 1, dia);
-}
-
-function estaNoPeriodo(dataPedido, periodo, referenciaHoje) {
-  if (periodo === 'todos') return true;
-  const diffDias = Math.floor((referenciaHoje - converterDataBr(dataPedido)) / (1000 * 60 * 60 * 24));
-  if (periodo === 'hoje') return diffDias === 0;
-  if (periodo === '7dias') return diffDias >= 0 && diffDias <= 7;
-  if (periodo === '30dias') return diffDias >= 0 && diffDias <= 30;
-  return true;
-}
-
-const formatarMoeda = (valor) =>
-  Number(valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-// Data + hora no formato "dd/mm/aaaa hh:mm", que é o que estaNoPeriodo/converterDataBr
-// esperam (eles fazem split(' ') e depois split('/')).
-function formatarDataPedido(dataIso) {
-  const data = new Date(dataIso);
-  const dataParte = data.toLocaleDateString('pt-BR');
-  const horaParte = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  return `${dataParte} ${horaParte}`;
-}
-
-// Converte cada linha vinda de GET /pedidos/pedidos-admin (ver pedidos.routes.js)
-// para o formato que a UI (cards de métrica, filtros, tabela) espera.
-// OBS: ajuste STATUS_PEDIDO em mockPedidosAdmin.js caso os valores não sejam
-// exatamente iguais aos do enum status_pedido do banco (pendente/enviado/entregue/cancelado).
-function normalizarPedidoAdmin(pedidoApi) {
-  return {
-    id: pedidoApi.id,
-    numero: `AZY-${String(pedidoApi.id).padStart(6, '0')}`,
-    cliente: {
-      nome: pedidoApi.cliente_nome,
-      email: pedidoApi.cliente_email,
-    },
-    dataPedido: formatarDataPedido(pedidoApi.criado_em),
-    quantidadeItens: Number(pedidoApi.quantidade_itens ?? 0),
-    totalNumero: Number(pedidoApi.total ?? 0),
-    total: formatarMoeda(pedidoApi.total),
-    status: pedidoApi.status_pedido,
-  };
-}
-
-// Rótulo exibido na timeline pra cada valor de status_pedido do banco.
-const STATUS_LABELS = {
-  pendente: 'Pedido realizado',
-  pago: 'Pagamento aprovado',
-  enviado: 'Enviado',
-  entregue: 'Entregue',
-  cancelado: 'Cancelado',
-};
-
-// Converte a resposta de GET /pedidos/pedidos-admin/:id ({ pedido, itens, timeline })
-// pro formato completo que ModalDetalhesPedido.jsx precisa. É um objeto bem
-// mais rico que o da listagem — por isso é buscado só quando o modal abre,
-// e não já na listagem.
-function normalizarDetalhePedido(resposta) {
-  const { pedido, itens, timeline } = resposta;
-
-  return {
-    id: pedido.id,
-    numero: `AZY-${String(pedido.id).padStart(6, '0')}`,
-    status: pedido.status_pedido,
-    cliente: {
-      nome: pedido.cliente_nome,
-      email: pedido.cliente_email,
-      // A tabela usuarios/pedidos não tem telefone nem endereço hoje — se
-      // isso for adicionado no banco, é só incluir aqui.
-      telefone: pedido.cliente_telefone ?? '—',
-    },
-    // Endereço de entrega salvo no próprio pedido — não existe quando o
-    // cliente escolheu retirada na loja. Dados de cartão de propósito NÃO
-    // entram aqui: o admin só deve ver o endereço, nunca o cartão do cliente.
-    endereco: pedido.tipo_entrega !== 'retirada' ? {
-      nome: pedido.endereco_nome_destinatario,
-      telefone: pedido.endereco_telefone,
-      rua: pedido.endereco_rua,
-      numero: pedido.endereco_numero,
-      complemento: pedido.endereco_complemento,
-      bairro: pedido.endereco_bairro,
-      cidade: pedido.endereco_cidade,
-      estado: pedido.endereco_estado,
-      cep: pedido.endereco_cep,
-    } : null,
-    tipoEntregaLabel: pedido.tipo_entrega === 'retirada' ? 'Retirada na loja' : null,
-    itens: itens.map((item) => ({
-      id: item.produto_id,
-      nome: item.nome,
-      imagem: item.imagem,
-      qtd: item.quantidade,
-      precoUnitario: formatarMoeda(item.preco_unitario),
-      subtotal: formatarMoeda(item.subtotal),
-    })),
-    subtotal: formatarMoeda(pedido.subtotal),
-    desconto: formatarMoeda(pedido.desconto),
-    frete: formatarMoeda(pedido.frete),
-    formaPagamento: pedido.forma_pagamento,
-    total: formatarMoeda(pedido.total),
-    // historico_pedidos vem em ordem cronológica crescente — cada linha já
-    // é um evento que aconteceu de fato, então todas entram "concluídas".
-    timeline: (timeline ?? []).map((evento) => ({
-      etapa: STATUS_LABELS[evento.status] ?? evento.status,
-      data: formatarDataPedido(evento.criado_em),
-      concluido: true,
-    })),
-  };
-}
 
 const variantesEntrada = {
   oculto: { opacity: 0, y: 18 },

@@ -1,5 +1,5 @@
 import styles from './BadgeStatusPedido.module.css';
-import { STATUS_PEDIDO, STATUS_LABEL } from '../../../pages/Admin/mockPedidosAdmin';
+import { STATUS_PEDIDO, STATUS_LABEL } from '../../../pages/Admin/utilitariosPedidosAdmin';
 
 const CLASSE_POR_STATUS = {
   [STATUS_PEDIDO.PENDENTE]: styles.selosPendente,

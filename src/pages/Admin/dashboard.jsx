@@ -4,7 +4,13 @@ import HeaderAdmin from "../../components/Admin/Header";
 import { useAuth } from "../../context/authContext"
 import { api } from "../../services/api"
 import dadosDashboard from "../../context/dataContext"
-import { useState } from "react";
+import {
+  STATUS_PEDIDO,
+  formatarMoeda,
+  normalizarPedidoAdmin,
+  estaNoMesAtual,
+} from "./utilitariosPedidosAdmin";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -25,6 +31,8 @@ export default function Dashboard() {
 
   const { usuario } = useAuth()
   const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, carregando } = dadosDashboard()
+  const [pedidos, setPedidos] = useState([])
+  const [loading, setLoading] = useState()
   const vendasUltimos30Dias = vendas.vendasUltimos30Dias || []
 
   const formatarDataGrafico = (data) => {
@@ -35,14 +43,6 @@ export default function Dashboard() {
       month: "2-digit"
     })
   }
-
-  const formatarMoeda = (valor) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL"
-    }).format(valor)
-  }
-
 
   const CORES_STATUS = {
     pendente: "#D4AF37",
@@ -65,6 +65,33 @@ export default function Dashboard() {
     return nomes[status] || status
 
   }
+
+  useEffect(() => {
+    async function carregarPedidos() {
+      try {
+        setLoading(true);
+        const resposta = await api.get('/pedidos/pedidos-admin');
+        setPedidos(resposta.data.map(normalizarPedidoAdmin));
+      } catch (error) {
+        console.error(error);
+        setPedidos([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    carregarPedidos();
+  }, []);
+
+  const faturamentoBruto = pedidos
+    .filter((p) => p.status !== STATUS_PEDIDO.CANCELADO)
+    .reduce((acc, p) => acc + p.totalNumero, 0);
+
+  // Faturamento apenas dos pedidos feitos no mês/ano atual (não cancelados).
+  const faturamentoMensal = pedidos
+    .filter((p) => p.status !== STATUS_PEDIDO.CANCELADO)
+    .filter((p) => estaNoMesAtual(p.dataPedido))
+    .reduce((acc, p) => acc + p.totalNumero, 0);
+
 
 
   if (carregando) {
@@ -111,14 +138,16 @@ export default function Dashboard() {
                 <img
                   width="30"
                   height="30"
-                  src="https://img.icons8.com/pastel-glyph/128/C9A84C/box--v3.png"
-                  alt="box--v3"
+                  src="https://img.icons8.com/material-sharp/30/C9A84C/real.png"
+                  alt="real"
                 />
               </div>
-              <span className={style.cardRotulo}>PRODUTOS ATIVOS</span>
+              <span className={style.cardRotulo}>FATURAMENTO BRUTO</span>
             </div>
-            <h1 className={style.cardValor}>{metricas.produtosAtivos}</h1>
-            <p className={style.cardDescricao}>produtos ativos em estoque</p>
+            <h1 className={style.cardValor}>{formatarMoeda(faturamentoBruto)}</h1>
+            <p className={style.cardDescricao}>faturamento total da loja em todo o tempo</p>
+
+
           </div>
 
           <div className={style.card}>
@@ -131,11 +160,30 @@ export default function Dashboard() {
                   alt="real"
                 />
               </div>
-              <span className={style.cardRotulo}>FATURAMENTO BRUTO</span>
+              <span className={style.cardRotulo}>FATURAMENTO MENSAL</span>
             </div>
-            <h1 className={style.cardValor}>R$ {Number(vendas.faturamentoBruto || 0).toLocaleString("pt-BR")}</h1>
-            <p className={style.cardDescricao}>produtos ativos em estoque</p>
+            <h1 className={style.cardValor}>{formatarMoeda(faturamentoMensal)}</h1>
+            <p className={style.cardDescricao}>faturamento da loja no mês atual</p>
           </div>
+
+
+          <div className={style.card}>
+            <div className={style.cardTopo}>
+              <div className={style.iconeCard}>
+                <img
+                  width="30"
+                  height="30"
+                  src="https://img.icons8.com/material-sharp/30/C9A84C/real.png"
+                  alt="real"
+                />
+              </div>
+              <span className={style.cardRotulo}>TICKET MÉDIO</span>
+            </div>
+            <h1 className={style.cardValor}>{formatarMoeda(vendas.ticketMedio)}</h1>
+            <p className={style.cardDescricao}>faturamento da loja no mês atual</p>
+          </div>
+
+
 
           <div className={style.card}>
             <div className={style.cardTopo}>
@@ -168,6 +216,8 @@ export default function Dashboard() {
             <h1 className={style.cardValor}>{vendas.vendasMensal}</h1>
             <p className={style.cardDescricao}>vendas desse mês atráves do site</p>
           </div>
+
+
         </section>
 
 
@@ -399,7 +449,7 @@ export default function Dashboard() {
 
           </div>
 
-          {/* <div className={style.cardRecentes}>
+          <div className={style.cardRecentes}>
             <div className={style.cabecalhoRecentes}>
               <div>
                 <p className={style.tituloRecentes}>
@@ -444,6 +494,51 @@ export default function Dashboard() {
             </div>
           </div>
 
+          <div className={style.cardRecentes}>
+            <div className={style.cabecalhoRecentes}>
+              <div>
+                <p className={style.tituloRecentes}>
+                  Coleções mais vendidas
+                </p>
+
+                <p className={style.subtituloRecentes}>
+                  Descubra qual coleção está faturando mais
+                </p>
+              </div>
+            </div>
+
+            <div className={style.listaRecentes}>
+              {(metricas.colecoesMaisVendidas || []).length === 0 ? (
+                <p className={style.semProdutos}>
+                  Não há nenhuma coleção cadastrada ou faturando no momento
+                </p>
+              ) : (
+                (metricas.colecoesMaisVendidas.map((colecao) => (
+                  <div
+                    key={colecao.id}
+                    className={style.itemRecente}
+                  >
+                    <div className={style.informacoesRecente}>
+                      <p className={style.nomeRecente}>
+                        {colecao.nome}
+                      </p>
+
+                      <span className={style.categoriaRecente}>
+                        {colecao.faturamento}
+                      </span>
+                    </div>
+
+                    <div className={style.dadosRecente}>
+                      <span className={style.estoqueRecente}>
+                        {colecao.produtosVendidos} un.
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ))}
+            </div>
+          </div>
+
           <div className={style.cardEstoque}>
             <div className={style.cabecalho}>
               <span className={style.icone}>⚠</span>
@@ -470,7 +565,7 @@ export default function Dashboard() {
               )}
 
             </div>
-          </div> */}
+          </div>
         </section>
       </main>
     </>

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import styles from './BarraFiltros.module.css';
-import { STATUS_PEDIDO, STATUS_LABEL } from '../../../pages/Admin/mockPedidosAdmin';
+import { STATUS_PEDIDO, STATUS_LABEL } from '../../../pages/Admin/utilitariosPedidosAdmin';
 
 const OPCOES_PERIODO = [
   { valor: 'todos', rotulo: 'Todo o período' },
