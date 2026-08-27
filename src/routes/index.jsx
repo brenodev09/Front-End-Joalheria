@@ -18,6 +18,8 @@ import Pedidos from "../pages/Admin/GestaoPedidos.jsx"
 import Funcionarios from "../pages/Admin/FuncionariosPage.jsx"
 import Cupons from "../pages/Admin/Cupons.jsx"
 import Notificacoes from "../pages/Admin/Notificacoes.jsx"
+import Configuracoes from "../pages/Admin/Configuracoes.jsx"
+import Manutencao from "../pages/Manutencao.jsx"
 
 // paginas do usuario
 import UserLayout from "../Layouts/UserLayout.jsx";
@@ -36,6 +38,7 @@ import PagProduto from "../pages/ProdutoJoalheria.jsx";
 import Catalogo from "../pages/User/Catalogo";
 import ColecoesPublicas from "../pages/User/Colecoes.jsx";
 import ColecaoDetalhe from "../pages/User/ColecaoDetalhe.jsx";
+import StatusLojaGuard from "./StatusLojaGuard.jsx";
 
 
 
@@ -46,12 +49,15 @@ export default function Rotas() {
         <>
         <script src="https://sdk.mercadopago.com/js/v2"></script>
             <Routes>
-                <Route path="/" element={<Inicial />} />
-                <Route path="/produto/:id" element={<PagProduto />} />
-                <Route path="/carrinho" element={<Carrinho />} />
-                <Route path="/catalogo" element={<Catalogo />} />
-                <Route path="/colecoes" element={<ColecoesPublicas />} />
-                <Route path="/colecoes/:id" element={<ColecaoDetalhe />} />
+                <Route element={<StatusLojaGuard />}>
+                    <Route path="/" element={<Inicial />} />
+                    <Route path="/produto/:id" element={<PagProduto />} />
+                    <Route path="/carrinho" element={<Carrinho />} />
+                    <Route path="/catalogo" element={<Catalogo />} />
+                    <Route path="/colecoes" element={<ColecoesPublicas />} />
+                    <Route path="/colecoes/:id" element={<ColecaoDetalhe />} />
+                </Route>
+                <Route path="/manutencao" element={<Manutencao />} />
 
                 <Route element={<RotasAdmin />}>
                     <Route path="/admin" element={<AdminLayout />}>
@@ -65,6 +71,7 @@ export default function Rotas() {
                         <Route path="colecoes" element={<Colecoes />} />
                         <Route path="funcionarios" element={<Funcionarios />} />
                         <Route path="cupons" element={<Cupons />} />
+                        <Route path="configuracoes" element={<Configuracoes />} />
                     </Route>
                 </Route>
 
@@ -77,8 +84,8 @@ export default function Rotas() {
 
 
                 <Route element={<RotasPublicas />}>
-                    <Route path="/Cadastrar" element={<Cadastro />} />
-                    <Route path="/Login" element={<Login />} />
+                    <Route path="/cadastro" element={<Cadastro />} />
+                    <Route path="/login" element={<Login />} />
                 </Route>
             </Routes>
 

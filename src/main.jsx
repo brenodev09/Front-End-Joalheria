@@ -6,6 +6,7 @@ import AuthProvider from "./context/authContext.jsx";
 import { CarrinhoProvider } from "./context/carrinhoContext.jsx";
 import { PedidosProvider } from "./context/pedidosContext.jsx";
 import { BrowserRouter } from "react-router-dom";
+import { LojaProvider } from "./context/lojaContext.jsx";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -16,6 +17,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
         <AuthProvider>
 
+          <LojaProvider>
+
           <PedidosProvider>
             
             <CarrinhoProvider>
@@ -23,6 +26,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </CarrinhoProvider>
 
           </PedidosProvider>
+
+          </LojaProvider>
 
 
         </AuthProvider>

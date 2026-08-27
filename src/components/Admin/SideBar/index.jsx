@@ -10,6 +10,7 @@ import {
   Gem,
   User,
   Bell
+  ,Settings
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -116,6 +117,11 @@ export default function Sidebar() {
             alt="user"
           />
           <span className={styles.textoNav}>Conta</span>
+        </NavLink>
+
+        <NavLink to="/admin/configuracoes" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
+          <Settings size={27} strokeWidth={1.7} />
+          <span className={styles.textoNav}>Configurações</span>
         </NavLink>
 
       

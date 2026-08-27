@@ -53,6 +53,9 @@ export default function AuthProvider({ children }) {
         } catch (error) {
             return {
                 sucesso: false,
+                bloqueado: error.response?.status === 429 || error.response?.data?.bloqueado === true,
+                retryAfter: Number(error.response?.data?.retryAfter || 0),
+                bloqueadoAte: error.response?.data?.bloqueadoAte || null,
                 mensagem:
                     error.response?.data?.erro ||
                     "Erro ao fazer login",

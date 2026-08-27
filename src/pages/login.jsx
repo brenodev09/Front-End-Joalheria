@@ -1,5 +1,5 @@
 import style from "../styles/login.module.css"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import background from "../img/bg-login.png"
 import { useAuth } from "../context/authContext"
 import { useNavigate } from "react-router-dom"
@@ -12,9 +12,26 @@ export default function Login() {
   // const [confirmarSenha, setConfirmarSenha] = useState()
   const [erro, setErro] = useState("")
   const [entrando, setEntrando] = useState(false)
+  const [bloqueadoAte, setBloqueadoAte] = useState(() => Number(localStorage.getItem("login_bloqueado_ate")) || 0)
+  const [segundosRestantes, setSegundosRestantes] = useState(() => Math.max(0, Math.ceil(((Number(localStorage.getItem("login_bloqueado_ate")) || 0) - Date.now()) / 1000)))
   const navegar = useNavigate()
 
   const { login } = useAuth()
+
+  useEffect(() => {
+    if (!bloqueadoAte) return undefined
+    const atualizar = () => {
+      const restantes = Math.max(0, Math.ceil((bloqueadoAte - Date.now()) / 1000))
+      setSegundosRestantes(restantes)
+      if (!restantes) {
+        setBloqueadoAte(0)
+        localStorage.removeItem("login_bloqueado_ate")
+      }
+    }
+    atualizar()
+    const intervalo = window.setInterval(atualizar, 1000)
+    return () => window.clearInterval(intervalo)
+  }, [bloqueadoAte])
 
   function ValidarForm() {
 
@@ -29,14 +46,17 @@ export default function Login() {
     }
 
     return true
-
-    setErro("")
   }
 
 
   async function fazerLogin(event) {
     event.preventDefault()
     setErro("")
+
+    if (segundosRestantes > 0) {
+      setErro(`Aguarde ${formatarTempo(segundosRestantes)} para tentar novamente.`)
+      return
+    }
 
     if (!ValidarForm()) return;
 
@@ -47,7 +67,13 @@ export default function Login() {
     if (resultado.sucesso) {
       navegar("/")
     } else {
-      setErro(resultado.mensagem)
+      if (resultado.bloqueado && resultado.bloqueadoAte) {
+        const dataBloqueio = new Date(resultado.bloqueadoAte).getTime()
+        setBloqueadoAte(dataBloqueio)
+        localStorage.setItem("login_bloqueado_ate", String(dataBloqueio))
+        setSegundosRestantes(Math.max(0, Math.ceil((dataBloqueio - Date.now()) / 1000)))
+      }
+      setErro(resultado.bloqueado ? `Muitas tentativas. Aguarde ${formatarTempo(resultado.retryAfter)}.` : resultado.mensagem)
       setEntrando(false)
     }
   }
@@ -105,8 +131,8 @@ export default function Login() {
 
 
           <div className={style.rodapeForm}>
-            <button disabled = {entrando} type="submit" className={`btnPadrao ${style.btnCriar} ${entrando ? style.btnEntrando : ""}`}> 
-            {entrando ? "ENTRANDO..." : "ENTRAR"}</button>
+            <button disabled = {entrando || segundosRestantes > 0} type="submit" className={`btnPadrao ${style.btnCriar} ${entrando ? style.btnEntrando : ""}`}> 
+            {entrando ? "ENTRANDO..." : segundosRestantes > 0 ? `AGUARDE ${formatarTempo(segundosRestantes)}` : "ENTRAR"}</button>
 
             <div className={style.possuiConta}>
               <p>Não possui uma conta? </p>
@@ -118,4 +144,10 @@ export default function Login() {
       </main>
     </>
   );
+}
+
+function formatarTempo(segundos) {
+  const minutos = Math.floor(segundos / 60)
+  const segundosFormatados = String(segundos % 60).padStart(2, "0")
+  return `${minutos}:${segundosFormatados}`
 }

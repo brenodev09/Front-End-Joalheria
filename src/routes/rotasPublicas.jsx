@@ -1,10 +1,11 @@
 import {Outlet, Navigate} from "react-router-dom"
 import {useAuth} from "../context/authContext"
-import { useState } from "react"
+import { useLoja } from "../context/lojaContext";
 
 export default function RotasPublicas(){
     
     const {carregando, estaLogado} = useAuth()
+    const { status } = useLoja()
 
     if(carregando){
       return  <p>Está carregando</p>
@@ -12,6 +13,10 @@ export default function RotasPublicas(){
 
     if(estaLogado){
         return <Navigate to="/admin/dashboard"/>
+    }
+
+    if (status === "maintenance" || status === "closed") {
+      return <Navigate to="/manutencao" replace />;
     }
 
     return <Outlet/>
