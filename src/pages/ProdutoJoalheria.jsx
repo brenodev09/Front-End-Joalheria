@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -9,7 +9,6 @@ import {
   ZoomIn,
   Heart,
   Share2,
-  Ruler,
   Minus,
   Plus,
   ShoppingBag,
@@ -30,6 +29,7 @@ import {
 import style from "../styles/ProdutoJoalheria.module.css"
 import Header from "../components/Header"
 import { useCarrinho } from "../context/carrinhoContext";
+import semFoto from "../img/semFotoImg.png";
 
 
 
@@ -123,7 +123,7 @@ const RELACIONADOS = [
 /* ------------------------------------------------------------------ */
 
 function formatarPreco(valor) {
-  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+  return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
 const RAIO_ANCORA = 30
@@ -161,9 +161,12 @@ export default function ProdutoJoalheria() {
 
   useEffect(() => {
     async function produtoSelecionado() {
-      const resposta = await api.get(`/produtos/${id}`)
-      console.log("Produto recebido:", resposta.data)
-      setProduto(resposta.data)
+      try {
+        const resposta = await api.get(`/produtos/${id}`)
+        setProduto(resposta.data)
+      } catch (error) {
+        console.error("Erro ao carregar produto:", error.response?.data || error)
+      }
     }
 
     produtoSelecionado()
@@ -177,11 +180,9 @@ export default function ProdutoJoalheria() {
   const [origemZoom, setOrigemZoom] = useState('50% 50%')
 
   /* ---- estado: informações ---- */
-  const [materialAtivo, setMaterialAtivo] = useState(PRODUTO.materiais[0].id)
   const [variacaoAtiva, setVariacaoAtiva] = useState(null);
   const [quantidade, setQuantidade] = useState(1)
   const [favorito, setFavorito] = useState(false)
-  const [guiaAberto, setGuiaAberto] = useState(false)
   const [adicionado, setAdicionado] = useState(false)
   const [erroTamanho, setErroTamanho] = useState(false)
 
@@ -212,8 +213,6 @@ export default function ProdutoJoalheria() {
       })),
     [],
   )
-
-  const materialSelecionado = PRODUTO.materiais.find((m) => m.id === materialAtivo)
 
   /* ---- animação: galeria (fade + scale de entrada) ---- */
   useGSAP(
@@ -352,55 +351,21 @@ export default function ProdutoJoalheria() {
   }
 
   async function adicionarSacola() {
-
-    if (produto.variacoes?.length > 0 && !variacaoAtiva) {
-
-      setErroTamanho(true);
-
-      return;
-
-    }
-
-
     try {
-
-
-      await adicionarAoCarrinho(
-        produto.id,
-        quantidade,
-        variacaoAtiva?.id || null
-      );
-
-
+      await adicionarAoCarrinho(produto.id, quantidade, variacaoAtiva?.id || null, produto)
       setAdicionado(true);
-
-
-      // abre a sidebar da sacola
       abrirSidebar();
-
-
-      setTimeout(() => {
-        setAdicionado(false);
-      }, 2500);
-
-
+      setTimeout(() => setAdicionado(false), 2500);
     } catch (error) {
-
-      console.error(
-        "Erro ao adicionar:",
-        error
-      );
-
+      setErroConfiguracao(error.response?.data?.message || error.response?.data?.erro || error.message || "Não foi possível adicionar esta configuração.")
     }
-
   }
 
   if (!produto) {
     return <div>Carregando...</div>
   }
 
-  const precoSelecionado =
-    variacaoAtiva?.preco || produto.preco;
+  const precoSelecionado = variacaoAtiva?.preco ?? produto.preco;
 
 
   const precoParceladoo = precoSelecionado / 12;
@@ -433,15 +398,13 @@ export default function ProdutoJoalheria() {
             >
               <img
                 ref={imagemGaleriaRef}
-                src={
-                  produto.imagem?.startsWith("http")
-                    ?
-                    produto.imagem
-                    :
-                    `http://localhost:3000${produto.imagem}`
-                }
+                src={produto.imagem?.startsWith("http") ? produto.imagem : `http://localhost:3000${produto.imagem}`}
                 alt={produto.nome}
                 className={style.imagemPrincipal}
+                onError={(event) => {
+                  event.currentTarget.onerror = null
+                  event.currentTarget.src = semFoto
+                }}
               />
 
               <button
@@ -476,6 +439,10 @@ export default function ProdutoJoalheria() {
                         `http://localhost:3000${produto.imagem}`
                     }
                     alt={produto.nome}
+                    onError={(event) => {
+                      event.currentTarget.onerror = null
+                      event.currentTarget.src = semFoto
+                    }}
                   />
                 </button>
 
@@ -490,83 +457,20 @@ export default function ProdutoJoalheria() {
             <h1 className={`${style.nomeProduto} ${style.animarEntrada}`}>{produto.nome}</h1>
 
             <p className={`${style.descricaoCurta} ${style.animarEntrada}`}>{produto.descricao}</p>
+            {produto.personalizavel !== false && (
+              <Link className={style.botaoAtelier} to={`/atelier/${produto.id}`}>
+                ✨ Personalizar esta joia
+              </Link>
+            )}
 
             <div className={`${style.blocoPreco} ${style.animarEntrada}`}>
-              <span className={style.precoAtual}>{formatarPreco(produto.preco)}</span>
+              <span className={style.precoAtual}>{formatarPreco(precoSelecionado)}</span>
               <span className={style.parcelamento}>
                 ou 12x de {formatarPreco(precoParceladoo)} sem juros
               </span>
             </div>
 
             <div className={style.linhaDivisoria} />
-
-            <div className={`${style.blocoSelecao} ${style.animarEntrada}`}>
-              <div className={style.rotuloSelecao}>
-                <span>Material</span>
-                <span className={style.valorSelecionado}>{materialSelecionado.nome}</span>
-              </div>
-              <div className={style.gradeMateriais}>
-                {PRODUTO.materiais.map((material) => (
-                  <button
-                    key={material.id}
-                    type="button"
-                    className={`${style.amostraMaterial} ${material.id === materialAtivo ? style.amostraMaterialAtiva : ''
-                      }`}
-                    style={{ backgroundColor: material.cor }}
-                    onClick={() => setMaterialAtivo(material.id)}
-                    aria-label={material.nome}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className={`${style.blocoSelecao} ${style.animarEntrada}`}>
-              <div className={style.rotuloSelecao}>
-                <span>Tamanho (aro)</span>
-                <button type="button" className={style.linkGuia} onClick={() => setGuiaAberto((a) => !a)}>
-                  <Ruler size={13} strokeWidth={1.5} />
-                  Guia de medidas
-                </button>
-              </div>
-
-              {guiaAberto && (
-                <p className={style.textoGuia}>
-                  Meça a circunferência interna de um anel que já sirva bem em você e compare com uma
-                  fita métrica em milímetros para encontrar o aro ideal.
-                </p>
-              )}
-
-              <div className={`${style.gradeTamanhos} ${erroTamanho ? style.erroTamanho : ""}`}>
-                {produto.variacoes
-                  .filter(v => v.tipo === "Tamanho")
-                  .map((variacao) => (
-
-                    <button
-
-                      key={variacao.id}
-
-                      type="button"
-
-                      className={`
-  ${style.opcaoTamanho}
-
-  ${variacaoAtiva?.id === variacao.id
-                          ? style.opcaoTamanhoAtiva
-                          : ""}
-  `}
-
-                      onClick={() => setVariacaoAtiva(variacao)}
-
-                    >
-
-                      {variacao.valor}
-
-                    </button>
-
-
-                  ))}
-              </div>
-            </div>
 
             <div className={`${style.linhaAcoes} ${style.animarEntrada}`}>
               <div className={style.seletorQuantidade}>

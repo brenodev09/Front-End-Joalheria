@@ -72,8 +72,9 @@ export function CarrinhoProvider({ children }) {
     produtoId,
     quantidade = 1,
     variacaoId = null,
-    produtoInfo = null
-) {
+    produtoInfo = null,
+    configuracao = {}
+  ) {
 
     console.log("DADOS ENVIO CARRINHO:", {
         produtoId,
@@ -96,9 +97,10 @@ export function CarrinhoProvider({ children }) {
         const resposta = await api.post(
             "/carrinho",
             {
-                produto_id: produtoId,
+                produtoId,
                 quantidade,
-                variacao_id: variacaoId,
+                configuracao,
+                ...(variacaoId ? { variacao_id: variacaoId } : {}),
             },
             {
                 headers: {

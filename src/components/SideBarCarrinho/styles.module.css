@@ -580,3 +580,10 @@
 
 
 }
+.configuracao {
+  display: grid;
+  gap: 3px;
+  margin: 6px 0;
+  color: rgba(245, 243, 239, 0.62);
+  font-size: 11px;
+}

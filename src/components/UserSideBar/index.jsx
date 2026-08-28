@@ -170,17 +170,6 @@ export default function SideBar({ isOpen, fecharSideBar }) {
         }
     }
 
-    async function resgatarCupom(cupom) {
-        try {
-            setCarregandoCupons(true)
-            await api.post(`/cupons/${cupom.id}/resgatar`)
-            await carregarCupons()
-        } catch (error) {
-            setErroCupons(error.response?.data?.erro || "Não foi possível resgatar o cupom.")
-            setCarregandoCupons(false)
-        }
-    }
-
     return (
         <>
             {/* Overlay escuro */}
@@ -340,7 +329,7 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                             <div className={style.listaCuponsModal}>
                                 {cupons.map((cupom) => {
                                     const resgatado = cupom.resgatado || cupom.resgatado_em;
-                                    const disponivel = cupom.disponivel ?? cupom.pode_resgatar ?? false;
+                                    const disponivel = cupom.disponivel ?? cupom.pode_resgatar ?? true;
                                     return (
                                         <article className={`${style.cardCupom} ${!disponivel ? style.cupomIndisponivel : ""}`} key={cupom.id || cupom.codigo}>
                                             <div>
@@ -349,7 +338,7 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                                                 {cupom.valor_minimo > 0 && <small>Pedido mínimo: R$ {Number(cupom.valor_minimo).toFixed(2).replace(".", ",")}</small>}
                                                 {!disponivel && <small>{cupom.motivo_indisponibilidade || "Indisponível para esta conta"}</small>}
                                             </div>
-                                            {resgatado ? <span className={style.cupomResgatado}>Resgatado</span> : disponivel ? <button type="button" className={style.btnResgatar} onClick={() => resgatarCupom(cupom)} disabled={carregandoCupons}>Resgatar</button> : <span className={style.cupomBloqueado}>Indisponível</span>}
+                                            {resgatado ? <span className={style.cupomResgatado}>Disponível</span> : disponivel ? <button type="button" className={style.btnResgatar} onClick={() => navegar_e_fechar("/carrinho")} disabled={carregandoCupons}>Usar no carrinho</button> : <span className={style.cupomBloqueado}>Indisponível</span>}
                                         </article>
                                     );
                                 })}

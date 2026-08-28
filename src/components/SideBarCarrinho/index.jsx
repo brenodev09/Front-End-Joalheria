@@ -260,9 +260,21 @@ export default function SideBarCarrinho() {
                                     </h3>
 
 
-                                    <p>
-                                        {item.material}
-                                    </p>
+                                    {item.configuracao && (
+                                        <div className={styles.configuracao}>
+                                            {Array.isArray(item.configuracao)
+                                                ? item.configuracao.map((grupo) => (
+                                                    <p key={grupo.personalizacaoId}>
+                                                        {grupo.nome}: {grupo.opcoes?.map((opcao) => opcao.nome).join(", ") || grupo.valorLivre || "—"}
+                                                    </p>
+                                                ))
+                                                : Object.entries(item.configuracao).map(([chave, valor]) => (
+                                                    <p key={chave}>
+                                                        {chave}: {typeof valor === "object" ? valor.valorLivre : valor}
+                                                    </p>
+                                                ))}
+                                        </div>
+                                    )}
 
 
                                     <span className={styles.preco}>

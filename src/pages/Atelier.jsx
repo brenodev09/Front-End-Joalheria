@@ -1,0 +1,311 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Minus, Pause, Play, Plus, ShoppingBag } from "lucide-react";
+import { useCarrinho } from "../context/carrinhoContext";
+import {
+  calculateConfiguration,
+  getConfigurator,
+  validateConfiguration,
+} from "../services/configurator";
+import styles from "../styles/Atelier.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+function assetUrl(asset) {
+  if (!asset || typeof asset !== "string") return "";
+  return /^https?:\/\//i.test(asset) ? asset : `${API_URL}${asset.startsWith("/") ? asset : `/${asset}`}`;
+}
+
+function chave(grupo) {
+  return grupo.chave || grupo.slug || grupo.nome?.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "_") || String(grupo.id);
+}
+
+function imagensDo(valor) {
+  if (!valor) return [];
+  if (Array.isArray(valor)) return valor.flatMap(imagensDo);
+  if (typeof valor === "string") return [valor];
+  return valor.imagens || valor.images || valor.frames || valor.angulos || valor.galeria || [];
+}
+
+function framesDoProduto(produto) {
+  return imagensDo(produto?.imagens360 || produto?.imagens_360 || produto?.galeria360 || produto?.galeria || produto?.imagens || produto?.imagem)
+    .map(assetUrl).filter(Boolean);
+}
+
+function visualDaOpcao(opcao, frame) {
+  const visual = opcao?.visual;
+  if (!visual || typeof visual !== "object") return "";
+  const frames = imagensDo(visual.frames || visual.imagens || visual.images || visual.angulos);
+  return assetUrl(frames[frame] || visual.imagem || visual.image || visual.asset || visual.src);
+}
+
+function getGroupKey(grupo) {
+  return chave(grupo);
+}
+
+function getSelectionValues(value) {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null || value === "") return [];
+  return [value];
+}
+
+function getOptionLabel(grupo, value) {
+  const option = (grupo?.opcoes || []).find((item) => String(item.id) === String(value));
+  return option?.nome || value || "Não informado";
+}
+
+function ImageViewer({ produto, visuais }) {
+  const frames = framesDoProduto(produto);
+  const [frame, setFrame] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const [automatico, setAutomatico] = useState(false);
+  const [interagiu, setInteragiu] = useState(false);
+  const inicio = useRef(null);
+  const pinchDistance = useRef(null);
+
+  useEffect(() => {
+    setFrame(0);
+  }, [produto?.id, frames.length]);
+
+  useEffect(() => {
+    if (!automatico || frames.length < 2) return undefined;
+    const timer = setInterval(() => setFrame((atual) => (atual + 1) % frames.length), 180);
+    return () => clearInterval(timer);
+  }, [automatico, frames.length]);
+
+  function ajustarZoom(valor) {
+    setZoom((atual) => Math.min(2.2, Math.max(1, Number((atual + valor).toFixed(2)))));
+  }
+
+  function arrastar(event) {
+    if (!frames.length) return;
+    const clientX = event.touches?.[0]?.clientX ?? event.clientX;
+    if (inicio.current == null) inicio.current = clientX;
+    const distancia = clientX - inicio.current;
+    if (Math.abs(distancia) < 18) return;
+    setFrame((atual) => (atual + (distancia < 0 ? 1 : -1) + frames.length) % frames.length);
+    inicio.current = clientX;
+    setInteragiu(true);
+  }
+
+  function handleTouchMove(event) {
+    if (!frames.length) return;
+    if (event.touches.length === 2) {
+      const [a, b] = Array.from(event.touches);
+      const distancia = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      if (pinchDistance.current == null) {
+        pinchDistance.current = distancia;
+        return;
+      }
+      const delta = (distancia - pinchDistance.current) / 220;
+      if (Math.abs(delta) > 0.01) {
+        ajustarZoom(delta);
+        pinchDistance.current = distancia;
+      }
+      return;
+    }
+    arrastar(event);
+  }
+
+  const camadas = visuais.map((visual) => {
+    const imagem = visualDaOpcao({ visual }, frame);
+    return imagem && visual?.camada ? { imagem, opacidade: visual.opacidade ?? 1 } : null;
+  }).filter(Boolean);
+  const principal = frames[frame] || assetUrl(produto?.imagem);
+
+  return (
+    <div
+      className={styles.viewer}
+      onMouseDown={(event) => { inicio.current = event.clientX; setInteragiu(true); }}
+      onMouseMove={(event) => event.buttons && arrastar(event)}
+      onMouseUp={() => { inicio.current = null; pinchDistance.current = null; }}
+      onMouseLeave={() => { inicio.current = null; pinchDistance.current = null; }}
+      onTouchStart={(event) => { if (event.touches.length === 1) inicio.current = event.touches[0].clientX; setInteragiu(true); }}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={() => { inicio.current = null; pinchDistance.current = null; }}
+      onWheel={(event) => { event.preventDefault(); setInteragiu(true); if (event.deltaY < 0) ajustarZoom(0.12); else ajustarZoom(-0.12); }}
+    >
+      <div className={styles.imageStage} style={{ transform: `scale(${zoom})` }}>
+        {principal && <img className={styles.mainImage} src={principal} alt={produto?.nome || "Joia"} draggable="false" />}
+        {camadas.map((camada) => <img className={styles.layerImage} style={{ opacity: camada.opacidade }} src={camada.imagem} alt="" key={camada.imagem} draggable="false" />)}
+      </div>
+      {!principal && <div className={styles.imageFallback}>Imagem da joia indisponível.</div>}
+      {!interagiu && frames.length > 1 && <span className={styles.dragHint}>Arraste para visualizar</span>}
+      <div className={styles.viewerActions}>
+        <button type="button" onClick={() => { setAutomatico((atual) => !atual); setInteragiu(true); }} disabled={frames.length < 2} className={automatico ? styles.active : ""}>{automatico ? <Pause size={15} /> : <Play size={15} />} 360°</button>
+        <button type="button" onClick={() => ajustarZoom(0.15)} aria-label="Aumentar zoom"><Plus size={15} /></button>
+        <button type="button" onClick={() => ajustarZoom(-0.15)} aria-label="Diminuir zoom"><Minus size={15} /></button>
+        <button type="button" onClick={() => { setFrame(0); setZoom(1); setAutomatico(false); setInteragiu(false); }}>Centralizar</button>
+      </div>
+      {frames.length > 1 && <small className={styles.frameCounter}>{frame + 1} / {frames.length}</small>}
+    </div>
+  );
+}
+
+export default function Atelier() {
+  const { produtoId } = useParams();
+  const { adicionarAoCarrinho } = useCarrinho();
+  const [dados, setDados] = useState(null);
+  const [configuracao, setConfiguracao] = useState({});
+  const [calculo, setCalculo] = useState(null);
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+
+  useEffect(() => {
+    let ativo = true;
+
+    getConfigurator(produtoId)
+      .then((resposta) => { if (ativo) setDados(resposta || {}); })
+      .catch((error) => {
+        if (!ativo) return;
+        setErro(error.response?.data?.erro || error.response?.data?.message || "Não foi possível abrir o Ateliê.");
+      })
+      .finally(() => { if (ativo) setCarregando(false); });
+
+    return () => { ativo = false; };
+  }, [produtoId]);
+
+  const grupos = useMemo(() => [...(dados?.personalizacoes || [])].sort((a, b) => Number(a.ordem || 0) - Number(b.ordem || 0)), [dados]);
+  const visuais = useMemo(() => grupos.flatMap((grupo) => {
+    const key = getGroupKey(grupo);
+    const selecionados = getSelectionValues(configuracao[key]);
+    return (grupo.opcoes || []).filter((opcao) => selecionados.some((id) => String(id) === String(opcao.id))).map((opcao) => opcao.visual).filter(Boolean);
+  }), [configuracao, grupos]);
+
+  useEffect(() => {
+    if (!dados || !grupos.length) return undefined;
+
+    setConfiguracao((atual) => {
+      const proximo = { ...atual };
+      let mudou = false;
+
+      grupos.forEach((grupo) => {
+        const key = getGroupKey(grupo);
+        const atualValor = proximo[key];
+        const list = getSelectionValues(atualValor);
+
+        if (grupo.obrigatoria && grupo.opcoes?.length && (!atualValor && !list.length)) {
+          proximo[key] = grupo.tipo === "checkbox" ? [grupo.opcoes[0].id] : grupo.opcoes[0].id;
+          mudou = true;
+        }
+      });
+
+      return mudou ? proximo : atual;
+    });
+  }, [dados, grupos]);
+
+  useEffect(() => {
+    if (!dados || !Object.keys(configuracao).length) return undefined;
+    const timer = setTimeout(async () => {
+      try {
+        const resposta = await calculateConfiguration(produtoId, configuracao);
+        setCalculo(resposta || null);
+        setErro("");
+      } catch (error) {
+        setCalculo(null);
+        setErro(error.response?.data?.erro || error.response?.data?.message || "Essa combinação não está disponível.");
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [configuracao, dados, produtoId]);
+
+  function alterar(grupo, valor) {
+    const nome = getGroupKey(grupo);
+    setConfiguracao((atual) => {
+      if (grupo.tipo !== "checkbox") return { ...atual, [nome]: valor };
+      const selecionados = Array.isArray(atual[nome]) ? atual[nome] : [];
+      return { ...atual, [nome]: selecionados.includes(valor) ? selecionados.filter((item) => item !== valor) : [...selecionados, valor] };
+    });
+  }
+
+  const resumo = useMemo(() => grupos
+    .map((grupo) => {
+      const key = getGroupKey(grupo);
+      const valor = configuracao[key];
+      const valores = getSelectionValues(valor);
+      const label = valores.length ? valores.map((item) => getOptionLabel(grupo, item)).join(", ") : "";
+
+      if (!label && !grupo.permite_valor_livre) return null;
+      if (grupo.permite_valor_livre && typeof valor === "string" && valor.trim()) return { grupo: grupo.nome, valor };
+      if (label) return { grupo: grupo.nome, valor: label };
+      return null;
+    })
+    .filter(Boolean), [configuracao, grupos]);
+
+  async function adicionar() {
+    setSalvando(true);
+    try {
+      await validateConfiguration(produtoId, configuracao);
+      await adicionarAoCarrinho(produtoId, 1, null, dados.produto, configuracao);
+    } catch (error) {
+      setErro(error.response?.data?.erro || error.response?.data?.message || error.message || "Configuração inválida.");
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  if (carregando) return <main className={styles.page}><p>Preparando seu Ateliê...</p></main>;
+  if (!dados) return <main className={styles.page}><p>{erro || "Produto não encontrado."}</p></main>;
+
+  if (dados.produto?.personalizavel === false) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.viewer} style={{ display: "grid", placeItems: "center", padding: "40px" }}>
+          <div className={styles.emptyState} style={{ maxWidth: "520px", textAlign: "center" }}>
+            <p className={styles.eyebrow}>ATELIÊ NÃO DISPONÍVEL</p>
+            <h1 style={{ marginTop: "12px", marginBottom: "12px" }}>Esta joia não possui opções de personalização.</h1>
+            <Link to={`/produto/${produtoId}`} className={styles.add} style={{ display: "inline-flex", width: "auto", minWidth: "220px" }}>
+              <ArrowLeft size={16} /> Voltar para o produto
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.header}><Link to={`/produto/${produtoId}`}><ArrowLeft size={16} /> Voltar para o produto</Link><span>ATELIÊ DIGITAL</span></header>
+      <div className={styles.layout}>
+        <ImageViewer produto={dados.produto} visuais={visuais} />
+        <section className={styles.panel}>
+          <p className={styles.eyebrow}>CRIE SUA PRÓPRIA VERSÃO</p>
+          <h1>{dados.produto?.nome || "Sua joia"}</h1>
+          <p className={styles.subtitle}>Escolha cada detalhe da sua peça.</p>
+          {!grupos.length && <div className={styles.emptyState}>Esta joia ainda não possui personalizações cadastradas.</div>}
+          {grupos.map((grupo) => {
+            const nome = getGroupKey(grupo);
+            const valor = configuracao[nome] ?? "";
+            const selecionados = getSelectionValues(valor);
+
+            return <fieldset className={styles.group} key={grupo.id}>
+              <legend>{grupo.nome}{grupo.obrigatoria ? " *" : ""}</legend>
+              {grupo.tipo === "select" ? <select value={valor} onChange={(event) => alterar(grupo, event.target.value)}><option value="">Selecione</option>{grupo.opcoes?.map((opcao) => <option value={opcao.id} key={opcao.id}>{opcao.nome}</option>)}</select> : <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""}><input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />{opcao.visual?.cor && <i style={{ backgroundColor: opcao.visual.cor }} />}{opcao.nome}<small>+ R$ {Number(opcao.valorAdicional || 0).toFixed(2)}</small></label>)}</div>}
+              {grupo.permite_valor_livre && <input type="text" value={typeof valor === "string" && !grupo.opcoes?.some((opcao) => String(opcao.id) === valor) ? valor : ""} maxLength={grupo.valor_livre_maximo || undefined} onChange={(event) => alterar(grupo, event.target.value)} placeholder="Personalize sua gravação" />}
+            </fieldset>;
+          })}
+
+          {resumo.length > 0 && (
+            <div className={styles.summaryBox}>
+              <span className={styles.summaryTitle}>Resumo da sua criação</span>
+              <ul className={styles.summaryList}>
+                {resumo.map((item) => (
+                  <li key={item.grupo}>
+                    <span>{item.grupo}</span>
+                    <strong>{item.valor}</strong>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {erro && <p className={styles.error} role="alert">{erro}</p>}
+          <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {Number(calculo?.precoFinal ?? dados.produto?.precoBase ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {Number(calculo.precoBase).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {Number(calculo.adicionais).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
+          <button type="button" className={styles.add} onClick={adicionar} disabled={salvando || !calculo}><ShoppingBag size={17} /> {salvando ? "Validando..." : "Adicionar ao carrinho"}</button>
+        </section>
+      </div>
+    </main>
+  );
+}

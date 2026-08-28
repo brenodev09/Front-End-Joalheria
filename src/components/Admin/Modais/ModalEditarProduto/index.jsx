@@ -22,6 +22,7 @@ export default function ModalEditarProduto({
 
     const [ativo, setAtivo] = useState(true);
     const [destaque, setDestaque] = useState(false);
+    const [personalizavel, setPersonalizavel] = useState(false);
 
     const [imagem, setImagem] = useState(null);
     const [imagemPreview, setImagemPreview] = useState(null);
@@ -65,6 +66,13 @@ export default function ModalEditarProduto({
             produto.destaque === 1 ||
             produto.destaque === "1" ||
             produto.destaque === "true"
+        );
+
+        setPersonalizavel(
+            produto.personalizavel === true ||
+            produto.personalizavel === 1 ||
+            produto.personalizavel === "1" ||
+            produto.personalizavel === "true"
         );
 
         setImagem(null);
@@ -231,6 +239,11 @@ export default function ModalEditarProduto({
             formData.append(
                 "destaque",
                 destaque ? "true" : "false"
+            );
+
+            formData.append(
+                "personalizavel",
+                personalizavel ? "true" : "false"
             );
 
             if (imagem) {
@@ -796,6 +809,29 @@ export default function ModalEditarProduto({
 
                             </label>
 
+                        </div>
+
+                        <div className={style.cardDestaque}>
+                            <div className={style.informacoesDestaque}>
+                                <span className={style.tituloDestaque}>
+                                    Personalização liberada
+                                </span>
+
+                                <span className={style.descricaoDestaque}>
+                                    {personalizavel
+                                        ? "O cliente pode customizar esta joia no ateliê"
+                                        : "O cliente não verá a opção de personalização"}
+                                </span>
+                            </div>
+
+                            <label className={style.switch}>
+                                <input
+                                    type="checkbox"
+                                    checked={personalizavel}
+                                    onChange={(e) => setPersonalizavel(e.target.checked)}
+                                />
+                                <span className={style.slider} />
+                            </label>
                         </div>
 
                     </div>

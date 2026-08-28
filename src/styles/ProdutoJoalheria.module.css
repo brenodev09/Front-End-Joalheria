@@ -193,6 +193,15 @@ a {
   will-change: transform;
 }
 
+.visualOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  pointer-events: none;
+  mix-blend-mode: color;
+  transition: background-color 0.35s ease, opacity 0.35s ease;
+}
+
 .botao360 {
   position: absolute;
   bottom: 20px;
@@ -318,6 +327,60 @@ a {
   flex-direction: column;
   gap: 6px;
   margin-top: 4px;
+}
+
+.botaoAtelier {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(201, 168, 106, 0.5);
+  color: var(--dourado-claro);
+  padding: 12px 16px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.botaoAtelier:hover {
+  background: rgba(201, 168, 106, 0.1);
+  border-color: var(--dourado);
+}
+
+.selectPersonalizacao,
+.inputPersonalizacao {
+  width: 100%;
+  padding: 12px 14px;
+  border: var(--borda-fina);
+  background: var(--grafite);
+  color: var(--branco-suave);
+  font: inherit;
+}
+
+.opcoesDinamicas {
+  display: grid;
+  gap: 10px;
+  color: rgba(245, 243, 239, 0.75);
+}
+
+.opcoesDinamicas label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.erroConfiguracao {
+  color: #e8a4a4;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.botaoCalcular {
+  align-self: flex-start;
+  border: var(--borda-fina);
+  background: transparent;
+  color: var(--dourado-claro);
+  padding: 10px 16px;
 }
 
 .precoAtual {

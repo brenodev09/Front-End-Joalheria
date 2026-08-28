@@ -113,7 +113,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
       try {
         setCarregandoCupons(true);
         const token = localStorage.getItem("token");
-        const resposta = await api.get("/cupons/resgatados", {
+        const resposta = await api.get("/cupons/disponiveis", {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         const dados = Array.isArray(resposta.data)
@@ -765,6 +765,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
             produto_id: item.produto_id || item.id,
             quantidade: item.quantidade,
             variacao_id: item.variacao_id || null,
+            configuracao: item.configuracao || {},
           },
           configuracao
         );

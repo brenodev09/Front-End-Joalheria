@@ -27,6 +27,7 @@ export default function ModalAddProduto({
 
     const [ativo, setAtivo] = useState(true);
     const [destaque, setDestaque] = useState(false);
+    const [personalizavel, setPersonalizavel] = useState(false);
 
     const [imagem, setImagem] = useState(null);
     const [imagemPreview, setImagemPreview] = useState(null);
@@ -107,6 +108,7 @@ export default function ModalAddProduto({
 
         setAtivo(true);
         setDestaque(false);
+        setPersonalizavel(false);
 
         setImagem(null);
         setImagemPreview(null);
@@ -199,6 +201,11 @@ export default function ModalAddProduto({
             formData.append(
                 "destaque",
                 destaque ? "true" : "false"
+            );
+
+            formData.append(
+                "personalizavel",
+                personalizavel ? "true" : "false"
             );
 
             if (imagem) {
@@ -622,24 +629,12 @@ export default function ModalAddProduto({
 
                             <div className={style.cardDestaque}>
 
-                                <div
-                                    className={
-                                        style.informacoesDestaque
-                                    }
-                                >
-                                    <span
-                                        className={
-                                            style.tituloDestaque
-                                        }
-                                    >
+                                <div className={style.informacoesDestaque}>
+                                    <span className={style.tituloDestaque}>
                                         Produto em destaque
                                     </span>
 
-                                    <span
-                                        className={
-                                            style.descricaoDestaque
-                                        }
-                                    >
+                                    <span className={style.descricaoDestaque}>
                                         {destaque
                                             ? "Visível na seção destaques da loja"
                                             : "Não visível na seção de destaques da loja - Oculto para clientes"}
@@ -650,18 +645,33 @@ export default function ModalAddProduto({
                                     <input
                                         type="checkbox"
                                         checked={destaque}
-                                        onChange={(e) =>
-                                            setDestaque(
-                                                e.target.checked
-                                            )
-                                        }
+                                        onChange={(e) => setDestaque(e.target.checked)}
                                     />
-
-                                    <span
-                                        className={style.slider}
-                                    />
+                                    <span className={style.slider} />
                                 </label>
+                            </div>
 
+                            <div className={style.cardDestaque}>
+                                <div className={style.informacoesDestaque}>
+                                    <span className={style.tituloDestaque}>
+                                        Personalização liberada
+                                    </span>
+
+                                    <span className={style.descricaoDestaque}>
+                                        {personalizavel
+                                            ? "O cliente pode personalizar esta joia no ateliê"
+                                            : "O cliente não verá a opção de personalização"}
+                                    </span>
+                                </div>
+
+                                <label className={style.switch}>
+                                    <input
+                                        type="checkbox"
+                                        checked={personalizavel}
+                                        onChange={(e) => setPersonalizavel(e.target.checked)}
+                                    />
+                                    <span className={style.slider} />
+                                </label>
                             </div>
 
                         </section>

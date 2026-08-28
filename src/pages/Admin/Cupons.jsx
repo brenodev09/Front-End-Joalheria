@@ -126,7 +126,12 @@ export default function GestaoCupons() {
   }
 
   async function editarCupom(id, dados) {
-    await api.put(`/cupons/${id}`, dados);
+    const resposta = await api.put(`/cupons/${id}`, dados);
+    if (resposta.data) {
+      setCupons((atuais) => atuais.map((cupom) => (
+        cupom.id === id ? normalizarCupom(resposta.data) : cupom
+      )));
+    }
     await carregarCupons();
   }
 

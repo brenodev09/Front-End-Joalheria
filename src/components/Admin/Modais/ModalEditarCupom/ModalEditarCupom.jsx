@@ -23,6 +23,7 @@ export default function ModalEditarCupom({
     const [usoMaximo, setUsoMaximo] = useState("");
     const [valorMinimo, setValorMinimo] = useState("");
     const [validadeDias, setValidadeDias] = useState("");
+    const [dataFimOriginal, setDataFimOriginal] = useState(null);
 
     const [ativo, setAtivo] = useState(true);
     const [destaque, setDestaque] = useState(false);
@@ -34,20 +35,22 @@ export default function ModalEditarCupom({
     useEffect(() => {
         if (!cupom) return;
 
-        setNome(cupom.nome || "");
-        setDescricao(cupom.descricao || "");
-        setTipo(cupom.tipo || "");
-        setValor(cupom.valor || "");
+        const preenchimento = window.setTimeout(() => {
+            setNome(cupom.nome || "");
+            setDescricao(cupom.descricao || "");
+            setTipo(cupom.tipo || "");
+            setValor(cupom.valor || "");
+            setUsoMaximo(cupom.usoMaximo || "");
+            setValorMinimo(cupom.valorMinimo || "");
+            setValidadeDias(cupom.validadeDias || "");
+            setDataFimOriginal(cupom.data_fim || null);
+            setAtivo(cupom.status ? cupom.status === "ativo" : true);
+            setDestaque(cupom.destaque || false);
+            setEtapa(1);
+            setErro("");
+        }, 0);
 
-        setUsoMaximo(cupom.usoMaximo || "");
-        setValorMinimo(cupom.valorMinimo || "");
-        setValidadeDias(cupom.validadeDias || "");
-
-        setAtivo(cupom.status ? cupom.status === "ativo" : true);
-        setDestaque(cupom.destaque || false);
-
-        setEtapa(1);
-        setErro("");
+        return () => window.clearTimeout(preenchimento);
     }, [cupom]);
 
     function mostrarErro(mensagem) {
@@ -80,8 +83,13 @@ export default function ModalEditarCupom({
     }
 
     async function salvarCupom() {
-        if (!usoMaximo || !validadeDias) {
-            mostrarErro("Preencha o limite de usos e a validade.");
+        if (usoMaximo !== "" && (!Number.isInteger(Number(usoMaximo)) || Number(usoMaximo) < 1)) {
+            mostrarErro("Informe um limite de usos válido ou deixe vazio para ilimitado.");
+            return;
+        }
+
+        if (validadeDias !== "" && (!Number.isFinite(Number(validadeDias)) || Number(validadeDias) < 1)) {
+            mostrarErro("Informe uma validade válida ou deixe vazio para não expirar.");
             return;
         }
 
@@ -91,10 +99,14 @@ export default function ModalEditarCupom({
                 tipo: tipo === "Percentual" ? "percentual" : "fixo",
                 valor: Number(valor),
                 valor_minimo: Number(valorMinimo || 0),
-                quantidade_uso: Number(usoMaximo),
+                quantidade_uso: usoMaximo === "" ? null : Number(usoMaximo),
                 ativo,
                 data_inicio: cupom.data_inicio || formatarDataMySql(new Date()),
-                data_fim: formatarDataMySql(new Date(Date.now() + Number(validadeDias) * 86400000)),
+                data_fim: validadeDias === ""
+                    ? null
+                    : dataFimOriginal && Number(validadeDias) === Number(cupom.validadeDias)
+                        ? dataFimOriginal
+                        : formatarDataMySql(new Date(Date.now() + Number(validadeDias) * 86400000)),
             });
             fecharModal();
         } catch (error) {

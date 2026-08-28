@@ -38,6 +38,8 @@ import PagProduto from "../pages/ProdutoJoalheria.jsx";
 import Catalogo from "../pages/User/Catalogo";
 import ColecoesPublicas from "../pages/User/Colecoes.jsx";
 import ColecaoDetalhe from "../pages/User/ColecaoDetalhe.jsx";
+import Atelier from "../pages/Atelier.jsx";
+import PersonalizacaoProduto from "../pages/Admin/PersonalizacaoProduto.jsx";
 import StatusLojaGuard from "./StatusLojaGuard.jsx";
 
 
@@ -52,6 +54,9 @@ export default function Rotas() {
                 <Route element={<StatusLojaGuard />}>
                     <Route path="/" element={<Inicial />} />
                     <Route path="/produto/:id" element={<PagProduto />} />
+                    <Route path="/produto/:id/personalizacao" element={<PagProduto />} />
+                    <Route path="/produto/:id/personalização" element={<PagProduto />} />
+                    <Route path="/atelier/:produtoId" element={<Atelier />} />
                     <Route path="/carrinho" element={<Carrinho />} />
                     <Route path="/catalogo" element={<Catalogo />} />
                     <Route path="/colecoes" element={<ColecoesPublicas />} />
@@ -65,6 +70,7 @@ export default function Rotas() {
                         <Route path="notificacoes" element={<Notificacoes />} />
                         <Route path="categorias" element={<Categorias />} />
                         <Route path="produtos" element={<Produtos />} />
+                        <Route path="produtos/personalizacao" element={<PersonalizacaoProduto />} />
                         <Route path="materiais" element={<Materiais />} />
                         <Route path="conta" element={<InfoConta />} />
                         <Route path="pedidos" element={<Pedidos />} />
