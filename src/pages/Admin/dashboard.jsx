@@ -4,6 +4,8 @@ import HeaderAdmin from "../../components/Admin/Header";
 import { useAuth } from "../../context/authContext"
 import { api } from "../../services/api"
 import dadosDashboard from "../../context/dataContext"
+import ModalAddMeta from "../../components/Admin/Modais/ModalAddMeta"
+
 import {
   STATUS_PEDIDO,
   formatarMoeda,
@@ -31,10 +33,12 @@ import {
 export default function Dashboard() {
 
   const { usuario } = useAuth()
-  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, carregando } = dadosDashboard()
+  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, metaMensal, carregando } = dadosDashboard()
+  const metaDoMes = metaMensal || {}
   const [pedidos, setPedidos] = useState([])
   const [loading, setLoading] = useState()
   const vendasUltimos30Dias = vendas.vendasUltimos30Dias || []
+  const [abrirModal, setAbrirModal] = useState(false)
 
   const formatarDataGrafico = (data) => {
     const dataObj = new Date(data)
@@ -97,11 +101,12 @@ export default function Dashboard() {
   const faturamentoCategorias = metricas.faturamentoCategorias || []
   const totalFaturamentoCategorias = faturamentoCategorias.reduce((acc, item) => acc + item.faturamento, 0)
 
-  const dadosCategoriasPizza = metricas.faturamentoCategorias?.map(item => ({
-    ...item,
-    percentual: ((item.faturamento / totalFaturamentoCategorias) * 100).toFixed(1)
-  }))
-
+  const dadosCategoriasPizza = (metricas.faturamentoCategorias || []).map(item => ({
+  ...item,
+  percentual: totalFaturamentoCategorias > 0
+    ? ((item.faturamento / totalFaturamentoCategorias) * 100).toFixed(1)
+    : "0.0"
+}))
 
 
 
@@ -141,16 +146,35 @@ export default function Dashboard() {
             painel.
           </p>
 
-          <div className={style.saudacaoResumo}>
-            <div className={style.resumoItem}>
-              <span className={style.resumoRotulo}>Hoje</span>
-              <span className={style.resumoValor}>R$ 28.400</span>
+          <div className={style.acoesMetricas}>
+
+            <div className={style.metricasFaturamento}>
+              <div className={style.resumoItem}>
+                <span className={style.resumoRotulo}>Hoje</span>
+                <span className={style.resumoValor}>R$ 28.400</span>
+              </div>
+              <div className={style.resumoItem}>
+                <span className={style.resumoRotulo}>Esta semana</span>
+                <span className={style.resumoValor}>R$ 142K</span>
+              </div>
             </div>
-            <div className={style.resumoItem}>
-              <span className={style.resumoRotulo}>Esta semana</span>
-              <span className={style.resumoValor}>R$ 142K</span>
-            </div>
+
+            <button
+              className={`${style.btnPadrao} ${style.addMeta}`}
+              onClick={() => setAbrirModal(true)}
+            >
+              {/* <img
+                width="20"
+                height="20"
+                src="https://img.icons8.com/ios-filled/23/plus-math.png"
+                alt="plus-math"
+              /> */}
+              <p>ADICIONAR META MENSAL</p>
+            </button>
+
           </div>
+
+
         </div>
 
         {/* Bloco de cards métricos */}
@@ -782,8 +806,97 @@ export default function Dashboard() {
               </div>
             </div>
 
+            <div className={style.cardMetaMensal}>
+
+              <div className={style.cabecalhoMeta}>
+
+                <div>
+                  <span className={style.tituloMeta}>
+                    META DO MÊS
+                  </span>
+
+                  <p className={style.descricaoMeta}>
+                    {metaMensal.descricao || "Meta mensal"}
+                  </p>
+                </div>
+
+                {metaMensal.metaAtingida && (
+                  <div className={style.badgeMeta}>
+                    ✓ Atingida
+                  </div>
+                )}
+
+              </div>
+
+              <div className={style.valorMeta}>
+
+                {formatarMoeda(metaMensal.valorMeta || 0)}
+
+              </div>
+
+              <div className={style.barraMeta}>
+
+                <div
+                  className={style.progressoMeta}
+                  style={{
+                    width: `${Math.min(metaMensal.percentual || 0, 100)}%`
+                  }}
+                />
+
+              </div>
+
+              <div className={style.infoMeta}>
+
+                <div>
+
+                  <span className={style.labelMeta}>
+                    Faturado
+                  </span>
+
+                  <strong>
+                    {formatarMoeda(metaMensal.faturamentoAtual || 0)}
+                  </strong>
+
+                </div>
+
+                <div>
+
+                  <span className={style.labelMeta}>
+                    Progresso
+                  </span>
+
+                  <strong>
+                    {metaMensal.percentual || 0}%
+                  </strong>
+
+                </div>
+
+              </div>
+
+              <div className={style.rodapeMeta}>
+
+                <span>
+                  Faltam
+                </span>
+
+                <strong>
+                  {formatarMoeda(metaMensal.faltam || 0)}
+                </strong>
+
+              </div>
+
+            </div>
+
           </div>
         </section>
+
+
+
+        <ModalAddMeta
+          isOpen={abrirModal}
+          fecharModal={() => { setAbrirModal(false) }}
+
+        />
       </main>
     </>
   );

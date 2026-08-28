@@ -8,6 +8,7 @@ export default function useDashboard() {
     const [alertasEstoque, setAlertasEstoque] = useState([])
     const [produtosRecentes, setProdutosRecentes] = useState([])
     const [vendas, setVendas] = useState({})
+    const [metaMensal, setMetaMensal] = useState({})
     const [carregando, setCarregando] = useState(true)
 
     useEffect(() => {
@@ -21,20 +22,31 @@ export default function useDashboard() {
                     estoqueCategorias,
                     alertas,
                     produtosRecentes,
-                    vendas
+                    vendas,
+                    metaMensal
                 ] = await Promise.all([
                     api.get("/dashboard/metricas"),
                     api.get("/dashboard/estoque-categorias"),
                     api.get("/dashboard/alertas-estoque"),
                     api.get("/dashboard/produtos-recentes"),
-                    api.get("/dashboard/resumo-vendas")
+                    api.get("/dashboard/resumo-vendas"),
                 ])
+
+
+try {
+    const metaDoMes = await api.get("/dashboard/metas-mensais/atual")
+    setMetaMensal(metaDoMes.data)
+} catch {
+    setMetaMensal({})
+}
+
 
                 setMetricas(metricas.data)
                 setEstoqueCategorias(estoqueCategorias.data)
                 setAlertasEstoque(alertas.data)
                 setProdutosRecentes(produtosRecentes.data)
                 setVendas(vendas.data)
+                setMetaMensal(metaMensal.data)
 
             } catch (error) {
 
@@ -58,6 +70,7 @@ export default function useDashboard() {
         alertasEstoque,
         produtosRecentes,
         vendas,
+        metaMensal,
         carregando
     }
 
