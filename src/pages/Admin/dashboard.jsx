@@ -23,7 +23,8 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 
 
@@ -708,6 +709,77 @@ export default function Dashboard() {
 
               </div>
 
+            </div>
+
+            <div className={style.cardGrafico}>
+              <div className={style.cabecalhoGrafico}>
+                <span>PRODUTOS MAIS VENDIDOS</span>
+                <p>Ranking dos 5 produtos com maior volume de vendas</p>
+              </div>
+
+              <div className={style.graficoProdutos}>
+                <ResponsiveContainer width="100%" height={340}>
+                  <BarChart
+                    data={vendas.produtosMaisVendidos || []}
+                    layout="vertical"
+                    margin={{
+                      top: 10,
+                      right: 20,
+                      left: 30,
+                      bottom: 10
+                    }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="rgba(255,255,255,.05)"
+                    />
+
+                    <XAxis
+                      type="number"
+                      stroke="#888"
+                    />
+
+                    <YAxis
+                      type="category"
+                      dataKey="nome"
+                      width={140}
+                      stroke="#ccc"
+                    />
+
+                    <Tooltip
+                      formatter={(value) => [`${value} vendas`, "Quantidade"]}
+                      contentStyle={{
+                        background: "#111",
+                        border: "1px solid rgba(201,168,76,.4)",
+                        borderRadius: "10px",
+                        color: "#fff"
+                      }}
+                    />
+
+                    <Bar
+                      dataKey="totalVendas"
+                      radius={[0, 8, 8, 0]}
+                      animationDuration={1200}
+                      animationEasing="ease-out"
+                    >
+                      {(vendas.produtosMaisVendidos || []).map((_, index) => (
+                        <Cell
+                          key={index}
+                          fill={
+                            [
+                              "#D4AF37",
+                              "#14C8B8",
+                              "#FF6B6B",
+                              "#4F8EF7",
+                              "#9B5DE5"
+                            ][index]
+                          }
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
 
           </div>

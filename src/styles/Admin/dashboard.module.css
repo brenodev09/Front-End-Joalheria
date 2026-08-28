@@ -525,6 +525,36 @@
 
 }
 
+
+
+.graficoProdutos {
+  width: 100%;
+  min-height: 340px;
+  margin-top: 1rem;
+}
+
+
+.graficoProdutos :global(.recharts-cartesian-axis-tick-value) {
+  fill: #e6e6e6;
+  font-size: .85rem;
+}
+
+.graficoProdutos :global(.recharts-tooltip-wrapper) {
+  outline: none;
+}
+
+.graficoProdutos :global(.recharts-bar-rectangle) {
+  transition: .3s ease;
+}
+
+.graficoProdutos :global(.recharts-bar-rectangle:hover) {
+  filter: brightness(1.15);
+}
+
+.graficoProdutos :global(.recharts-cartesian-grid line) {
+  stroke: rgba(255,255,255,.05);
+}
+
 @media (max-width: 400px) {
   .painelPrincipal {
     padding: 12px;

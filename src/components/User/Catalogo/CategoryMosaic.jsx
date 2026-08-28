@@ -22,7 +22,7 @@ export default function CategoryMosaic({ categorias = [], onSelect }) {
   }
 
   function pecasLabel(categoria) {
-    if (!categoria.totalProdutos) return "Coleção em breve";
+    if (!categoria.totalProdutos) return "";
     return `${categoria.totalProdutos} ${categoria.totalProdutos === 1 ? "peça" : "peças"}`;
   }
 
