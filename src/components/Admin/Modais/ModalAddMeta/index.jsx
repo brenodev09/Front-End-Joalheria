@@ -57,7 +57,7 @@ export default function ModalAddMetaFaturamento({
             }
 
 
-            await api.post("/dashboard/dashboard/metas-mensais", {
+            await api.post("/dashboard/metas-mensais", {
                 mes: Number(mes),
                 ano: Number(ano),
                 valor_meta: Number(valorMeta),

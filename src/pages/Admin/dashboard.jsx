@@ -35,6 +35,21 @@ export default function Dashboard() {
   const { usuario } = useAuth()
   const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, metaMensal, carregando } = dadosDashboard()
   const metaDoMes = metaMensal || {}
+  const nomesMeses = {
+    1: "Janeiro",
+    2: "Fevereiro",
+    3: "Março",
+    4: "Abril",
+    5: "Maio",
+    6: "Junho",
+    7: "Julho",
+    8: "Agosto",
+    9: "Setembro",
+    10: "Outubro",
+    11: "Novembro",
+    12: "Dezembro"
+  }
+  const nomeMes = nomesMeses[metaMensal.mes] || "Mês não definido"
   const [pedidos, setPedidos] = useState([])
   const [loading, setLoading] = useState()
   const vendasUltimos30Dias = vendas.vendasUltimos30Dias || []
@@ -102,11 +117,11 @@ export default function Dashboard() {
   const totalFaturamentoCategorias = faturamentoCategorias.reduce((acc, item) => acc + item.faturamento, 0)
 
   const dadosCategoriasPizza = (metricas.faturamentoCategorias || []).map(item => ({
-  ...item,
-  percentual: totalFaturamentoCategorias > 0
-    ? ((item.faturamento / totalFaturamentoCategorias) * 100).toFixed(1)
-    : "0.0"
-}))
+    ...item,
+    percentual: totalFaturamentoCategorias > 0
+      ? ((item.faturamento / totalFaturamentoCategorias) * 100).toFixed(1)
+      : "0.0"
+  }))
 
 
 
@@ -812,7 +827,7 @@ export default function Dashboard() {
 
                 <div>
                   <span className={style.tituloMeta}>
-                    META DO MÊS
+                    META DO MÊS DE {nomeMes.toUpperCase()}
                   </span>
 
                   <p className={style.descricaoMeta}>

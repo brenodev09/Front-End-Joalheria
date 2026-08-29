@@ -33,12 +33,14 @@ export default function useDashboard() {
                 ])
 
 
-try {
-    const metaDoMes = await api.get("/dashboard/metas-mensais/atual")
-    setMetaMensal(metaDoMes.data)
-} catch {
-    setMetaMensal({})
-}
+                try {
+                    const metaDoMes = await api.get("/dashboard/metas-mensais/atual")
+                    console.log("META:", metaDoMes.data)
+
+                    setMetaMensal(metaDoMes.data)
+                } catch {
+                    setMetaMensal({})
+                }
 
 
                 setMetricas(metricas.data)
@@ -46,7 +48,6 @@ try {
                 setAlertasEstoque(alertas.data)
                 setProdutosRecentes(produtosRecentes.data)
                 setVendas(vendas.data)
-                setMetaMensal(metaMensal.data)
 
             } catch (error) {
 
