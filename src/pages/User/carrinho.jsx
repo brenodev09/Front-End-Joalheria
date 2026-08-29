@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 
 import estilos from "../../styles/User/carrinho.module.css";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer"
 import { useCarrinho } from "../../context/carrinhoContext";
 import { api } from "../../services/api";
 
@@ -2514,6 +2515,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
           </>
         )}
       </main>
+
+      <Footer/>
     </div>
   );
 }

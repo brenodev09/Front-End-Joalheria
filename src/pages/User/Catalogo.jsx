@@ -13,6 +13,7 @@ import SortDropdown from "../../components/User/Catalogo/SortDropdown";
 import ProductMosaic from "../../components/User/Catalogo/ProductMosaic";
 import CategoryMosaic from "../../components/User/Catalogo/CategoryMosaic";
 import CatalogPagination from "../../components/User/Catalogo/CatalogPagination";
+import Footer from "../../components/Footer"
 
 import ManifestoQuote from "../../components/User/Catalogo/ManifestoQuote";
 import TrustFooter from "../../components/User/Catalogo/TrustFooter";
@@ -521,6 +522,8 @@ const navegar = useNavigate();
         window.location.href = "/Login";
     }}
 />
+
+<Footer/>
 
     </main>
   );

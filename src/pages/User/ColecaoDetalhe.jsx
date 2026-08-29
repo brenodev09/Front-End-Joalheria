@@ -15,6 +15,7 @@ import { resolveImage } from "../../components/User/Catalogo/azoryUtils";
 import { useAuth } from "../../context/authContext";
 
 import Header from "../../components/Header";
+import Footer from "../../components/Footer"
 import ProductMosaic from "../../components/User/Catalogo/ProductMosaic";
 
 import styles from "../../styles/User/colecoesPublicas.module.css";
@@ -208,6 +209,8 @@ export default function ColecaoDetalhe() {
           <ProductMosaic produtos={produtosAtivos} />
         )}
       </div>
+
+      <Footer/>
     </div>
   );
 }

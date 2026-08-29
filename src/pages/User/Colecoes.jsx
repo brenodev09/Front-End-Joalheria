@@ -15,6 +15,7 @@ import { resolveImage } from "../../components/User/Catalogo/azoryUtils";
 
 import Header from "../../components/Header";
 import ProximasColecoes from "../../components/User/ProximasColecoes";
+import Footer from "../../components/Footer"
 
 import styles from "../../styles/User/colecoesPublicas.module.css";
 
@@ -125,6 +126,8 @@ export default function ColecoesPublicas() {
         {/* Contador regressivo das próximas coleções (já existia no projeto) */}
         <ProximasColecoes />
       </div>
+
+      <Footer/>
     </div>
   );
 }

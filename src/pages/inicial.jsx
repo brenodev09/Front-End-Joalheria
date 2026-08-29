@@ -4,6 +4,7 @@ import style from "../styles/Admin/inicial.module.css"
 import styles from "../styles/User/inicial.module.css"
 import Particulas from "../components/particulas";
 import Header from "../components/Header";
+import Footer from "../components/Footer"
 
 import relogio from "../img/Destaques/relogio.png"
 import colar from "../img/Destaques/colar.png"
@@ -381,6 +382,7 @@ console.log(typeof destaques);
       </section>
 
 
+          <Footer/>
     </div >
   );
 }

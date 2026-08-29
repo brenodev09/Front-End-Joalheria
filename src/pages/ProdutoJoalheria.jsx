@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { api } from "../services/api"
+import Footer from "../components/Footer"
 import {
   RotateCw,
   ZoomIn,
@@ -517,7 +518,7 @@ export default function ProdutoJoalheria() {
               >
                 <Heart size={17} strokeWidth={1.5} fill={favorito ? 'currentColor' : 'none'} />
               </button>
-{/* 
+              {/* 
               <button type="button" className={style.botaoIcone} aria-label="Compartilhar produto">
                 <Share2 size={17} strokeWidth={1.5} />
               </button> */}
@@ -667,6 +668,7 @@ export default function ProdutoJoalheria() {
       </section>
 
 
+      <Footer />
     </main>
   )
 }

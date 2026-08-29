@@ -1,0 +1,276 @@
+
+.footer {
+  --bg: #0a0a0a;
+  --gold: #d4af37;
+  --gold-soft: #e7cb74;
+  --white: #ffffff;
+  --gray: #a7a29b;
+  --gray-dim: #6e6a64;
+  --hairline: rgba(212, 175, 55, 0.14);
+
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 24px 0;
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Jost', sans-serif;
+  overflow: hidden;
+}
+
+/* ---------- assinatura: corrente de ouro suspensa ---------- */
+.chainLine {
+  position: relative;
+  height: 34px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.chainLine svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.chainStrand {
+  fill: none;
+  stroke: url(#chainGoldGrad);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: 0.55;
+}
+
+.chainLink {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.1;
+  opacity: 0.85;
+  animation: chainGlow 4.5s ease-in-out infinite;
+}
+
+.chainLink:nth-of-type(2n) {
+  animation-delay: -1.5s;
+}
+
+.chainLink:nth-of-type(3n) {
+  animation-delay: -3s;
+}
+
+@keyframes chainGlow {
+  0%,
+  100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 0px var(--gold));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px var(--gold));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chainLink {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* ---------- grid principal ---------- */
+.footerMain {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding: 0 4px 56px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.colTitle {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 26px;
+  font-weight: 400;
+}
+
+/* coluna marca */
+.logoMark {
+  display: block;
+  height: 38px;
+  width: auto;
+  margin-bottom: 20px;
+}
+
+.brandDesc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gray);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 320px;
+  margin: 0 0 28px;
+}
+
+.socials {
+  display: flex;
+  gap: 14px;
+}
+
+.socialIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray);
+  text-decoration: none;
+  transition:
+    border-color 0.35s ease,
+    color 0.35s ease,
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.socialIcon svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.socialIcon:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px -6px rgba(212, 175, 55, 0.55);
+}
+
+.socialIcon:focus-visible,
+.footerMain a:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* listas de links */
+.footerMain ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.footerMain a {
+  color: var(--gray);
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  position: relative;
+  display: inline-block;
+  transition:
+    color 0.3s ease,
+    padding-left 0.3s ease;
+}
+
+.footerMain a::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: translateY(-50%);
+  transition: width 0.3s ease;
+}
+
+.footerMain a:hover {
+  color: var(--gold-soft);
+  padding-left: 16px;
+}
+
+.footerMain a:hover::before {
+  width: 10px;
+}
+
+.contactItem {
+  color: var(--gray);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.label {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-dim);
+  margin-bottom: 3px;
+}
+
+/* ---------- barra inferior ---------- */
+.footerBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 28px 4px 40px;
+}
+
+.footerBottom p {
+  margin: 0;
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  color: var(--gray-dim);
+  font-weight: 300;
+}
+
+.crest {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gray-dim);
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+@media (max-width: 900px) {
+  .footerMain {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 44px;
+  }
+
+  .brandCol {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer {
+    padding: 32px 16px 0;
+  }
+
+  .footerMain {
+    grid-template-columns: 1fr;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
