@@ -11,7 +11,6 @@ export default function useDashboard() {
     const [metaMensal, setMetaMensal] = useState({})
     const [carregando, setCarregando] = useState(true)
 
-    useEffect(() => {
 
         async function carregarDashboard() {
 
@@ -23,7 +22,6 @@ export default function useDashboard() {
                     alertas,
                     produtosRecentes,
                     vendas,
-                    metaMensal
                 ] = await Promise.all([
                     api.get("/dashboard/metricas"),
                     api.get("/dashboard/estoque-categorias"),
@@ -61,9 +59,11 @@ export default function useDashboard() {
 
         }
 
+        useEffect(() =>{
         carregarDashboard()
 
-    }, [])
+        }, [])
+
 
     return {
         metricas,
@@ -72,7 +72,8 @@ export default function useDashboard() {
         produtosRecentes,
         vendas,
         metaMensal,
-        carregando
+        carregando,
+        carregarDashboard
     }
 
 }

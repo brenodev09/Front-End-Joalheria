@@ -5,6 +5,7 @@ import { useAuth } from "../../context/authContext"
 import { api } from "../../services/api"
 import dadosDashboard from "../../context/dataContext"
 import ModalAddMeta from "../../components/Admin/Modais/ModalAddMeta"
+import ModalEditarMeta from "../../components/Admin/Modais/ModalEditarMeta"
 
 import {
   STATUS_PEDIDO,
@@ -33,7 +34,7 @@ import {
 export default function Dashboard() {
 
   const { usuario } = useAuth()
-  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, metaMensal, carregando } = dadosDashboard()
+  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, metaMensal, carregando, carregarDashboard } = dadosDashboard()
   const metaDoMes = metaMensal || {}
   const nomesMeses = {
     1: "Janeiro",
@@ -841,6 +842,10 @@ export default function Dashboard() {
                   </div>
                 )}
 
+                <button onClick={() => setAbrirModal(true)} className={style.btnEditarMeta}>
+                  <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1"/>
+                </button>
+
               </div>
 
               <div className={style.valorMeta}>
@@ -910,6 +915,14 @@ export default function Dashboard() {
         <ModalAddMeta
           isOpen={abrirModal}
           fecharModal={() => { setAbrirModal(false) }}
+
+        />
+        <ModalEditarMeta
+          isOpen={abrirModal}
+          fecharModal={() => { setAbrirModal(false) }}
+              meta={metaMensal}
+              atualizarDashboard = {carregarDashboard}
+
 
         />
       </main>

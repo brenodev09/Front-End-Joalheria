@@ -654,6 +654,17 @@
   font-weight: 600;
 }
 
+.btnEditarMeta{
+  background: none;
+  /* border: .5px solid #937432 ; */
+  /* border-radius: 1px; */
+  /* padding: 0.5rem; */
+
+  img{
+    opacity: 0.5;
+  }
+}
+
 .valorMeta {
   font-size: 2rem;
   font-weight: 700;

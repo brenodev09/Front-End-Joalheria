@@ -1,6 +1,7 @@
 .sideBarr {
   width: 220px;
   height: 100vh;
+  overflow-y: auto;
   background-color: #141414;
   border-right: 1px solid rgba(209, 168, 75, 0.45);
   display: flex;
