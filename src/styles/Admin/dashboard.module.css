@@ -654,13 +654,13 @@
   font-weight: 600;
 }
 
-.btnEditarMeta{
+.btnEditarMeta {
   background: none;
   /* border: .5px solid #937432 ; */
   /* border-radius: 1px; */
   /* padding: 0.5rem; */
 
-  img{
+  img {
     opacity: 0.5;
   }
 }
@@ -728,6 +728,121 @@
 .rodapeMeta strong {
   color: #C9A84C;
   font-size: 1rem;
+}
+
+.cardComparativoMetas {
+  background: #151515;
+  border: 1px solid rgba(201, 168, 76, .25);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cardComparativoMetas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg,
+      rgba(201, 168, 76, .08),
+      transparent 60%);
+  pointer-events: none;
+}
+
+.cabecalhoComparativo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.listaMetasMini {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: .7rem;
+}
+
+.metaMini {
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 10px;
+  padding: .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.cabecalhoMetaMini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mesMetaMini {
+  color: #C9A84C;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+}
+
+.badgeMetaMini {
+  color: #4CAF50;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.valorMetaMini {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.barraMetaMini {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, .08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressoMetaMini {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #C9A84C, #E6C76E);
+  transition: width .8s ease;
+}
+
+.infoMetaMini {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: rgba(255, 255, 255, .55);
+}
+
+.percentualMetaMini {
+  color: #C9A84C;
+  font-weight: 600;
+}
+
+.btnVerTodasMetas {
+  align-self: center;
+  background: none;
+  border: 1px solid rgba(201, 168, 76, .35);
+  color: #C9A84C;
+  border-radius: 999px;
+  padding: .5rem 1.2rem;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.btnVerTodasMetas:hover {
+  background: rgba(201, 168, 76, .1);
 }
 
 @media (max-width: 400px) {

@@ -34,8 +34,10 @@ import {
 export default function Dashboard() {
 
   const { usuario } = useAuth()
-  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, metaMensal, carregando, carregarDashboard } = dadosDashboard()
+  const { metricas, estoqueCategorias, alertasEstoque, produtosRecentes, vendas, metaMensal, todasMetas, carregando, carregarDashboard } = dadosDashboard()
   const metaDoMes = metaMensal || {}
+  const [verTodasMetas, setVerTodasMetas] = useState(false)
+  const metasExibidas = verTodasMetas ? todasMetas : todasMetas.slice(0, 5)
   const nomesMeses = {
     1: "Janeiro",
     2: "Fevereiro",
@@ -54,7 +56,8 @@ export default function Dashboard() {
   const [pedidos, setPedidos] = useState([])
   const [loading, setLoading] = useState()
   const vendasUltimos30Dias = vendas.vendasUltimos30Dias || []
-  const [abrirModal, setAbrirModal] = useState(false)
+  const [abrirModalAdicionar, setAbrirModalAdicionar] = useState(false)
+  const [abrirModalEditar, setAbrirModalEditar] = useState(false)
 
   const formatarDataGrafico = (data) => {
     const dataObj = new Date(data)
@@ -177,7 +180,7 @@ export default function Dashboard() {
 
             <button
               className={`${style.btnPadrao} ${style.addMeta}`}
-              onClick={() => setAbrirModal(true)}
+              onClick={() => setAbrirModalAdicionar(true)}
             >
               {/* <img
                 width="20"
@@ -842,8 +845,8 @@ export default function Dashboard() {
                   </div>
                 )}
 
-                <button onClick={() => setAbrirModal(true)} className={style.btnEditarMeta}>
-                  <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1"/>
+                <button onClick={() => setAbrirModalEditar(true)} className={style.btnEditarMeta}>
+                  <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1" />
                 </button>
 
               </div>
@@ -907,21 +910,80 @@ export default function Dashboard() {
 
             </div>
 
+
+            {todasMetas.length > 0 && (
+              <div className={style.cardComparativoMetas}>
+
+                <div className={style.cabecalhoComparativo}>
+                  <div>
+                    <span className={style.tituloMeta}>HISTÓRICO DE METAS</span>
+                    <p className={style.descricaoMeta}>Compare os resultados de cada mês</p>
+                  </div>
+                </div>
+
+                <div className={style.listaMetasMini}>
+                  {metasExibidas.map((meta) => (
+                    <div key={meta.id} className={style.metaMini}>
+
+                      <div className={style.cabecalhoMetaMini}>
+                        <span className={style.mesMetaMini}>
+                          {nomesMeses[meta.mes]} / {meta.ano}
+                        </span>
+
+                        {meta.metaAtingida && (
+                          <span className={style.badgeMetaMini}>✓</span>
+                        )}
+                      </div>
+
+                      <strong className={style.valorMetaMini}>
+                        {formatarMoeda(meta.valorMeta)}
+                      </strong>
+
+                      <div className={style.barraMetaMini}>
+                        <div
+                          className={style.progressoMetaMini}
+                          style={{ width: `${Math.min(meta.percentual || 0, 100)}%` }}
+                        />
+                      </div>
+
+                      <div className={style.infoMetaMini}>
+                        <span>{formatarMoeda(meta.faturamentoAtual)} faturado</span>
+                        <span className={style.percentualMetaMini}>{meta.percentual}%</span>
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+
+                {todasMetas.length > 5 && (
+                  <button
+                    className={style.btnVerTodasMetas}
+                    onClick={() => setVerTodasMetas(!verTodasMetas)}
+                  >
+                    {verTodasMetas ? "Ver menos" : "Ver todas as metas"}
+                  </button>
+                )}
+
+              </div>
+            )}
+
           </div>
         </section>
 
 
 
         <ModalAddMeta
-          isOpen={abrirModal}
-          fecharModal={() => { setAbrirModal(false) }}
+          isOpen={abrirModalAdicionar}
+          fecharModal={() => setAbrirModalAdicionar(false)}
+          atualizarDashboard={carregarDashboard}
+
 
         />
         <ModalEditarMeta
-          isOpen={abrirModal}
-          fecharModal={() => { setAbrirModal(false) }}
-              meta={metaMensal}
-              atualizarDashboard = {carregarDashboard}
+          isOpen={abrirModalEditar}
+          fecharModal={() => setAbrirModalEditar(false)}
+          meta={metaMensal}
+          atualizarDashboard={carregarDashboard}
 
 
         />

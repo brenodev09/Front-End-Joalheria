@@ -20,6 +20,7 @@ const MESES = [
 export default function ModalAddMetaFaturamento({
     isOpen,
     fecharModal,
+    atualizarDashboard,
 }) {
     // Campos baseados na tabela metas_faturamento
     const [mes, setMes] = useState("");
