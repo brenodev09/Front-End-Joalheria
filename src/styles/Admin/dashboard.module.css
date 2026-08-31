@@ -20,7 +20,7 @@
 .saudacao {
   background-color: #1a1a1a;
   border: 1.7px solid rgba(201, 168, 76, 0.21);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
@@ -146,7 +146,7 @@
 .card {
   background-color: #1a1a1a;
   border: 1.7px solid rgba(201, 168, 76, 0.21);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
@@ -222,11 +222,95 @@
   gap: 24px;
 }
 
+/* ── Filtro de visão ── */
+
+.filtroVisao {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+
+.botaoFiltro {
+  background: #1a1a1a;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  color: rgba(255, 255, 255, .65);
+  border-radius: 999px;
+  padding: .5rem 1.1rem;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.botaoFiltro:hover {
+  border-color: rgba(201, 168, 76, 0.5);
+  color: #fff;
+}
+
+.botaoFiltroAtivo {
+  background: #C9A962;
+  border-color: #C9A962;
+  color: #111;
+}
+
+.botaoFiltroAtivo:hover {
+  background: #937432;
+  color: #fff;
+}
+
+/* ── Blocos de seção temáticos ── */
+
+.blocoSecao {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cabecalhoBloco {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 2px;
+}
+
+.cabecalhoBloco h2 {
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #C9A84C;
+  margin: 0;
+}
+
+.cabecalhoBloco p {
+  font-size: .82rem;
+  color: #8f8f8f;
+  margin: 0;
+}
+
+/* ── Linha de 2 colunas ──
+   align-items: start faz cada card assumir sua própria altura de conteúdo,
+   em vez de esticar para acompanhar o vizinho mais alto */
+
+.linhaDuasColunas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .linhaDuasColunas {
+    grid-template-columns: 1fr;
+  }
+}
+
 .cardGraficoGrande {
   grid-column: span 2;
   background: #151515;
   border: 1px solid rgba(201, 168, 76, 0.4);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 30px;
 
 }
@@ -237,7 +321,7 @@
   max-height: 25rem;
   background: #151515;
   border: 1px solid rgba(201, 168, 76, 0.4);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 24px;
 }
 
@@ -265,7 +349,7 @@
 .cardRecentes {
   background: #151515;
   border: 1.7px solid rgba(201, 168, 76, 0.21);
-  border-radius: 10px;
+  border-radius: 4px;
   width: 25rem;
   padding: 24px;
 
@@ -342,6 +426,37 @@
   color: #8f8f8f;
 }
 
+/* ── Imagens de produtos/coleções nos cards ── */
+
+.blocoComImagem {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.miniImagem {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  flex-shrink: 0;
+}
+
+.imagemPlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  background: rgba(201, 168, 76, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+
 .cardEstoque {
   width: 100%;
   width: 20rem;
@@ -351,7 +466,7 @@
 
   background: #090304;
   border: 1px solid rgba(255, 0, 34, 0.5);
-  border-radius: 9px;
+  border-radius: 4px;
 
   display: flex;
   flex-direction: column;
@@ -575,8 +690,11 @@
 
 .graficoProdutos {
   width: 100%;
-  min-height: 340px;
   margin-top: 1rem;
+}
+
+.cardProdutosMaisVendidos{
+  max-height: 40rem;
 }
 
 
@@ -604,7 +722,7 @@
 .cardMetaMensal {
   background: #151515;
   border: 1px solid rgba(201, 168, 76, .25);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 1.4rem;
   display: flex;
   flex-direction: column;
@@ -733,7 +851,7 @@
 .cardComparativoMetas {
   background: #151515;
   border: 1px solid rgba(201, 168, 76, .25);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 1.2rem;
   display: flex;
   flex-direction: column;
@@ -768,7 +886,7 @@
 .metaMini {
   background: rgba(255, 255, 255, .03);
   border: 1px solid rgba(255, 255, 255, .06);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: .75rem;
   display: flex;
   flex-direction: column;

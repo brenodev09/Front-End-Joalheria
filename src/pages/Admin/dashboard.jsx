@@ -28,6 +28,7 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
+  Text,
 } from "recharts";
 
 
@@ -58,6 +59,83 @@ export default function Dashboard() {
   const vendasUltimos30Dias = vendas.vendasUltimos30Dias || []
   const [abrirModalAdicionar, setAbrirModalAdicionar] = useState(false)
   const [abrirModalEditar, setAbrirModalEditar] = useState(false)
+  const [visaoAtiva, setVisaoAtiva] = useState("geral")
+
+  const VISOES = [
+    { id: "geral", label: "Visão Geral" },
+    { id: "vendas", label: "Vendas" },
+    { id: "estoque", label: "Estoque" },
+    { id: "metas", label: "Metas" },
+  ]
+
+  const mostrarBloco = (id) => visaoAtiva === "geral" || visaoAtiva === id
+
+  // Renderiza a imagem do produto alinhada com a linha da barra no eixo Y,
+  // reaproveitando o <Text> do recharts para o nome (mesmo comportamento de quebra de linha do eixo padrão)
+  const TickProdutoComImagem = (props) => {
+    const { x, y, payload, index } = props
+    const produto = (vendas.produtosMaisVendidos || []).find(
+      (p) => p.nome === payload.value
+    )
+
+    const tamanhoImagem = 26
+    const larguraEixo = 170
+    const espacoImagem = tamanhoImagem + 10
+    const larguraTexto = larguraEixo - espacoImagem
+
+    return (
+      <g>
+        {produto?.imagem ? (
+          <>
+            <defs>
+              <clipPath id={`clipProdutoImg-${index}`}>
+                <rect
+                  x={x - larguraEixo}
+                  y={y - tamanhoImagem / 2}
+                  width={tamanhoImagem}
+                  height={tamanhoImagem}
+                  rx={4}
+                  ry={4}
+                />
+              </clipPath>
+            </defs>
+
+            <image
+              href={`http://localhost:3000${produto.imagem}`}
+              x={x - larguraEixo}
+              y={y - tamanhoImagem / 2}
+              width={tamanhoImagem}
+              height={tamanhoImagem}
+              preserveAspectRatio="xMidYMid slice"
+              clipPath={`url(#clipProdutoImg-${index})`}
+            />
+          </>
+        ) : (
+          <rect
+            x={x - larguraEixo}
+            y={y - tamanhoImagem / 2}
+            width={tamanhoImagem}
+            height={tamanhoImagem}
+            rx={4}
+            fill="rgba(201,168,76,0.08)"
+            stroke="rgba(201,168,76,0.25)"
+          />
+        )}
+
+        <Text
+          x={x - 10}
+          y={y}
+          width={larguraTexto}
+          textAnchor="end"
+          verticalAnchor="middle"
+          fill="#fff"
+          fontSize={13}
+        >
+          {payload.value}
+        </Text>
+      </g>
+    )
+  }
 
   const formatarDataGrafico = (data) => {
     const dataObj = new Date(data)
@@ -287,8 +365,30 @@ export default function Dashboard() {
         </section>
 
 
-        {/* graficos e cards */}
-        <section className={style.painelGraficos}>
+        {/* Filtro de visão */}
+        <div className={style.filtroVisao}>
+          {VISOES.map((visao) => (
+            <button
+              key={visao.id}
+              type="button"
+              className={`${style.botaoFiltro} ${visaoAtiva === visao.id ? style.botaoFiltroAtivo : ""
+                }`}
+              onClick={() => setVisaoAtiva(visao.id)}
+            >
+              {visao.label}
+            </button>
+          ))}
+        </div>
+
+
+        {/* ==================== BLOCO: VENDAS ==================== */}
+        {mostrarBloco("vendas") && (
+        <section className={style.blocoSecao}>
+
+          <div className={style.cabecalhoBloco}>
+            <h2>Desempenho de Vendas</h2>
+            <p>Evolução do faturamento e comparativo dos produtos e coleções mais vendidos</p>
+          </div>
 
           <div className={style.cardGraficoGrande}>
 
@@ -415,39 +515,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className={style.cardGrafico}>
-            <div className={style.cabecalhoGrafico}>
-              <span>ESTOQUE POR CATEGORIA</span>
-              <p>Total de peças disponíveis em cada categoria</p>
-            </div>
-
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={estoqueCategorias}
-                margin={{
-                  top: 10,
-                  right: 20,
-                  left: 0,
-                  bottom: 10
-                }}
-              >
-                <XAxis dataKey="categoria" />
-                <YAxis />
-                <Tooltip
-                  cursor={{ fill: "transparent" }}
-                  contentStyle={{
-                    backgroundColor: "#1b1b1b",
-                    border: "1px solid #C9A84C",
-                    borderRadius: "2px"
-                  }}
-                />      <Bar
-                  dataKey="estoque"
-                  fill="#C9A84C"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <div className={style.linhaDuasColunas}>
 
           <div className={style.cardGrafico}>
 
@@ -513,124 +581,7 @@ export default function Dashboard() {
 
             </ResponsiveContainer>
 
-          </div>
 
-          <div className={style.cardRecentes}>
-            <div className={style.cabecalhoRecentes}>
-              <div>
-                <p className={style.tituloRecentes}>
-                  Produtos Recentes
-                </p>
-
-                <p className={style.subtituloRecentes}>
-                  Últimos produtos cadastrados
-                </p>
-              </div>
-            </div>
-
-            <div className={style.listaRecentes}>
-              {produtosRecentes.length === 0 ? (
-                <p className={style.semProdutos}>
-                  Nenhum produto cadastrado recentemente.
-                </p>
-              ) : (
-                produtosRecentes.map((produtoRecente) => (
-                  <div
-                    key={produtoRecente.id}
-                    className={style.itemRecente}
-                  >
-                    <div className={style.informacoesRecente}>
-                      <p className={style.nomeRecente}>
-                        {produtoRecente.nome}
-                      </p>
-
-                      <span className={style.categoriaRecente}>
-                        {produtoRecente.categoria}
-                      </span>
-                    </div>
-
-                    <div className={style.dadosRecente}>
-                      <span className={style.estoqueRecente}>
-                        {produtoRecente.estoque} un.
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className={style.cardRecentes}>
-            <div className={style.cabecalhoRecentes}>
-              <div>
-                <p className={style.tituloRecentes}>
-                  Coleções mais vendidas
-                </p>
-
-                <p className={style.subtituloRecentes}>
-                  Descubra qual coleção está faturando mais
-                </p>
-              </div>
-            </div>
-
-            <div className={style.listaRecentes}>
-              {(metricas.colecoesMaisVendidas || []).length === 0 ? (
-                <p className={style.semProdutos}>
-                  Não há nenhuma coleção cadastrada ou faturando no momento
-                </p>
-              ) : (
-                (metricas.colecoesMaisVendidas.map((colecao) => (
-                  <div
-                    key={colecao.id}
-                    className={style.itemRecente}
-                  >
-                    <div className={style.informacoesRecente}>
-                      <p className={style.nomeRecente}>
-                        {colecao.nome}
-                      </p>
-
-                      <span className={style.categoriaRecente}>
-                        {colecao.faturamento}
-                      </span>
-                    </div>
-
-                    <div className={style.dadosRecente}>
-                      <span className={style.estoqueRecente}>
-                        {colecao.produtosVendidos} un.
-                      </span>
-                    </div>
-                  </div>
-                ))
-                ))}
-            </div>
-          </div>
-
-          <div className={style.cardEstoque}>
-            <div className={style.cabecalho}>
-              <span className={style.icone}>⚠</span>
-              <span className={style.titulo}>ALERTAS DE ESTOQUE</span>
-            </div>
-
-            <div className={style.listaProdutos}>
-
-              {alertasEstoque.length === 0 ? (
-                <p>Nenhum alerta de estoque</p>
-              ) : (
-                alertasEstoque.map((produtoAlerta) => (
-                  <div className={style.itemProduto}>
-                    <div className={style.informacoesProduto}>
-                      <p className={style.nomeProduto}>{produtoAlerta.nome}</p>
-                      <span className={style.categoriaProduto}>{produtoAlerta.categoria}</span>
-                    </div>
-
-                    <span className={style.quantidadeProduto}>
-                      {produtoAlerta.estoque} uni.
-                    </span>
-                  </div>
-                ))
-              )}
-
-            </div>
           </div>
 
           <div className={style.cardGrafico}>
@@ -753,223 +704,457 @@ export default function Dashboard() {
               </div>
 
             </div>
+          </div>
 
-            <div className={style.cardGrafico}>
-              <div className={style.cabecalhoGrafico}>
-                <span>PRODUTOS MAIS VENDIDOS</span>
-                <p>Ranking dos 5 produtos com maior volume de vendas</p>
-              </div>
+          </div>
+          {/* fim linha: Pedidos por status + Faturamento por categoria */}
 
-              <div className={style.graficoProdutos}>
-                <ResponsiveContainer width="100%" height={340}>
-                  <BarChart
-                    data={vendas.produtosMaisVendidos || []}
-                    layout="vertical"
-                    margin={{
-                      top: 10,
-                      right: 20,
-                      left: 30,
-                      bottom: 10
+          <div className={style.linhaDuasColunas}>
+
+          <div className={`${style.cardGrafico} ${style.cardProdutosMaisVendidos}`}>
+            <div className={style.cabecalhoGrafico}>
+              <span>PRODUTOS MAIS VENDIDOS</span>
+              <p>Ranking dos 5 produtos com maior volume de vendas</p>
+            </div>
+
+            <div className={style.graficoProdutos}>
+              <ResponsiveContainer width="100%" height={340}>
+                <BarChart
+                  data={vendas.produtosMaisVendidos || []}
+                  layout="vertical"
+                  margin={{
+                    top: 10,
+                    right: 20,
+                    left: 30,
+                    bottom: 10
+                  }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(255,255,255,.05)"
+                  />
+
+                  <XAxis
+                    type="number"
+                    stroke="#888"
+                  />
+
+                  <YAxis
+                    type="category"
+                    dataKey="nome"
+                    width={170}
+                    stroke="#888"
+                    tick={<TickProdutoComImagem />}
+                  />
+
+                  <Tooltip
+                    formatter={(value) => [`${value} vendas`, "Quantidade"]}
+                    contentStyle={{
+                      background: "#111",
+                      border: "1px solid rgba(201,168,76,.4)",
+                      borderRadius: "10px",
+                      color: "#fff"
                     }}
+                  />
+
+                  <Bar
+                    dataKey="totalVendas"
+                    radius={[0, 8, 8, 0]}
+                    animationDuration={1200}
+                    animationEasing="ease-out"
                   >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,.05)"
-                    />
+                    {(vendas.produtosMaisVendidos || []).map((_, index) => (
+                      <Cell
+                        key={index}
+                        fill={
+                          [
+                            "#D4AF37",
+                            "#14C8B8",
+                            "#FF6B6B",
+                            "#4F8EF7",
+                            "#9B5DE5"
+                          ][index]
+                        }
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
 
-                    <XAxis
-                      type="number"
-                      stroke="#888"
-                    />
+          <div className={style.cardRecentes}>
+            <div className={style.cabecalhoRecentes}>
+              <div>
+                <p className={style.tituloRecentes}>
+                  Coleções mais vendidas
+                </p>
 
-                    <YAxis
-                      type="category"
-                      dataKey="nome"
-                      width={140}
-                      stroke="#ccc"
-                    />
-
-                    <Tooltip
-                      formatter={(value) => [`${value} vendas`, "Quantidade"]}
-                      contentStyle={{
-                        background: "#111",
-                        border: "1px solid rgba(201,168,76,.4)",
-                        borderRadius: "10px",
-                        color: "#fff"
-                      }}
-                    />
-
-                    <Bar
-                      dataKey="totalVendas"
-                      radius={[0, 8, 8, 0]}
-                      animationDuration={1200}
-                      animationEasing="ease-out"
-                    >
-                      {(vendas.produtosMaisVendidos || []).map((_, index) => (
-                        <Cell
-                          key={index}
-                          fill={
-                            [
-                              "#D4AF37",
-                              "#14C8B8",
-                              "#FF6B6B",
-                              "#4F8EF7",
-                              "#9B5DE5"
-                            ][index]
-                          }
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                <p className={style.subtituloRecentes}>
+                  Descubra qual coleção está faturando mais
+                </p>
               </div>
             </div>
 
-            <div className={style.cardMetaMensal}>
+            <div className={style.listaRecentes}>
+              {(metricas.colecoesMaisVendidas || []).length === 0 ? (
+                <p className={style.semProdutos}>
+                  Não há nenhuma coleção cadastrada ou faturando no momento
+                </p>
+              ) : (
+                (metricas.colecoesMaisVendidas.map((colecao) => (
+                  <div
+                    key={colecao.id}
+                    className={style.itemRecente}
+                  >
+                    <div className={style.blocoComImagem}>
 
-              <div className={style.cabecalhoMeta}>
+                      {colecao.imagem ? (
+                        <img
+                          src={`http://localhost:3000${colecao.imagem}`}
+                          alt={colecao.nome}
+                          className={style.miniImagem}
+                        />
+                      ) : (
+                        <div className={style.imagemPlaceholder}>💎</div>
+                      )}
 
-                <div>
-                  <span className={style.tituloMeta}>
-                    META DO MÊS DE {nomeMes.toUpperCase()}
-                  </span>
+                      <div className={style.informacoesRecente}>
+                        <p className={style.nomeRecente}>
+                          {colecao.nome}
+                        </p>
 
-                  <p className={style.descricaoMeta}>
-                    {metaMensal.descricao || "Meta mensal"}
-                  </p>
-                </div>
+                        <span className={style.categoriaRecente}>
+                          {colecao.faturamento}
+                        </span>
+                      </div>
 
-                {metaMensal.metaAtingida && (
-                  <div className={style.badgeMeta}>
-                    ✓ Atingida
+                    </div>
+
+                    <div className={style.dadosRecente}>
+                      <span className={style.estoqueRecente}>
+                        {colecao.produtosVendidos} un.
+                      </span>
+                    </div>
                   </div>
-                )}
+                ))
+                ))}
+            </div>
+          </div>
 
-                <button onClick={() => setAbrirModalEditar(true)} className={style.btnEditarMeta}>
-                  <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1" />
-                </button>
+          </div>
 
-              </div>
+        </section>
+        )}
 
-              <div className={style.valorMeta}>
+        {/* ==================== BLOCO: ESTOQUE ==================== */}
+        {mostrarBloco("estoque") && (
+        <section className={style.blocoSecao}>
 
-                {formatarMoeda(metaMensal.valorMeta || 0)}
+          <div className={style.cabecalhoBloco}>
+            <h2>Estoque</h2>
+            <p>Visão geral do estoque disponível, alertas de reposição e produtos recém-cadastrados</p>
+          </div>
 
-              </div>
+          <div className={style.linhaDuasColunas}>
 
-              <div className={style.barraMeta}>
+          <div className={style.cardGrafico}>
+            <div className={style.cabecalhoGrafico}>
+              <span>ESTOQUE POR CATEGORIA</span>
+              <p>Total de peças disponíveis em cada categoria</p>
+            </div>
 
-                <div
-                  className={style.progressoMeta}
-                  style={{
-                    width: `${Math.min(metaMensal.percentual || 0, 100)}%`
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={estoqueCategorias}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 0,
+                  bottom: 10
+                }}
+              >
+                <XAxis dataKey="categoria" />
+                <YAxis />
+                <Tooltip
+                  cursor={{ fill: "transparent" }}
+                  contentStyle={{
+                    backgroundColor: "#1b1b1b",
+                    border: "1px solid #C9A84C",
+                    borderRadius: "2px"
                   }}
                 />
+                <Bar
+                  dataKey="estoque"
+                  fill="#C9A84C"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
+          <div className={style.cardEstoque}>
+            <div className={style.cabecalho}>
+              <span className={style.icone}>⚠</span>
+              <span className={style.titulo}>ALERTAS DE ESTOQUE</span>
+            </div>
+
+            <div className={style.listaProdutos}>
+
+              {alertasEstoque.length === 0 ? (
+                <p>Nenhum alerta de estoque</p>
+              ) : (
+                alertasEstoque.map((produtoAlerta) => (
+                  <div className={style.itemProduto} key={produtoAlerta.id}>
+                    <div className={style.blocoComImagem}>
+
+                      {produtoAlerta.imagem ? (
+                        <img
+                          src={`http://localhost:3000${produtoAlerta.imagem}`}
+                          alt={produtoAlerta.nome}
+                          className={style.miniImagem}
+                        />
+                      ) : (
+                        <div className={style.imagemPlaceholder}>💎</div>
+                      )}
+
+                      <div className={style.informacoesProduto}>
+                        <p className={style.nomeProduto}>{produtoAlerta.nome}</p>
+                        <span className={style.categoriaProduto}>{produtoAlerta.categoria}</span>
+                      </div>
+
+                    </div>
+
+                    <span className={style.quantidadeProduto}>
+                      {produtoAlerta.estoque} uni.
+                    </span>
+                  </div>
+                ))
+              )}
+
+            </div>
+          </div>
+
+          </div>
+
+          <div className={style.cardRecentes}>
+            <div className={style.cabecalhoRecentes}>
+              <div>
+                <p className={style.tituloRecentes}>
+                  Produtos Recentes
+                </p>
+
+                <p className={style.subtituloRecentes}>
+                  Últimos produtos cadastrados
+                </p>
+              </div>
+            </div>
+
+            <div className={style.listaRecentes}>
+              {produtosRecentes.length === 0 ? (
+                <p className={style.semProdutos}>
+                  Nenhum produto cadastrado recentemente.
+                </p>
+              ) : (
+                produtosRecentes.map((produtoRecente) => (
+                  <div
+                    key={produtoRecente.id}
+                    className={style.itemRecente}
+                  >
+                    <div className={style.blocoComImagem}>
+
+                      {produtoRecente.imagem ? (
+                        <img
+                          src={`http://localhost:3000${produtoRecente.imagem}`}
+                          alt={produtoRecente.nome}
+                          className={style.miniImagem}
+                        />
+                      ) : (
+                        <div className={style.imagemPlaceholder}>💎</div>
+                      )}
+
+                      <div className={style.informacoesRecente}>
+                        <p className={style.nomeRecente}>
+                          {produtoRecente.nome}
+                        </p>
+
+                        <span className={style.categoriaRecente}>
+                          {produtoRecente.categoria}
+                        </span>
+                      </div>
+
+                    </div>
+
+                    <div className={style.dadosRecente}>
+                      <span className={style.estoqueRecente}>
+                        {produtoRecente.estoque} un.
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+        </section>
+        )}
+
+        {/* ==================== BLOCO: METAS ==================== */}
+        {mostrarBloco("metas") && (
+        <section className={style.blocoSecao}>
+
+          <div className={style.cabecalhoBloco}>
+            <h2>Metas Financeiras</h2>
+            <p>Acompanhe a meta do mês atual e compare com os resultados anteriores</p>
+          </div>
+
+          <div className={style.linhaDuasColunas}>
+
+          <div className={style.cardMetaMensal}>
+
+            <div className={style.cabecalhoMeta}>
+
+              <div>
+                <span className={style.tituloMeta}>
+                  META DO MÊS DE {nomeMes.toUpperCase()}
+                </span>
+
+                <p className={style.descricaoMeta}>
+                  {metaMensal.descricao || "Meta mensal"}
+                </p>
               </div>
 
-              <div className={style.infoMeta}>
-
-                <div>
-
-                  <span className={style.labelMeta}>
-                    Faturado
-                  </span>
-
-                  <strong>
-                    {formatarMoeda(metaMensal.faturamentoAtual || 0)}
-                  </strong>
-
+              {metaMensal.metaAtingida && (
+                <div className={style.badgeMeta}>
+                  ✓ Atingida
                 </div>
+              )}
 
-                <div>
+              <button onClick={() => setAbrirModalEditar(true)} className={style.btnEditarMeta}>
+                <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1" />
+              </button>
 
-                  <span className={style.labelMeta}>
-                    Progresso
-                  </span>
+            </div>
 
-                  <strong>
-                    {metaMensal.percentual || 0}%
-                  </strong>
+            <div className={style.valorMeta}>
 
-                </div>
+              {formatarMoeda(metaMensal.valorMeta || 0)}
 
-              </div>
+            </div>
 
-              <div className={style.rodapeMeta}>
+            <div className={style.barraMeta}>
 
-                <span>
-                  Faltam
+              <div
+                className={style.progressoMeta}
+                style={{
+                  width: `${Math.min(metaMensal.percentual || 0, 100)}%`
+                }}
+              />
+
+            </div>
+
+            <div className={style.infoMeta}>
+
+              <div>
+
+                <span className={style.labelMeta}>
+                  Faturado
                 </span>
 
                 <strong>
-                  {formatarMoeda(metaMensal.faltam || 0)}
+                  {formatarMoeda(metaMensal.faturamentoAtual || 0)}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span className={style.labelMeta}>
+                  Progresso
+                </span>
+
+                <strong>
+                  {metaMensal.percentual || 0}%
                 </strong>
 
               </div>
 
             </div>
 
+            <div className={style.rodapeMeta}>
 
-            {todasMetas.length > 0 && (
-              <div className={style.cardComparativoMetas}>
+              <span>
+                Faltam
+              </span>
 
-                <div className={style.cabecalhoComparativo}>
-                  <div>
-                    <span className={style.tituloMeta}>HISTÓRICO DE METAS</span>
-                    <p className={style.descricaoMeta}>Compare os resultados de cada mês</p>
-                  </div>
-                </div>
+              <strong>
+                {formatarMoeda(metaMensal.faltam || 0)}
+              </strong>
 
-                <div className={style.listaMetasMini}>
-                  {metasExibidas.map((meta) => (
-                    <div key={meta.id} className={style.metaMini}>
-
-                      <div className={style.cabecalhoMetaMini}>
-                        <span className={style.mesMetaMini}>
-                          {nomesMeses[meta.mes]} / {meta.ano}
-                        </span>
-
-                        {meta.metaAtingida && (
-                          <span className={style.badgeMetaMini}>✓</span>
-                        )}
-                      </div>
-
-                      <strong className={style.valorMetaMini}>
-                        {formatarMoeda(meta.valorMeta)}
-                      </strong>
-
-                      <div className={style.barraMetaMini}>
-                        <div
-                          className={style.progressoMetaMini}
-                          style={{ width: `${Math.min(meta.percentual || 0, 100)}%` }}
-                        />
-                      </div>
-
-                      <div className={style.infoMetaMini}>
-                        <span>{formatarMoeda(meta.faturamentoAtual)} faturado</span>
-                        <span className={style.percentualMetaMini}>{meta.percentual}%</span>
-                      </div>
-
-                    </div>
-                  ))}
-                </div>
-
-                {todasMetas.length > 5 && (
-                  <button
-                    className={style.btnVerTodasMetas}
-                    onClick={() => setVerTodasMetas(!verTodasMetas)}
-                  >
-                    {verTodasMetas ? "Ver menos" : "Ver todas as metas"}
-                  </button>
-                )}
-
-              </div>
-            )}
+            </div>
 
           </div>
-        </section>
 
+          {todasMetas.length > 0 && (
+            <div className={style.cardComparativoMetas}>
+
+              <div className={style.cabecalhoComparativo}>
+                <div>
+                  <span className={style.tituloMeta}>HISTÓRICO DE METAS</span>
+                  <p className={style.descricaoMeta}>Compare os resultados de cada mês</p>
+                </div>
+              </div>
+
+              <div className={style.listaMetasMini}>
+                {metasExibidas.map((meta) => (
+                  <div key={meta.id} className={style.metaMini}>
+
+                    <div className={style.cabecalhoMetaMini}>
+                      <span className={style.mesMetaMini}>
+                        {nomesMeses[meta.mes]} / {meta.ano}
+                      </span>
+
+                      {meta.metaAtingida && (
+                        <span className={style.badgeMetaMini}>✓</span>
+                      )}
+                    </div>
+
+                    <strong className={style.valorMetaMini}>
+                      {formatarMoeda(meta.valorMeta)}
+                    </strong>
+
+                    <div className={style.barraMetaMini}>
+                      <div
+                        className={style.progressoMetaMini}
+                        style={{ width: `${Math.min(meta.percentual || 0, 100)}%` }}
+                      />
+                    </div>
+
+                    <div className={style.infoMetaMini}>
+                      <span>{formatarMoeda(meta.faturamentoAtual)} faturado</span>
+                      <span className={style.percentualMetaMini}>{meta.percentual}%</span>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+
+              {todasMetas.length > 5 && (
+                <button
+                  className={style.btnVerTodasMetas}
+                  onClick={() => setVerTodasMetas(!verTodasMetas)}
+                >
+                  {verTodasMetas ? "Ver menos" : "Ver todas as metas"}
+                </button>
+              )}
+
+            </div>
+          )}
+
+          </div>
+
+        </section>
+        )}
 
 
         <ModalAddMeta

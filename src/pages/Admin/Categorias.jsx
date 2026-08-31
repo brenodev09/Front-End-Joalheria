@@ -149,11 +149,14 @@ export default function Categorias() {
 
                         <div className={style.infoCategoria}>
                             <h3 className={style.tituloCategoria}>{categoria.nome}</h3>
-                            <span className={style.quantidadeProdutos}>48 produtos cadastrados</span>
+                            <span className={style.quantidadeProdutos}>
+                                {categoria.total_produtos}{" "}
+                                {categoria.total_produtos === 1 ? "produto cadastrado" : "produtos cadastrados"}
+                            </span>
                             <p className={style.descricaoCategoria}>{categoria.descricao}</p>
 
                             <div className={style.acoesCategoria}>
-                                <button onClick={() => {setOpenModalEditar(true); setCategoriaSelecionada(categoria)}} className={style.botaoEditar}>
+                                <button onClick={() => { setOpenModalEditar(true); setCategoriaSelecionada(categoria) }} className={style.botaoEditar}>
                                     <img width="21" height="21" src="https://img.icons8.com/material/24/D1A84B/edit--v1.png" alt="edit--v1" />
                                     <p>Editar</p>
                                 </button>
@@ -288,11 +291,11 @@ export default function Categorias() {
 
             <ModalDeleteCategoria aberto={openModalDelete} categoria={categoriaSelecionada}
                 aoConfirmar={excluirCategoria} aoFechar={() => { setOpenModalDelete(false) }} />
-            <ModalEditarCategoria isOpen={openModalEditar} fecharModal={() => setOpenModalEditar(false)} 
-            categoria={categoriaSelecionada} 
-            aoSalvar ={(categoriaAtualizada) => {
-                setCategorias((atual) => atual.map((c) => (c.id === categoriaAtualizada.id ? categoriaAtualizada : c)))
-            }}/>
+            <ModalEditarCategoria isOpen={openModalEditar} fecharModal={() => setOpenModalEditar(false)}
+                categoria={categoriaSelecionada}
+                aoSalvar={(categoriaAtualizada) => {
+                    setCategorias((atual) => atual.map((c) => (c.id === categoriaAtualizada.id ? categoriaAtualizada : c)))
+                }} />
             <ModalAddCategoria isOpen={openModal} fecharModal={() => setOpenModal(false)} />
         </main>
 
