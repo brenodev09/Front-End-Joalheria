@@ -85,6 +85,11 @@
   border-bottom: 1px solid var(--hairline);
 }
 
+.navCol{
+  display: flex;
+  flex-direction: column;
+}
+
 .colTitle {
   font-size: 11px;
   letter-spacing: 0.24em;
@@ -118,9 +123,9 @@
   gap: 14px;
 }
 
-.socialIcon {
-  width: 38px;
-  height: 38px;
+.circuloIcone {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1px solid var(--hairline);
   display: flex;
@@ -137,8 +142,8 @@
 
 .socialIcon svg {
   display: block;
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
 }
 
 .socialIcon:hover {

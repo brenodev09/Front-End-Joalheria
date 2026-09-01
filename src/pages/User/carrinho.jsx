@@ -97,8 +97,8 @@ export default function Carrinho() {
 
   const [valorPedidoFinalizado, setValorPedidoFinalizado] =
     useState(0);
-const [pixQr, setPixQr] = useState(null)
-const [pixCopiaCola, setPixCopiaCola] = useState("")
+  const [pixQr, setPixQr] = useState(null)
+  const [pixCopiaCola, setPixCopiaCola] = useState("")
   const [codigoPedido, setCodigoPedido] = useState(null);
 
   const [finalizando, setFinalizando] = useState(false);
@@ -185,7 +185,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
 
 
-  
+
 
   const etapas = [
     {
@@ -377,9 +377,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
       return imagem;
     }
 
-    return `${API_BASE_URL}${
-      imagem.startsWith("/") ? imagem : `/${imagem}`
-    }`;
+    return `${API_BASE_URL}${imagem.startsWith("/") ? imagem : `/${imagem}`
+      }`;
   }
 
   /* =========================================================
@@ -722,10 +721,10 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
       const configuracao = token
         ? {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
         : {};
 
       /*
@@ -733,13 +732,16 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
        * no carrinho persistido antes de criar o pedido.
        */
       for (const item of produtos) {
+        const temConfiguracao =
+          item.configuracao && Object.keys(item.configuracao).length > 0;
+
         await api.post(
           "/carrinho",
           {
             produto_id: Number(item.produto_id || item.id),
             quantidade: Number(item.quantidade) || 1,
             variacao_id: item.variacao_id || null,
-            configuracao: item.configuracao || {},
+            ...(temConfiguracao ? { configuracao: item.configuracao } : {}),
           },
           configuracao
         );
@@ -759,9 +761,9 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
       const statusPagamento = String(
         resposta.data?.statusPagamento ??
-          resposta.data?.status_pagamento ??
-          resposta.data?.status ??
-          ""
+        resposta.data?.status_pagamento ??
+        resposta.data?.status ??
+        ""
       ).toLowerCase();
       const pagamentoAprovado = [
         "aprovado",
@@ -773,17 +775,17 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
       if (formaPagamento === "pix" && pag) {
         setPixQr(
           pag.qrCodeBase64 ??
-            pag.qr_code_base64 ??
-            pag.qrCode ??
-            pag.qr_code ??
-            null
+          pag.qr_code_base64 ??
+          pag.qrCode ??
+          pag.qr_code ??
+          null
         );
         setPixCopiaCola(
           pag.codigoPix ??
-            pag.codigo_pix ??
-            pag.copiaCola ??
-            pag.copia_cola ??
-            ""
+          pag.codigo_pix ??
+          pag.copiaCola ??
+          pag.copia_cola ??
+          ""
         );
       }
 
@@ -837,10 +839,10 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
       const detalhes = Array.isArray(detalhesBrutos)
         ? detalhesBrutos.join(" ")
         : typeof detalhesBrutos === "string"
-        ? detalhesBrutos
-        : detalhesBrutos
-        ? JSON.stringify(detalhesBrutos)
-        : "";
+          ? detalhesBrutos
+          : detalhesBrutos
+            ? JSON.stringify(detalhesBrutos)
+            : "";
 
       const mensagem =
         dadosErro?.erro ||
@@ -950,8 +952,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                 etapaAtual === 1
                   ? "0%"
                   : etapaAtual === 2
-                  ? "50%"
-                  : "100%",
+                    ? "50%"
+                    : "100%",
             }}
           />
         </div>
@@ -959,17 +961,17 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
         {etapas.map((etapa) => {
           const concluida =
             etapa.numero <
-              etapaAtual ||
+            etapaAtual ||
             pedidoConfirmado;
 
           const ativa =
             etapa.numero ===
-              etapaAtual &&
+            etapaAtual &&
             !pedidoConfirmado;
 
           const clicavel =
             etapa.numero <=
-              etapaAtual &&
+            etapaAtual &&
             !pedidoConfirmado;
 
           return (
@@ -983,15 +985,13 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
               }
               className={`
                 ${estilos.etapa}
-                ${
-                  ativa
-                    ? estilos.etapaAtiva
-                    : ""
+                ${ativa
+                  ? estilos.etapaAtiva
+                  : ""
                 }
-                ${
-                  concluida
-                    ? estilos.etapaConcluida
-                    : ""
+                ${concluida
+                  ? estilos.etapaConcluida
+                  : ""
                 }
               `}
               style={{
@@ -1053,9 +1053,9 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                 estilos.titulo
               }
             >
-                {pagamentoExpirado
-                  ? "Pedido cancelado"
-                  : pedidoConfirmado
+              {pagamentoExpirado
+                ? "Pedido cancelado"
+                : pedidoConfirmado
                   ? "Pedido confirmado"
                   : "Aguardando pagamento"}
             </h1>
@@ -1068,8 +1068,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
               {pagamentoExpirado
                 ? "O prazo para pagamento terminou. Seu pedido"
                 : pedidoConfirmado
-                ? "Obrigado por escolher a Azory. Seu pedido"
-                : "Seu pedido foi registrado. Efetue o pagamento em até"}{" "}
+                  ? "Obrigado por escolher a Azory. Seu pedido"
+                  : "Seu pedido foi registrado. Efetue o pagamento em até"}{" "}
               <strong>
                 #AZ-
                 {codigoPedido}
@@ -1087,81 +1087,81 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
             {pedidoConfirmado && formaPagamento ===
               "cartao" && (
-              <p
-                className={
-                  estilos.confirmacaoTexto
-                }
-              >
-                Seu pedido está sendo
-                preparado com todo o
-                cuidado de nossos
-                artesãos.
-              </p>
-            )}
-
-            {!pagamentoExpirado && formaPagamento ===
-              "pix" && (
-              <>
                 <p
                   className={
                     estilos.confirmacaoTexto
                   }
                 >
-                  Escaneie o QR Code ou copie
-                  o código PIX para concluir o
-                  pagamento.
+                  Seu pedido está sendo
+                  preparado com todo o
+                  cuidado de nossos
+                  artesãos.
                 </p>
+              )}
 
-                {pixQr && (
-                  <img
-                    src={
-                      pixQr.startsWith("data:")
-                        ? pixQr
-                        : `data:image/png;base64,${pixQr}`
+            {!pagamentoExpirado && formaPagamento ===
+              "pix" && (
+                <>
+                  <p
+                    className={
+                      estilos.confirmacaoTexto
                     }
-                    alt="QR Code para pagamento PIX"
-                    className={estilos.pixQr}
-                  />
-                )}
+                  >
+                    Escaneie o QR Code ou copie
+                    o código PIX para concluir o
+                    pagamento.
+                  </p>
 
-                {pixCopiaCola && (
-                  <div className={estilos.pixCodigoWrapper}>
-                    <input
-                      type="text"
-                      value={pixCopiaCola}
-                      readOnly
-                      aria-label="Código PIX copia e cola"
-                      className={estilos.pixCodigo}
-                    />
-                    <button
-                      type="button"
-                      className={estilos.pixCopiar}
-                      onClick={() =>
-                        navigator.clipboard.writeText(pixCopiaCola)
+                  {pixQr && (
+                    <img
+                      src={
+                        pixQr.startsWith("data:")
+                          ? pixQr
+                          : `data:image/png;base64,${pixQr}`
                       }
-                    >
-                      Copiar código PIX
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
+                      alt="QR Code para pagamento PIX"
+                      className={estilos.pixQr}
+                    />
+                  )}
+
+                  {pixCopiaCola && (
+                    <div className={estilos.pixCodigoWrapper}>
+                      <input
+                        type="text"
+                        value={pixCopiaCola}
+                        readOnly
+                        aria-label="Código PIX copia e cola"
+                        className={estilos.pixCodigo}
+                      />
+                      <button
+                        type="button"
+                        className={estilos.pixCopiar}
+                        onClick={() =>
+                          navigator.clipboard.writeText(pixCopiaCola)
+                        }
+                      >
+                        Copiar código PIX
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
 
             {!pagamentoExpirado && formaPagamento ===
               "boleto" && (
-              <p
-                className={
-                  estilos.confirmacaoTexto
-                }
-              >
-                O boleto foi
-                encaminhado para{" "}
-                <strong>
-                  {emailPagamento}
-                </strong>
-                .
-              </p>
-            )}
+                <p
+                  className={
+                    estilos.confirmacaoTexto
+                  }
+                >
+                  O boleto foi
+                  encaminhado para{" "}
+                  <strong>
+                    {emailPagamento}
+                  </strong>
+                  .
+                </p>
+              )}
 
             <div
               className={
@@ -1223,7 +1223,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                   {etapaAtual === 1 && (
                     <>
                       {produtos.length ===
-                      0 ? (
+                        0 ? (
                         <p
                           className={
                             estilos.carrinhoVazio
@@ -1357,7 +1357,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                                             Math.max(
                                               1,
                                               produto.quantidade -
-                                                1
+                                              1
                                             )
                                           )
                                         }
@@ -1384,7 +1384,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                                           atualizarQuantidade(
                                             produto.id,
                                             produto.quantidade +
-                                              1
+                                            1
                                           )
                                         }
                                       >
@@ -1401,9 +1401,9 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                                         Number(
                                           produto.preco
                                         ) *
-                                          Number(
-                                            produto.quantidade
-                                          )
+                                        Number(
+                                          produto.quantidade
+                                        )
                                       )}
                                     </span>
                                   </div>
@@ -1428,110 +1428,110 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                     >
                       {entregaSelecionada !==
                         "retirada" && (
-                        <>
-                          <h2
-                            className={
-                              estilos.formularioTitulo
-                            }
-                          >
-                            Endereço de
-                            Entrega
-                          </h2>
+                          <>
+                            <h2
+                              className={
+                                estilos.formularioTitulo
+                              }
+                            >
+                              Endereço de
+                              Entrega
+                            </h2>
 
-                          {tentouAvancarEntrega &&
-                            !entregaValida && (
-                              <p
-                                className={
-                                  estilos.mensagemErro
-                                }
-                              >
-                                Preencha todos
-                                os campos
-                                obrigatórios
-                                para
-                                continuar.
-                              </p>
-                            )}
-
-                          <div
-                            className={
-                              estilos.formularioGrade
-                            }
-                          >
-                            {camposEndereco.map(
-                              (campo) => (
-                                <label
-                                  key={
-                                    campo
+                            {tentouAvancarEntrega &&
+                              !entregaValida && (
+                                <p
+                                  className={
+                                    estilos.mensagemErro
                                   }
-                                  className={classeCampoEndereco(
-                                    campo,
-                                    campo ===
-                                      "endereco"
-                                      ? "campoLargo"
-                                      : undefined
-                                  )}
                                 >
-                                  <span>
-                                    {
-                                      rotulosCampoEndereco[
-                                        campo
-                                      ]
-                                    }
-                                  </span>
+                                  Preencha todos
+                                  os campos
+                                  obrigatórios
+                                  para
+                                  continuar.
+                                </p>
+                              )}
 
-                                  <input
-                                    type="text"
-                                    name={
+                            <div
+                              className={
+                                estilos.formularioGrade
+                              }
+                            >
+                              {camposEndereco.map(
+                                (campo) => (
+                                  <label
+                                    key={
                                       campo
                                     }
-                                    value={
-                                      enderecoForm[
+                                    className={classeCampoEndereco(
+                                      campo,
+                                      campo ===
+                                        "endereco"
+                                        ? "campoLargo"
+                                        : undefined
+                                    )}
+                                  >
+                                    <span>
+                                      {
+                                        rotulosCampoEndereco[
                                         campo
-                                      ]
-                                    }
-                                    onChange={
-                                      aoMudarCampoEndereco
-                                    }
-                                    placeholder={
-                                      placeholdersCampoEndereco[
+                                        ]
+                                      }
+                                    </span>
+
+                                    <input
+                                      type="text"
+                                      name={
                                         campo
-                                      ]
-                                    }
-                                  />
-                                </label>
-                              )
-                            )}
-                          </div>
-                        </>
-                      )}
+                                      }
+                                      value={
+                                        enderecoForm[
+                                        campo
+                                        ]
+                                      }
+                                      onChange={
+                                        aoMudarCampoEndereco
+                                      }
+                                      placeholder={
+                                        placeholdersCampoEndereco[
+                                        campo
+                                        ]
+                                      }
+                                    />
+                                  </label>
+                                )
+                              )}
+                            </div>
+                          </>
+                        )}
 
                       {entregaSelecionada ===
                         "retirada" && (
-                        <div>
-                          <h2
-                            className={
-                              estilos.formularioTitulo
-                            }
-                          >
-                            Retirada em
-                            Boutique
-                          </h2>
+                          <div>
+                            <h2
+                              className={
+                                estilos.formularioTitulo
+                              }
+                            >
+                              Retirada em
+                              Boutique
+                            </h2>
 
-                          <p
-                            className={
-                              estilos.mensagemPagamentoAlternativo
-                            }
-                          >
-                            Seu pedido
-                            ficará
-                            disponível
-                            para retirada
-                            em até 24
-                            horas.
-                          </p>
-                        </div>
-                      )}
+                            <p
+                              className={
+                                estilos.mensagemPagamentoAlternativo
+                              }
+                            >
+                              Seu pedido
+                              ficará
+                              disponível
+                              para retirada
+                              em até 24
+                              horas.
+                            </p>
+                          </div>
+                        )}
 
                       <h2
                         className={
@@ -1555,11 +1555,10 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                               }
                               className={`
                                 ${estilos.opcaoEntregaCard}
-                                ${
-                                  entregaSelecionada ===
+                                ${entregaSelecionada ===
                                   opcao.id
-                                    ? estilos.opcaoEntregaSelecionada
-                                    : ""
+                                  ? estilos.opcaoEntregaSelecionada
+                                  : ""
                                 }
                               `}
                             >
@@ -1612,11 +1611,11 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                                 }
                               >
                                 {opcao.preco ===
-                                0
+                                  0
                                   ? "Grátis"
                                   : formatarPreco(
-                                      opcao.preco
-                                    )}
+                                    opcao.preco
+                                  )}
                               </span>
                             </label>
                           )
@@ -1663,7 +1662,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                         }
                       >
                         {entregaSelecionada ===
-                        "retirada" ? (
+                          "retirada" ? (
                           <>
                             <p
                               className={
@@ -1759,11 +1758,11 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                             }{" "}
                             —{" "}
                             {opcaoEntregaEscolhida.preco ===
-                            0
+                              0
                               ? "Grátis"
                               : formatarPreco(
-                                  opcaoEntregaEscolhida.preco
-                                )}
+                                opcaoEntregaEscolhida.preco
+                              )}
                           </p>
                         )}
                       </div>
@@ -1791,11 +1790,10 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                               type="button"
                               className={`
                                 ${estilos.abaPagamento}
-                                ${
-                                  formaPagamento ===
+                                ${formaPagamento ===
                                   aba.id
-                                    ? estilos.abaPagamentoAtiva
-                                    : ""
+                                  ? estilos.abaPagamentoAtiva
+                                  : ""
                                 }
                               `}
                               onClick={() => {
@@ -1822,121 +1820,121 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
                       {formaPagamento ===
                         "cartao" && (
-                        <>
-                          <div
-                            className={
-                              estilos.formularioGrade
-                            }
-                          >
-                            <label
-                              className={classeCampoCartao(
-                                "numero"
-                              )}
+                          <>
+                            <div
+                              className={
+                                estilos.formularioGrade
+                              }
                             >
-                              <span>
-                                Número do
-                                Cartão
-                              </span>
-
-                              <input
-                                type="text"
-                                name="numero"
-                                value={
-                                  cartaoForm.numero
-                                }
-                                onChange={
-                                  aoMudarCampoCartao
-                                }
-                                placeholder="0000 0000 0000 0000"
-                                inputMode="numeric"
-                              />
-                            </label>
-
-                            <label
-                              className={classeCampoCartao(
-                                "nome"
-                              )}
-                            >
-                              <span>
-                                Nome no
-                                Cartão
-                              </span>
-
-                              <input
-                                type="text"
-                                name="nome"
-                                value={
-                                  cartaoForm.nome
-                                }
-                                onChange={
-                                  aoMudarCampoCartao
-                                }
-                                placeholder="Como está impresso no cartão"
-                              />
-                            </label>
-
-                            <label
-                              className={classeCampoCartao(
-                                "validade"
-                              )}
-                            >
-                              <span>
-                                Validade
-                              </span>
-
-                              <input
-                                type="text"
-                                name="validade"
-                                value={
-                                  cartaoForm.validade
-                                }
-                                onChange={
-                                  aoMudarCampoCartao
-                                }
-                                placeholder="MM/AA"
-                              />
-                            </label>
-
-                            <label
-                              className={classeCampoCartao(
-                                "cvv"
-                              )}
-                            >
-                              <span>
-                                CVV
-                              </span>
-
-                              <input
-                                type="password"
-                                name="cvv"
-                                value={
-                                  cartaoForm.cvv
-                                }
-                                onChange={
-                                  aoMudarCampoCartao
-                                }
-                                placeholder="000"
-                                inputMode="numeric"
-                              />
-                            </label>
-                          </div>
-
-                          {tentouFinalizarPagamento &&
-                            !cartaoValido && (
-                              <p
-                                className={
-                                  estilos.mensagemErro
-                                }
+                              <label
+                                className={classeCampoCartao(
+                                  "numero"
+                                )}
                               >
-                                Preencha
-                                corretamente
-                                todos os
-                                dados do
-                                cartão.
-                              </p>
-                            )}
-                        </>
-                      )}
+                                <span>
+                                  Número do
+                                  Cartão
+                                </span>
+
+                                <input
+                                  type="text"
+                                  name="numero"
+                                  value={
+                                    cartaoForm.numero
+                                  }
+                                  onChange={
+                                    aoMudarCampoCartao
+                                  }
+                                  placeholder="0000 0000 0000 0000"
+                                  inputMode="numeric"
+                                />
+                              </label>
+
+                              <label
+                                className={classeCampoCartao(
+                                  "nome"
+                                )}
+                              >
+                                <span>
+                                  Nome no
+                                  Cartão
+                                </span>
+
+                                <input
+                                  type="text"
+                                  name="nome"
+                                  value={
+                                    cartaoForm.nome
+                                  }
+                                  onChange={
+                                    aoMudarCampoCartao
+                                  }
+                                  placeholder="Como está impresso no cartão"
+                                />
+                              </label>
+
+                              <label
+                                className={classeCampoCartao(
+                                  "validade"
+                                )}
+                              >
+                                <span>
+                                  Validade
+                                </span>
+
+                                <input
+                                  type="text"
+                                  name="validade"
+                                  value={
+                                    cartaoForm.validade
+                                  }
+                                  onChange={
+                                    aoMudarCampoCartao
+                                  }
+                                  placeholder="MM/AA"
+                                />
+                              </label>
+
+                              <label
+                                className={classeCampoCartao(
+                                  "cvv"
+                                )}
+                              >
+                                <span>
+                                  CVV
+                                </span>
+
+                                <input
+                                  type="password"
+                                  name="cvv"
+                                  value={
+                                    cartaoForm.cvv
+                                  }
+                                  onChange={
+                                    aoMudarCampoCartao
+                                  }
+                                  placeholder="000"
+                                  inputMode="numeric"
+                                />
+                              </label>
+                            </div>
+
+                            {tentouFinalizarPagamento &&
+                              !cartaoValido && (
+                                <p
+                                  className={
+                                    estilos.mensagemErro
+                                  }
+                                >
+                                  Preencha
+                                  corretamente
+                                  todos os
+                                  dados do
+                                  cartão.
+                                </p>
+                              )}
+                          </>
+                        )}
 
                       {/* =================================================
                           PIX
@@ -1944,82 +1942,81 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
                       {formaPagamento ===
                         "pix" && (
-                        <>
-                          <p
-                            className={
-                              estilos.mensagemPagamentoAlternativo
-                            }
-                          >
-                            Ao finalizar,
-                            seu pedido
-                            será
-                            registrado e
-                            as
-                            instruções de
-                            pagamento
-                            serão
-                            disponibilizadas
-                            conforme a
-                            configuração
-                            do backend.
-                          </p>
+                          <>
+                            <p
+                              className={
+                                estilos.mensagemPagamentoAlternativo
+                              }
+                            >
+                              Ao finalizar,
+                              seu pedido
+                              será
+                              registrado e
+                              as
+                              instruções de
+                              pagamento
+                              serão
+                              disponibilizadas
+                              conforme a
+                              configuração
+                              do backend.
+                            </p>
 
-                          <div
-                            className={
-                              estilos.formularioGrade
-                            }
-                          >
-                            <label
-                              className={`
+                            <div
+                              className={
+                                estilos.formularioGrade
+                              }
+                            >
+                              <label
+                                className={`
                                 ${estilos.campo}
                                 ${estilos.campoLargo}
-                                ${
-                                  tentouFinalizarPagamento &&
-                                  !emailValido
+                                ${tentouFinalizarPagamento &&
+                                    !emailValido
                                     ? estilos.campoErro
                                     : ""
-                                }
+                                  }
                               `}
-                            >
-                              <span>
-                                E-mail
-                                para
-                                pagamento
-                              </span>
-
-                              <input
-                                type="email"
-                                value={
-                                  emailPagamento
-                                }
-                                onChange={(
-                                  evento
-                                ) =>
-                                  setEmailPagamento(
-                                    evento
-                                      .target
-                                      .value
-                                  )
-                                }
-                                placeholder="seuemail@exemplo.com"
-                              />
-                            </label>
-                          </div>
-
-                          {tentouFinalizarPagamento &&
-                            !emailValido && (
-                              <p
-                                className={
-                                  estilos.mensagemErro
-                                }
                               >
-                                Informe um
-                                e-mail
-                                válido.
-                              </p>
-                            )}
-                        </>
-                      )}
+                                <span>
+                                  E-mail
+                                  para
+                                  pagamento
+                                </span>
+
+                                <input
+                                  type="email"
+                                  value={
+                                    emailPagamento
+                                  }
+                                  onChange={(
+                                    evento
+                                  ) =>
+                                    setEmailPagamento(
+                                      evento
+                                        .target
+                                        .value
+                                    )
+                                  }
+                                  placeholder="seuemail@exemplo.com"
+                                />
+                              </label>
+                            </div>
+
+                            {tentouFinalizarPagamento &&
+                              !emailValido && (
+                                <p
+                                  className={
+                                    estilos.mensagemErro
+                                  }
+                                >
+                                  Informe um
+                                  e-mail
+                                  válido.
+                                </p>
+                              )}
+                          </>
+                        )}
 
                       {/* =================================================
                           BOLETO
@@ -2027,77 +2024,76 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
 
                       {formaPagamento ===
                         "boleto" && (
-                        <>
-                          <p
-                            className={
-                              estilos.mensagemPagamentoAlternativo
-                            }
-                          >
-                            O boleto será
-                            associado ao
-                            pedido e as
-                            instruções
-                            serão
-                            disponibilizadas
-                            conforme a
-                            configuração
-                            do backend.
-                          </p>
+                          <>
+                            <p
+                              className={
+                                estilos.mensagemPagamentoAlternativo
+                              }
+                            >
+                              O boleto será
+                              associado ao
+                              pedido e as
+                              instruções
+                              serão
+                              disponibilizadas
+                              conforme a
+                              configuração
+                              do backend.
+                            </p>
 
-                          <div
-                            className={
-                              estilos.formularioGrade
-                            }
-                          >
-                            <label
-                              className={`
+                            <div
+                              className={
+                                estilos.formularioGrade
+                              }
+                            >
+                              <label
+                                className={`
                                 ${estilos.campo}
                                 ${estilos.campoLargo}
-                                ${
-                                  tentouFinalizarPagamento &&
-                                  !emailValido
+                                ${tentouFinalizarPagamento &&
+                                    !emailValido
                                     ? estilos.campoErro
                                     : ""
-                                }
+                                  }
                               `}
-                            >
-                              <span>
-                                E-mail
-                              </span>
-
-                              <input
-                                type="email"
-                                value={
-                                  emailPagamento
-                                }
-                                onChange={(
-                                  evento
-                                ) =>
-                                  setEmailPagamento(
-                                    evento
-                                      .target
-                                      .value
-                                  )
-                                }
-                                placeholder="seuemail@exemplo.com"
-                              />
-                            </label>
-                          </div>
-
-                          {tentouFinalizarPagamento &&
-                            !emailValido && (
-                              <p
-                                className={
-                                  estilos.mensagemErro
-                                }
                               >
-                                Informe um
-                                e-mail
-                                válido.
-                              </p>
-                            )}
-                        </>
-                      )}
+                                <span>
+                                  E-mail
+                                </span>
+
+                                <input
+                                  type="email"
+                                  value={
+                                    emailPagamento
+                                  }
+                                  onChange={(
+                                    evento
+                                  ) =>
+                                    setEmailPagamento(
+                                      evento
+                                        .target
+                                        .value
+                                    )
+                                  }
+                                  placeholder="seuemail@exemplo.com"
+                                />
+                              </label>
+                            </div>
+
+                            {tentouFinalizarPagamento &&
+                              !emailValido && (
+                                <p
+                                  className={
+                                    estilos.mensagemErro
+                                  }
+                                >
+                                  Informe um
+                                  e-mail
+                                  válido.
+                                </p>
+                              )}
+                          </>
+                        )}
 
                       {/* =================================================
                           REVISÃO
@@ -2175,9 +2171,9 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                                   Number(
                                     produto.preco
                                   ) *
-                                    Number(
-                                      produto.quantidade
-                                    )
+                                  Number(
+                                    produto.quantidade
+                                  )
                                 )}
                               </span>
                             </div>
@@ -2295,8 +2291,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                       {valorEntrega === 0
                         ? "Grátis"
                         : formatarPreco(
-                            valorEntrega
-                          )}
+                          valorEntrega
+                        )}
                     </span>
                   </div>
 
@@ -2323,8 +2319,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                                 {carregandoCupons
                                   ? "Carregando cupons..."
                                   : cuponsDisponiveis.length > 0
-                                  ? "Selecione um cupom"
-                                  : "Nenhum cupom disponível"}
+                                    ? "Selecione um cupom"
+                                    : "Nenhum cupom disponível"}
                               </option>
                               {cuponsDisponiveis.map((cupomDisponivel) => (
                                 <option
@@ -2460,17 +2456,17 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
                     }
                     disabled={
                       produtos.length ===
-                        0 ||
+                      0 ||
                       finalizando
                     }
                   >
                     {finalizando
                       ? "Finalizando..."
                       : etapaAtual === 1
-                      ? "Continuar para Entrega"
-                      : etapaAtual === 2
-                      ? "Continuar para Pagamento"
-                      : "Finalizar Compra"}
+                        ? "Continuar para Entrega"
+                        : etapaAtual === 2
+                          ? "Continuar para Pagamento"
+                          : "Finalizar Compra"}
                   </button>
 
                   <p
@@ -2489,7 +2485,7 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
         )}
       </main>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 }

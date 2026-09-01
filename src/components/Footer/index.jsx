@@ -65,7 +65,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       {/* assinatura: corrente de ouro suspensa */}
-      <div className={styles.chainLine} aria-hidden="true">
+      {/* <div className={styles.chainLine} aria-hidden="true">
         <svg viewBox="0 0 1200 34" preserveAspectRatio="none">
           <defs>
             <linearGradient id="chainGoldGrad" x1="0" y1="0" x2="1" y2="0">
@@ -88,7 +88,7 @@ export default function Footer() {
             <circle className={styles.chainLink} cx="1160" cy="10" r="4" />
           </g>
         </svg>
-      </div>
+      </div> */}
 
       <div className={styles.footerMain}>
         <div className={styles.brandCol}>
@@ -99,7 +99,8 @@ export default function Footer() {
           </p>
           <div className={styles.socials}>
             {SOCIAL_LINKS.map(({ label, href, icon }) => (
-              <a
+              <div className={styles.circuloIcone}>
+                 <a
                 key={label}
                 className={styles.socialIcon}
                 href={href}
@@ -109,6 +110,8 @@ export default function Footer() {
               >
                 {icon}
               </a>
+              </div>
+             
             ))}
           </div>
         </div>
