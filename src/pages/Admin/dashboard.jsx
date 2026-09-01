@@ -184,7 +184,7 @@ export default function Dashboard() {
     carregarPedidos();
   }, []);
 
-  
+
 
 
   const faturamentoCategorias = metricas.faturamentoCategorias || []
@@ -240,11 +240,15 @@ export default function Dashboard() {
             <div className={style.metricasFaturamento}>
               <div className={style.resumoItem}>
                 <span className={style.resumoRotulo}>Hoje</span>
-                <span className={style.resumoValor}>R$ 28.400</span>
+                <span className={style.resumoValor}>
+                  {formatarMoeda(vendas?.faturamentoHoje ?? 0)}
+                </span>
               </div>
               <div className={style.resumoItem}>
                 <span className={style.resumoRotulo}>Esta semana</span>
-                <span className={style.resumoValor}>R$ 142K</span>
+                <span className={style.resumoValor}>
+                  {formatarMoeda(vendas?.faturamentoSemana ?? 0)}
+                </span>
               </div>
             </div>
 
