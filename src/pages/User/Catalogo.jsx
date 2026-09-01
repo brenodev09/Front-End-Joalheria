@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../services/api";
-import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 
 import ProximasColecoes from "../../components/User/ProximasColecoes";
@@ -58,7 +57,6 @@ export default function Catalogo() {
   const [materialMap, setMaterialMap] = useState({});
 
   const [status, setStatus] = useState("loading");
-const navegar = useNavigate();
   const [busca, setBusca] = useState("");
 
   const [sort, setSort] = useState("recentes");

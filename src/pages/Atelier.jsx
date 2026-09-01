@@ -55,6 +55,34 @@ function getOptionLabel(grupo, value) {
   return option?.nome || value || "Não informado";
 }
 
+function isProdutoPersonalizavel(produto) {
+  if (!produto) return false;
+
+  const valor = produto.personalizavel ?? produto.personalizable ?? produto.personalizacaoAtiva ?? produto.hasPersonalizacao;
+
+  if (valor === undefined || valor === null || valor === "") {
+    return Boolean(
+      Array.isArray(produto.personalizacoes) && produto.personalizacoes.length > 0 ||
+      Array.isArray(produto.personalizacao) && produto.personalizacao.length > 0 ||
+      Array.isArray(produto.configuracao) && produto.configuracao.length > 0 ||
+      Array.isArray(produto.personalizacoesConfig) && produto.personalizacoesConfig.length > 0 ||
+      Array.isArray(produto.gruposPersonalizacao) && produto.gruposPersonalizacao.length > 0 ||
+      Boolean(produto.hasPersonalizacao)
+    );
+  }
+
+  if (typeof valor === "string") {
+    const normalizado = valor.trim().toLowerCase();
+    if (["false", "0", "no", "off", "null", "undefined", ""].includes(normalizado)) return false;
+    if (["true", "1", "yes", "on"].includes(normalizado)) return true;
+    return Boolean(normalizado);
+  }
+
+  if (typeof valor === "number") return valor !== 0;
+
+  return Boolean(valor);
+}
+
 function ImageViewer({ produto, visuais }) {
   const frames = framesDoProduto(produto);
   const [frame, setFrame] = useState(0);
@@ -167,7 +195,17 @@ export default function Atelier() {
     return () => { ativo = false; };
   }, [produtoId]);
 
-  const grupos = useMemo(() => [...(dados?.personalizacoes || [])].sort((a, b) => Number(a.ordem || 0) - Number(b.ordem || 0)), [dados]);
+  const produto = dados?.produto ?? dados ?? {};
+  const grupos = useMemo(() => {
+    const lista = Array.isArray(dados?.personalizacoes)
+      ? dados.personalizacoes
+      : Array.isArray(produto?.personalizacoes)
+        ? produto.personalizacoes
+        : [];
+
+    return [...lista].sort((a, b) => Number(a.ordem || 0) - Number(b.ordem || 0));
+  }, [dados, produto]);
+
   const visuais = useMemo(() => grupos.flatMap((grupo) => {
     const key = getGroupKey(grupo);
     const selecionados = getSelectionValues(configuracao[key]);
@@ -238,7 +276,7 @@ export default function Atelier() {
     setSalvando(true);
     try {
       await validateConfiguration(produtoId, configuracao);
-      await adicionarAoCarrinho(produtoId, 1, null, dados.produto, configuracao);
+      await adicionarAoCarrinho(produtoId, 1, null, produto, configuracao);
     } catch (error) {
       setErro(error.response?.data?.erro || error.response?.data?.message || error.message || "Configuração inválida.");
     } finally {
@@ -249,7 +287,9 @@ export default function Atelier() {
   if (carregando) return <main className={styles.page}><p>Preparando seu Ateliê...</p></main>;
   if (!dados) return <main className={styles.page}><p>{erro || "Produto não encontrado."}</p></main>;
 
-  if (dados.produto?.personalizavel === false) {
+  const personalizavel = isProdutoPersonalizavel(produto) || grupos.length > 0;
+
+  if (!personalizavel) {
     return (
       <main className={styles.page}>
         <div className={styles.viewer} style={{ display: "grid", placeItems: "center", padding: "40px" }}>
@@ -272,7 +312,7 @@ export default function Atelier() {
         <ImageViewer produto={dados.produto} visuais={visuais} />
         <section className={styles.panel}>
           <p className={styles.eyebrow}>CRIE SUA PRÓPRIA VERSÃO</p>
-          <h1>{dados.produto?.nome || "Sua joia"}</h1>
+          <h1>{produto?.nome || "Sua joia"}</h1>
           <p className={styles.subtitle}>Escolha cada detalhe da sua peça.</p>
           {!grupos.length && <div className={styles.emptyState}>Esta joia ainda não possui personalizações cadastradas.</div>}
           {grupos.map((grupo) => {
@@ -302,7 +342,7 @@ export default function Atelier() {
           )}
 
           {erro && <p className={styles.error} role="alert">{erro}</p>}
-          <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {Number(calculo?.precoFinal ?? dados.produto?.precoBase ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {Number(calculo.precoBase).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {Number(calculo.adicionais).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
+          <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {Number(calculo?.precoFinal ?? produto?.precoBase ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {Number(calculo.precoBase).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {Number(calculo.adicionais).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
           <button type="button" className={styles.add} onClick={adicionar} disabled={salvando || !calculo}><ShoppingBag size={17} /> {salvando ? "Validando..." : "Adicionar ao carrinho"}</button>
         </section>
       </div>

@@ -81,7 +81,7 @@ const [nomeImagem, setNomeImagem] = useState("");
         formData.append("imagem", imagem);
       }
 
-      const resposta = await api.put(`/categorias/${categoria.id}`, formData);
+      const resposta = await api.put(`/materiais/${material.id}`, formData);
 
       aoSalvar?.(resposta.data);
       fecharModal();

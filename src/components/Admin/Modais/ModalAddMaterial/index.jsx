@@ -107,24 +107,22 @@ setTimeout(() => setMostrarNotificacao(false), 2000);
     }
   }
 
-  function Preview() {
-    return (
-      <div className={style.cardPreview}>
-        <div className={style.imagemCategoria}>
-          {imagemPreview ? (
-            <img src={imagemPreview} className={style.imagemPreview} />
-          ) : (
-            <p>Preview aqui</p>
-          )}
-        </div>
-
-        <div className={style.textCard}>
-          <h1>{nome || "Material"}</h1>
-          <p>{descricao || "Descrição..."}</p>
-        </div>
+  const Preview = () => (
+    <div className={style.cardPreview}>
+      <div className={style.imagemCategoria}>
+        {imagemPreview ? (
+          <img src={imagemPreview} alt="Preview do material" className={style.imagemPreview} />
+        ) : (
+          <p>Preview aqui</p>
+        )}
       </div>
-    );
-  }
+
+      <div className={style.textCard}>
+        <h1>{nome || "Material"}</h1>
+        <p>{descricao || "Descrição..."}</p>
+      </div>
+    </div>
+  );
 
   return (
     <>

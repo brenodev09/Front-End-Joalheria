@@ -127,6 +127,34 @@ function formatarPreco(valor) {
   return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
+function isProdutoPersonalizavel(produto) {
+  if (!produto) return false;
+
+  const valor = produto.personalizavel ?? produto.personalizable ?? produto.personalizacaoAtiva ?? produto.hasPersonalizacao;
+
+  if (valor === undefined || valor === null || valor === '') {
+    return Boolean(
+      (Array.isArray(produto.personalizacoes) && produto.personalizacoes.length > 0) ||
+      (Array.isArray(produto.personalizacao) && produto.personalizacao.length > 0) ||
+      (Array.isArray(produto.configuracao) && produto.configuracao.length > 0) ||
+      (Array.isArray(produto.personalizacoesConfig) && produto.personalizacoesConfig.length > 0) ||
+      (Array.isArray(produto.gruposPersonalizacao) && produto.gruposPersonalizacao.length > 0) ||
+      Boolean(produto.hasPersonalizacao)
+    );
+  }
+
+  if (typeof valor === 'string') {
+    const normalizado = valor.trim().toLowerCase();
+    if (['false', '0', 'no', 'off', 'null', 'undefined', ''].includes(normalizado)) return false;
+    if (['true', '1', 'yes', 'on'].includes(normalizado)) return true;
+    return Boolean(normalizado);
+  }
+
+  if (typeof valor === 'number') return valor !== 0;
+
+  return Boolean(valor);
+}
+
 const RAIO_ANCORA = 30
 const RAIO_ROTULO = 43
 
@@ -185,6 +213,7 @@ export default function ProdutoJoalheria() {
   const [quantidade, setQuantidade] = useState(1)
   const [favorito, setFavorito] = useState(false)
   const [adicionado, setAdicionado] = useState(false)
+  const [erroConfiguracao, setErroConfiguracao] = useState('')
   const [erroTamanho, setErroTamanho] = useState(false)
 
   /* ---- refs: galeria ---- */
@@ -458,7 +487,7 @@ export default function ProdutoJoalheria() {
             <h1 className={`${style.nomeProduto} ${style.animarEntrada}`}>{produto.nome}</h1>
 
             <p className={`${style.descricaoCurta} ${style.animarEntrada}`}>{produto.descricao}</p>
-            {produto.personalizavel !== false && (
+            {isProdutoPersonalizavel(produto) && (
               <Link className={style.botaoAtelier} to={`/atelier/${produto.id}`}>
                 ✨ Personalizar esta joia
               </Link>

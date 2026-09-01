@@ -30,7 +30,6 @@ export async function calculateConfiguration(productId, configuration) {
   const payload = normalizeConfiguration(configuration);
   const response = await api.post(`/produtos/${productId}/personalizacao/calcular`, {
     configuracao: payload,
-    configuration: payload,
   });
 
   return response.data;
@@ -40,7 +39,6 @@ export async function validateConfiguration(productId, configuration) {
   const payload = normalizeConfiguration(configuration);
   const response = await api.post(`/produtos/${productId}/personalizacao/validar`, {
     configuracao: payload,
-    configuration: payload,
   });
 
   return response.data;
@@ -48,7 +46,7 @@ export async function validateConfiguration(productId, configuration) {
 
 export async function addCustomizedProductToCart(productId, configuration, extra = {}) {
   const payload = {
-    produtoId: Number(productId),
+    produto_id: Number(productId),
     configuracao: normalizeConfiguration(configuration),
     ...extra,
   };

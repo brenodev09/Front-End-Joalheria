@@ -5,6 +5,7 @@ import {
   useState,
 } from "react";
 import { api } from "../services/api";
+import { normalizeConfiguration } from "../services/configurator";
 
 const CarrinhoContext = createContext();
 
@@ -75,70 +76,42 @@ export function CarrinhoProvider({ children }) {
     produtoInfo = null,
     configuracao = {}
   ) {
-
-    console.log("DADOS ENVIO CARRINHO:", {
-        produtoId,
-        quantidade,
-        variacaoId,
-        produtoInfo,
-        token: pegarToken()
-    });
-
-
     try {
+      const token = pegarToken();
 
-        const token = pegarToken();
+      if (!token) {
+        throw new Error("Usuário precisa estar logado");
+      }
 
-        if (!token) {
-            throw new Error("Usuário precisa estar logado");
-        }
+      const payload = {
+        produto_id: Number(produtoId),
+        quantidade: Number(quantidade) || 1,
+        ...(Object.keys(normalizeConfiguration(configuracao || {})).length > 0
+          ? { configuracao: normalizeConfiguration(configuracao || {}) }
+          : {}),
+        ...(variacaoId ? { variacao_id: variacaoId } : {}),
+      };
 
+      const resposta = await api.post("/carrinho", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const resposta = await api.post(
-            "/carrinho",
-            {
-                produtoId,
-                quantidade,
-                configuracao,
-                ...(variacaoId ? { variacao_id: variacaoId } : {}),
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+      await carregarCarrinho();
 
+      if (produtoInfo) {
+        setProdutoAdicionado(produtoInfo);
+      }
 
-        console.log("RESPOSTA BACKEND:", resposta.data);
+      abrirSidebar();
 
-
-        await carregarCarrinho();
-
-
-        if (produtoInfo) {
-            setProdutoAdicionado(produtoInfo);
-        }
-
-
-        abrirSidebar();
-
-
-        return resposta.data;
-
-
+      return resposta.data;
     } catch (error) {
-
-        console.error(
-            "ERRO CARRINHO:",
-            error.response?.data || error
-        );
-
-        throw error;
-
+      console.error("ERRO CARRINHO:", error.response?.data || error);
+      throw error;
     }
-
-}
+  }
   /*
   ==========================================
       ALTERAR QUANTIDADE

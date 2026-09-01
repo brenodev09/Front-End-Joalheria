@@ -78,35 +78,33 @@ export default function ModalAddMetaFaturamento({
         }
     }
 
-    function PreviewMeta() {
-        return (
-            <div className={style.cardPreview}>
-                <div className={style.textCard}>
-                    <h1>
-                        {mesSelecionado && ano
-                            ? `Meta de ${mesSelecionado.nome} / ${ano}`
-                            : "Meta de faturamento"}
-                    </h1>
+    const PreviewMeta = () => (
+        <div className={style.cardPreview}>
+            <div className={style.textCard}>
+                <h1>
+                    {mesSelecionado && ano
+                        ? `Meta de ${mesSelecionado.nome} / ${ano}`
+                        : "Meta de faturamento"}
+                </h1>
 
-                    <p>
-                        {descricao || "Descrição da meta (opcional)"}
-                    </p>
+                <p>
+                    {descricao || "Descrição da meta (opcional)"}
+                </p>
 
-                    <span className={style.previewPeriodo}>
-                        {mesSelecionado && ano
-                            ? `${mesSelecionado.nome} de ${ano}`
-                            : "Período não selecionado"}
-                    </span>
+                <span className={style.previewPeriodo}>
+                    {mesSelecionado && ano
+                        ? `${mesSelecionado.nome} de ${ano}`
+                        : "Período não selecionado"}
+                </span>
 
-                    <strong className={style.previewPreco}>
-                        {valorMeta
-                            ? `R$ ${Number(valorMeta).toFixed(2)}`
-                            : "R$ 0,00"}
-                    </strong>
-                </div>
+                <strong className={style.previewPreco}>
+                    {valorMeta
+                        ? `R$ ${Number(valorMeta).toFixed(2)}`
+                        : "R$ 0,00"}
+                </strong>
             </div>
-        );
-    }
+        </div>
+    );
 
     if (!isOpen) return null;
 

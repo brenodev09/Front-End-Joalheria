@@ -166,9 +166,9 @@ function CartaoPreview({ dados }) {
         <span className={`${styles.cartaoPreviewNome} ${!temNome ? styles.cartaoPreviewNomePlaceholder : ''}`}>
           {temNome ? nome : 'Nome da categoria'}
         </span>
-        {(temDescricao || true) && (
+        {temDescricao && (
           <span className={styles.cartaoPreviewDescricao}>
-            {temDescricao ? descricao : 'Descrição aparecerá aqui conforme você digita...'}
+            {descricao}
           </span>
         )}
       </div>

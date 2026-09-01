@@ -27,16 +27,6 @@ export default function Produtos() {
     buscarProdutos()
   }, [])
 
-  async function buscarProdutos() {
-    try {
-      const response = await api.get("/produtos")
-      setProducts(response.data)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalExcluirAberto, setModalExcluirAberto] =

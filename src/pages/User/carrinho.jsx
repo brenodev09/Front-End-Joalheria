@@ -687,64 +687,37 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
         localStorage.getItem("token");
 
       const payload = {
-        formaPagamento,
-        tipoEntrega: entregaSelecionada,
+        forma_pagamento: formaPagamento,
+        tipo_entrega: entregaSelecionada,
       };
 
       if (cupomAplicado) {
         payload.codigo = cupomAplicado;
       }
 
-      /*
-       * Só envia endereço quando existe entrega física.
-       */
-      if (
-        entregaSelecionada !==
-        "retirada"
-      ) {
+      if (entregaSelecionada !== "retirada") {
         payload.endereco = {
-          nome: enderecoForm.nome,
+          nome_destinatario: enderecoForm.nome,
           telefone: enderecoForm.telefone,
-          endereco: enderecoForm.endereco,
+          rua: enderecoForm.endereco,
           numero: enderecoForm.numero,
           bairro: enderecoForm.bairro,
           cidade: enderecoForm.cidade,
-          uf: enderecoForm.estado,
+          estado: enderecoForm.estado,
           cep: enderecoForm.cep,
         };
       }
 
-      /*
-       * CARTÃO
-       *
-       * Não enviamos CVV.
-       * Não enviamos validade.
-       * Não armazenamos o cartão completo.
-       */
-      if (
-        formaPagamento ===
-        "cartao"
-      ) {
-        payload.dadosCartao = {
+      if (formaPagamento === "cartao") {
+        payload.dados_cartao = {
           numero: cartaoForm.numero,
-          nomeTitular:
-            cartaoForm.nome,
-          bandeira:
-            detectarBandeira(
-              cartaoForm.numero
-            ),
+          nome_titular: cartaoForm.nome,
+          bandeira: detectarBandeira(cartaoForm.numero),
         };
       }
 
-      /*
-       * PIX / BOLETO
-       */
-      if (
-        formaPagamento === "pix" ||
-        formaPagamento === "boleto"
-      ) {
-        payload.emailPagamento =
-          emailPagamento.trim();
+      if (formaPagamento === "pix" || formaPagamento === "boleto") {
+        payload.email_pagamento = emailPagamento.trim();
       }
 
       const configuracao = token
@@ -763,8 +736,8 @@ const [pixCopiaCola, setPixCopiaCola] = useState("")
         await api.post(
           "/carrinho",
           {
-            produto_id: item.produto_id || item.id,
-            quantidade: item.quantidade,
+            produto_id: Number(item.produto_id || item.id),
+            quantidade: Number(item.quantidade) || 1,
             variacao_id: item.variacao_id || null,
             configuracao: item.configuracao || {},
           },

@@ -45,6 +45,30 @@ export default function AvisoLancamento({ onVerColecao }) {
     const [aberto, setAberto] = useState(false);
     const [saindo, setSaindo] = useState(false);
 
+    async function marcarComoNotificado() {
+        if (!usuario?.id) {
+            return;
+        }
+
+        try {
+            await api.put(`/colecoes/avisos/${usuario.id}/notificar`, {
+                colecao_ids: avisos.map((colecao) => colecao.id)
+            });
+        } catch (error) {
+            console.error("Erro ao marcar avisos como notificados:", error);
+        }
+    }
+
+    function fechar() {
+        if (saindo) return;
+        setSaindo(true);
+        setTimeout(async () => {
+            await marcarComoNotificado();
+            setAberto(false);
+            setSaindo(false);
+        }, DURACAO_SAIDA_MS);
+    }
+
     useEffect(() => {
         // Sem usuário logado, não faz nada.
         if (!usuario?.id) {
@@ -89,34 +113,7 @@ export default function AvisoLancamento({ onVerColecao }) {
             document.body.style.overflow = overflowOriginal;
             window.removeEventListener("keydown", aoPressionarTecla);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [aberto]);
-
-    async function marcarComoNotificado() {
-        if (!usuario?.id) {
-            return;
-        }
-
-        try {
-            await api.put(`/colecoes/avisos/${usuario.id}/notificar`, {
-                colecao_ids: avisos.map((colecao) => colecao.id)
-            });
-        } catch (error) {
-            console.error("Erro ao marcar avisos como notificados:", error);
-        }
-    }
-
-    // Dispara a animação de saída e só desmonta/marca como notificado
-    // depois que ela termina.
-    function fechar() {
-        if (saindo) return;
-        setSaindo(true);
-        setTimeout(async () => {
-            await marcarComoNotificado();
-            setAberto(false);
-            setSaindo(false);
-        }, DURACAO_SAIDA_MS);
-    }
+    }, [aberto, fechar]);
 
     function verColecao(colecao) {
         if (saindo) return;

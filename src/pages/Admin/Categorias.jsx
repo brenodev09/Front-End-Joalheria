@@ -1,5 +1,4 @@
 import style from "../../styles/Admin/categorias.module.css"
-import aneis from "../../img/Categorias/aneis.png"
 import { useState, useEffect } from "react"
 import { api } from "../../services/api.js"
 import ModalAddCategoria from "../../components/Admin/Modais/ModalAddCategoria"

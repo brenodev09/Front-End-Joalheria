@@ -1,6 +1,5 @@
 import style from "../styles/cadastro.module.css";
 import background from "../img/bg-cadastro.png";
-import { api } from "../services/api"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext"
@@ -39,8 +38,6 @@ export default function Cadastro() {
     }
 
     return true
-
-    setErro("")
   }
 
   async function cadastrarUsuario(event) {

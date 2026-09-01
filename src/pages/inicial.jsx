@@ -6,8 +6,6 @@ import Particulas from "../components/particulas";
 import Header from "../components/Header";
 import Footer from "../components/Footer"
 
-import relogio from "../img/Destaques/relogio.png"
-import colar from "../img/Destaques/colar.png"
 import modelo from "../img/Destaques/modelo.png"
 
 import { useAuth } from "../context/authContext"
@@ -32,10 +30,10 @@ const IMAGEM_FALLBACK =
   "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=85&fit=crop"
 
 
-export default function inicial() {
+export default function Inicial() {
 
 
-  const { usuario, estaLogado } = useAuth()
+  const { usuario } = useAuth()
   const [destaques, setDestaques] = useState([])
   const navegar = useNavigate()
 
@@ -166,7 +164,7 @@ export default function inicial() {
 
         setDestaques(resposta.data)
       } catch (errror) {
-        console.log(error)
+        console.error(errror)
       }
     }
 
