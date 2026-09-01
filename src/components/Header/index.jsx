@@ -66,6 +66,47 @@ export default function Header() {
                             CATEGORIAS
                         </NavLink>
 
+                        
+                        <NavLink
+                            to="/admin/categorias"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            PEDIDOS
+                        </NavLink>
+
+                        <NavLink
+                            to="/admin/categorias"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            COLEÇÕES
+                        </NavLink>
+
+
+                        <NavLink
+                            to="/admin/categorias"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            FUNCIONÁRIOS
+                        </NavLink>
+
+
+                        <NavLink
+                            to="/admin/categorias"
+                            className={({ isActive }) =>
+                                `${style.link} ${isActive ? style.active : ""}`
+                            }
+                        >
+                            CUPONS
+                        </NavLink>
+
+
+
                     </nav>
 
                 ) : (

@@ -157,10 +157,10 @@ export default function SideBar({ isOpen, fecharSideBar }) {
             const dados = Array.isArray(resposta.data)
                 ? resposta.data
                 : resposta.data?.cupons
-                    || resposta.data?.dados
-                    || resposta.data?.data
-                    || resposta.data?.rows
-                    || []
+                || resposta.data?.dados
+                || resposta.data?.data
+                || resposta.data?.rows
+                || []
             setCupons(dados)
         } catch (error) {
             console.error("Erro ao carregar cupons:", error)
@@ -240,18 +240,43 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                                 onClick={() => navegar_e_fechar("/admin/produtos")}
                             />
                             <ItemMenu
-                                icone={<img
-                                    width="20"
+                                icone={
+                                <img width="20"
                                     height="20"
                                     src="https://img.icons8.com/external-sbts2018-outline-sbts2018/58/ffffff/external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018.png" alt="external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018" />}
                                 rotulo="Pedidos"
                                 onClick={() => navegar_e_fechar("/admin/pedidos")}
                             />
+
                             <ItemMenu
                                 icone={<IcoCategorias />}
                                 rotulo="Categorias"
                                 onClick={() => navegar_e_fechar("/admin/categorias")}
                             />
+
+
+                            <ItemMenu
+                                icone={<img
+                                    width="23"
+                                    height="23"
+                                    src="https://img.icons8.com/ios/50/ffffff/stack-of-photos.png"
+                                    alt="coleções"
+                                />}
+                                rotulo="Coleções"
+                                onClick={() => navegar_e_fechar("/admin/colecoes")}
+                            />
+
+                            <ItemMenu
+                                icone={<img width="23" height="23" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff" />
+                                }
+                                rotulo="Funcionários"
+                                onClick={() => navegar_e_fechar("/admin/funcionarios")}
+                            />
+
+
+
+
+
                             <ItemMenu
                                 icone={<IcoUsuarios />}
                                 rotulo="Minha conta"

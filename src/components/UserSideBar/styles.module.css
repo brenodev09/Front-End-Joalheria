@@ -313,6 +313,11 @@
   flex-shrink: 0;
   color: inherit;
   transition: color var(--transicao);
+
+  img{
+  opacity: 50%;
+
+  } 
   
 }
 
