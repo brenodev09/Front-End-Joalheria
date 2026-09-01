@@ -184,15 +184,7 @@ export default function Dashboard() {
     carregarPedidos();
   }, []);
 
-  const faturamentoBruto = pedidos
-    .filter((p) => p.status !== STATUS_PEDIDO.CANCELADO)
-    .reduce((acc, p) => acc + p.totalNumero, 0);
-
-  // Faturamento apenas dos pedidos feitos no mês/ano atual (não cancelados).
-  const faturamentoMensal = pedidos
-    .filter((p) => p.status !== STATUS_PEDIDO.CANCELADO)
-    .filter((p) => estaNoMesAtual(p.dataPedido))
-    .reduce((acc, p) => acc + p.totalNumero, 0);
+  
 
 
   const faturamentoCategorias = metricas.faturamentoCategorias || []
@@ -288,7 +280,7 @@ export default function Dashboard() {
               </div>
               <span className={style.cardRotulo}>FATURAMENTO BRUTO</span>
             </div>
-            <h1 className={style.cardValor}>{formatarMoeda(faturamentoBruto)}</h1>
+            <h1 className={style.cardValor}>  {formatarMoeda(vendas.faturamentoBruto || 0)}</h1>
             <p className={style.cardDescricao}>faturamento total da loja em todo o tempo</p>
 
 
@@ -306,7 +298,7 @@ export default function Dashboard() {
               </div>
               <span className={style.cardRotulo}>FATURAMENTO MENSAL</span>
             </div>
-            <h1 className={style.cardValor}>{formatarMoeda(faturamentoMensal)}</h1>
+            <h1 className={style.cardValor}>  {formatarMoeda(vendas.faturamentoMensal || 0)} </h1>
             <p className={style.cardDescricao}>faturamento da loja no mês atual</p>
           </div>
 
@@ -383,777 +375,777 @@ export default function Dashboard() {
 
         {/* ==================== BLOCO: VENDAS ==================== */}
         {mostrarBloco("vendas") && (
-        <section className={style.blocoSecao}>
+          <section className={style.blocoSecao}>
 
-          <div className={style.cabecalhoBloco}>
-            <h2>Desempenho de Vendas</h2>
-            <p>Evolução do faturamento e comparativo dos produtos e coleções mais vendidos</p>
-          </div>
-
-          <div className={style.cardGraficoGrande}>
-
-            <div className={style.cabecalhoGrafico}>
-              <span>VENDAS DOS ÚLTIMOS 30 DIAS</span>
-
-              <p>
-                Faturamento e quantidade de vendas por dia
-              </p>
+            <div className={style.cabecalhoBloco}>
+              <h2>Desempenho de Vendas</h2>
+              <p>Evolução do faturamento e comparativo dos produtos e coleções mais vendidos</p>
             </div>
 
+            <div className={style.cardGraficoGrande}>
 
-            <ResponsiveContainer width="100%" height={300}>
+              <div className={style.cabecalhoGrafico}>
+                <span>VENDAS DOS ÚLTIMOS 30 DIAS</span>
 
-              <ComposedChart
-                data={vendas.vendasUltimos30Dias || []}
-                margin={{
-                  top: 10,
-                  right: 10,
-                  left: 10,
-                  bottom: 10
-                }}
-              >
-
-                {/* EIXO HORIZONTAL */}
-
-                <XAxis
-                  dataKey="data"
-                  tickFormatter={formatarDataGrafico}
-                />
-
-
-                {/* EIXO DO FATURAMENTO */}
-
-                <YAxis
-                  yAxisId="faturamento"
-                  orientation="left"
-                  tickFormatter={(valor) => `R$ ${valor}`}
-                />
-
-
-                {/* EIXO DA QUANTIDADE */}
-
-                <YAxis
-                  yAxisId="quantidade"
-                  orientation="right"
-                  allowDecimals={false}
-                />
-
-
-                {/* TOOLTIP */}
-
-                <Tooltip
-                  labelFormatter={(data) =>
-                    `Data: ${formatarDataGrafico(data)}`
-                  }
-
-                  formatter={(valor, nome) => {
-
-                    if (nome === "Faturamento") {
-                      return [
-                        formatarMoeda(valor),
-                        "Faturamento"
-                      ]
-                    }
-
-                    return [
-                      `${valor} vendas`,
-                      "Quantidade"
-                    ]
-
-                  }}
-
-                  contentStyle={{
-                    backgroundColor: "#1b1b1b",
-                    border: "1px solid #C9A84C",
-                    borderRadius: "2px"
-                  }}
-
-                  labelStyle={{
-                    color: "#C9A84C"
-                  }}
-                />
-
-
-                {/* LEGENDA */}
-
-                <Legend />
-
-
-                {/* BARRAS - QUANTIDADE */}
-
-                <Bar
-                  yAxisId="quantidade"
-                  dataKey="quantidade_vendas"
-                  name="Quantidade"
-                  fill="#8F7A3D"
-                  radius={[4, 4, 0, 0]}
-                  barSize={12}
-                />
-
-
-                {/* LINHA - FATURAMENTO */}
-
-                <Line
-                  yAxisId="faturamento"
-                  type="monotone"
-                  dataKey="faturamento"
-                  name="Faturamento"
-                  stroke="#C9A84C"
-                  strokeWidth={3}
-                  dot={{
-                    r: 3,
-                    fill: "#C9A84C"
-                  }}
-                  activeDot={{
-                    r: 6
-                  }}
-                />
-
-              </ComposedChart>
-
-            </ResponsiveContainer>
-
-          </div>
-
-          <div className={style.linhaDuasColunas}>
-
-          <div className={style.cardGrafico}>
-
-            <div className={style.cabecalhoGrafico}>
-
-              <span>PEDIDOS POR STATUS</span>
-
-              <p>
-                Distribuição dos pedidos atuais
-              </p>
-
-            </div>
-
-
-            <ResponsiveContainer width="100%" height={300}>
-
-              <PieChart>
-
-                <Pie
-                  data={vendas.pedidosPorStatus || []}
-                  dataKey="quantidade"
-                  nameKey="status"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={100}
-                  paddingAngle={3}
-                >
-
-                  {(vendas.pedidosPorStatus || []).map((item) => (
-
-                    <Cell
-                      key={item.status}
-                      fill={CORES_STATUS[item.status]}
-                    />
-
-                  ))}
-
-                </Pie>
-
-
-                <Tooltip
-                  formatter={(valor, nome) => [
-                    `${valor} pedidos`,
-                    nome.charAt(0).toUpperCase() + nome.slice(1)
-                  ]}
-
-                  contentStyle={{
-                    backgroundColor: "#1b1b1b",
-                    border: "1px solid #C9A84C",
-                    borderRadius: "2px"
-                  }}
-
-                  labelStyle={{
-                    color: "#C9A84C"
-                  }}
-                />
-
-
-                <Legend />
-
-              </PieChart>
-
-            </ResponsiveContainer>
-
-
-          </div>
-
-          <div className={style.cardGrafico}>
-
-            <div className={style.cabecalhoGrafico}>
-              <span>FATURAMENTO POR CATEGORIA</span>
-
-              <p>
-                Descubra quais categorias geram mais receita
-              </p>
-            </div>
-
-            <div className={style.graficoCategorias}>
-
-              <div className={style.graficoPizza}>
-
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-
-                    <Pie
-                      data={dadosCategoriasPizza}
-                      dataKey="faturamento"
-                      nameKey="categoria"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={75}
-                      outerRadius={115}
-                      paddingAngle={4}
-                      cornerRadius={8}
-                      stroke="transparent"
-                    >
-                      {dadosCategoriasPizza.map((item, index) => (
-                        <Cell
-                          key={item.id}
-                          fill={
-                            CORES_CATEGORIAS[
-                            index % CORES_CATEGORIAS.length
-                            ]
-                          }
-                        />
-                      ))}
-                    </Pie>
-
-                    <Tooltip
-                      position={undefined}
-                      cursor={false}
-                      wrapperStyle={{
-                        zIndex: 9999
-                      }}
-                      formatter={(valor) => [
-                        formatarMoeda(valor),
-                        "Faturamento"
-                      ]}
-                      contentStyle={{
-                        backgroundColor: "#141414",
-                        border: "1px solid #C9A84C",
-                        borderRadius: "8px",
-                        color: "#fff"
-                      }}
-                    />
-
-                  </PieChart>
-                </ResponsiveContainer>
-
-                <div className={style.centroPizza}>
-                  <span className={style.textoCentro}>
-                    TOTAL
-                  </span>
-
-                  <strong className={style.valorCentro}>
-                    {formatarMoeda(totalFaturamentoCategorias)}
-                  </strong>
-                </div>
-
+                <p>
+                  Faturamento e quantidade de vendas por dia
+                </p>
               </div>
 
-              <div className={style.legendaCategorias}>
 
-                {dadosCategoriasPizza.map((categoria, index) => (
+              <ResponsiveContainer width="100%" height={300}>
 
-                  <div
-                    key={categoria.id}
-                    className={style.itemCategoria}
-                  >
-
-                    <div className={style.infoCategoria}>
-
-                      <span
-                        className={style.corCategoria}
-                        style={{
-                          background:
-                            CORES_CATEGORIAS[
-                            index % CORES_CATEGORIAS.length
-                            ]
-                        }}
-                      />
-
-                      <div>
-                        <p className={style.nomeCategoria}>
-                          {categoria.categoria}
-                        </p>
-
-                        <span className={style.valorCategoria}>
-                          {formatarMoeda(categoria.faturamento)}
-                        </span>
-                      </div>
-
-                    </div>
-
-                    <div className={style.dadosCategoria}>
-                      <span className={style.percentualCategoria}>
-                        {categoria.percentual}%
-                      </span>
-                    </div>
-
-                  </div>
-
-                ))}
-
-              </div>
-
-            </div>
-          </div>
-
-          </div>
-          {/* fim linha: Pedidos por status + Faturamento por categoria */}
-
-          <div className={style.linhaDuasColunas}>
-
-          <div className={`${style.cardGrafico} ${style.cardProdutosMaisVendidos}`}>
-            <div className={style.cabecalhoGrafico}>
-              <span>PRODUTOS MAIS VENDIDOS</span>
-              <p>Ranking dos 5 produtos com maior volume de vendas</p>
-            </div>
-
-            <div className={style.graficoProdutos}>
-              <ResponsiveContainer width="100%" height={340}>
-                <BarChart
-                  data={vendas.produtosMaisVendidos || []}
-                  layout="vertical"
+                <ComposedChart
+                  data={vendas.vendasUltimos30Dias || []}
                   margin={{
                     top: 10,
-                    right: 20,
-                    left: 30,
+                    right: 10,
+                    left: 10,
                     bottom: 10
                   }}
                 >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="rgba(255,255,255,.05)"
-                  />
+
+                  {/* EIXO HORIZONTAL */}
 
                   <XAxis
-                    type="number"
-                    stroke="#888"
+                    dataKey="data"
+                    tickFormatter={formatarDataGrafico}
                   />
+
+
+                  {/* EIXO DO FATURAMENTO */}
 
                   <YAxis
-                    type="category"
-                    dataKey="nome"
-                    width={170}
-                    stroke="#888"
-                    tick={<TickProdutoComImagem />}
+                    yAxisId="faturamento"
+                    orientation="left"
+                    tickFormatter={(valor) => `R$ ${valor}`}
                   />
 
+
+                  {/* EIXO DA QUANTIDADE */}
+
+                  <YAxis
+                    yAxisId="quantidade"
+                    orientation="right"
+                    allowDecimals={false}
+                  />
+
+
+                  {/* TOOLTIP */}
+
                   <Tooltip
-                    formatter={(value) => [`${value} vendas`, "Quantidade"]}
+                    labelFormatter={(data) =>
+                      `Data: ${formatarDataGrafico(data)}`
+                    }
+
+                    formatter={(valor, nome) => {
+
+                      if (nome === "Faturamento") {
+                        return [
+                          formatarMoeda(valor),
+                          "Faturamento"
+                        ]
+                      }
+
+                      return [
+                        `${valor} vendas`,
+                        "Quantidade"
+                      ]
+
+                    }}
+
                     contentStyle={{
-                      background: "#111",
-                      border: "1px solid rgba(201,168,76,.4)",
-                      borderRadius: "10px",
-                      color: "#fff"
+                      backgroundColor: "#1b1b1b",
+                      border: "1px solid #C9A84C",
+                      borderRadius: "2px"
+                    }}
+
+                    labelStyle={{
+                      color: "#C9A84C"
                     }}
                   />
 
+
+                  {/* LEGENDA */}
+
+                  <Legend />
+
+
+                  {/* BARRAS - QUANTIDADE */}
+
                   <Bar
-                    dataKey="totalVendas"
-                    radius={[0, 8, 8, 0]}
-                    animationDuration={1200}
-                    animationEasing="ease-out"
-                  >
-                    {(vendas.produtosMaisVendidos || []).map((_, index) => (
-                      <Cell
-                        key={index}
-                        fill={
-                          [
-                            "#D4AF37",
-                            "#14C8B8",
-                            "#FF6B6B",
-                            "#4F8EF7",
-                            "#9B5DE5"
-                          ][index]
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
+                    yAxisId="quantidade"
+                    dataKey="quantidade_vendas"
+                    name="Quantidade"
+                    fill="#8F7A3D"
+                    radius={[4, 4, 0, 0]}
+                    barSize={12}
+                  />
+
+
+                  {/* LINHA - FATURAMENTO */}
+
+                  <Line
+                    yAxisId="faturamento"
+                    type="monotone"
+                    dataKey="faturamento"
+                    name="Faturamento"
+                    stroke="#C9A84C"
+                    strokeWidth={3}
+                    dot={{
+                      r: 3,
+                      fill: "#C9A84C"
+                    }}
+                    activeDot={{
+                      r: 6
+                    }}
+                  />
+
+                </ComposedChart>
+
               </ResponsiveContainer>
-            </div>
-          </div>
 
-          <div className={style.cardRecentes}>
-            <div className={style.cabecalhoRecentes}>
-              <div>
-                <p className={style.tituloRecentes}>
-                  Coleções mais vendidas
-                </p>
-
-                <p className={style.subtituloRecentes}>
-                  Descubra qual coleção está faturando mais
-                </p>
-              </div>
             </div>
 
-            <div className={style.listaRecentes}>
-              {(metricas.colecoesMaisVendidas || []).length === 0 ? (
-                <p className={style.semProdutos}>
-                  Não há nenhuma coleção cadastrada ou faturando no momento
-                </p>
-              ) : (
-                (metricas.colecoesMaisVendidas.map((colecao) => (
-                  <div
-                    key={colecao.id}
-                    className={style.itemRecente}
-                  >
-                    <div className={style.blocoComImagem}>
+            <div className={style.linhaDuasColunas}>
 
-                      {colecao.imagem ? (
-                        <img
-                          src={`http://localhost:3000${colecao.imagem}`}
-                          alt={colecao.nome}
-                          className={style.miniImagem}
+              <div className={style.cardGrafico}>
+
+                <div className={style.cabecalhoGrafico}>
+
+                  <span>PEDIDOS POR STATUS</span>
+
+                  <p>
+                    Distribuição dos pedidos atuais
+                  </p>
+
+                </div>
+
+
+                <ResponsiveContainer width="100%" height={300}>
+
+                  <PieChart>
+
+                    <Pie
+                      data={vendas.pedidosPorStatus || []}
+                      dataKey="quantidade"
+                      nameKey="status"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={100}
+                      paddingAngle={3}
+                    >
+
+                      {(vendas.pedidosPorStatus || []).map((item) => (
+
+                        <Cell
+                          key={item.status}
+                          fill={CORES_STATUS[item.status]}
                         />
-                      ) : (
-                        <div className={style.imagemPlaceholder}>💎</div>
-                      )}
 
-                      <div className={style.informacoesRecente}>
-                        <p className={style.nomeRecente}>
-                          {colecao.nome}
-                        </p>
+                      ))}
 
-                        <span className={style.categoriaRecente}>
-                          {colecao.faturamento}
-                        </span>
+                    </Pie>
+
+
+                    <Tooltip
+                      formatter={(valor, nome) => [
+                        `${valor} pedidos`,
+                        nome.charAt(0).toUpperCase() + nome.slice(1)
+                      ]}
+
+                      contentStyle={{
+                        backgroundColor: "#1b1b1b",
+                        border: "1px solid #C9A84C",
+                        borderRadius: "2px"
+                      }}
+
+                      labelStyle={{
+                        color: "#C9A84C"
+                      }}
+                    />
+
+
+                    <Legend />
+
+                  </PieChart>
+
+                </ResponsiveContainer>
+
+
+              </div>
+
+              <div className={style.cardGrafico}>
+
+                <div className={style.cabecalhoGrafico}>
+                  <span>FATURAMENTO POR CATEGORIA</span>
+
+                  <p>
+                    Descubra quais categorias geram mais receita
+                  </p>
+                </div>
+
+                <div className={style.graficoCategorias}>
+
+                  <div className={style.graficoPizza}>
+
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+
+                        <Pie
+                          data={dadosCategoriasPizza}
+                          dataKey="faturamento"
+                          nameKey="categoria"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={75}
+                          outerRadius={115}
+                          paddingAngle={4}
+                          cornerRadius={8}
+                          stroke="transparent"
+                        >
+                          {dadosCategoriasPizza.map((item, index) => (
+                            <Cell
+                              key={item.id}
+                              fill={
+                                CORES_CATEGORIAS[
+                                index % CORES_CATEGORIAS.length
+                                ]
+                              }
+                            />
+                          ))}
+                        </Pie>
+
+                        <Tooltip
+                          position={undefined}
+                          cursor={false}
+                          wrapperStyle={{
+                            zIndex: 9999
+                          }}
+                          formatter={(valor) => [
+                            formatarMoeda(valor),
+                            "Faturamento"
+                          ]}
+                          contentStyle={{
+                            backgroundColor: "#141414",
+                            border: "1px solid #C9A84C",
+                            borderRadius: "8px",
+                            color: "#fff"
+                          }}
+                        />
+
+                      </PieChart>
+                    </ResponsiveContainer>
+
+                    <div className={style.centroPizza}>
+                      <span className={style.textoCentro}>
+                        TOTAL
+                      </span>
+
+                      <strong className={style.valorCentro}>
+                        {formatarMoeda(totalFaturamentoCategorias)}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <div className={style.legendaCategorias}>
+
+                    {dadosCategoriasPizza.map((categoria, index) => (
+
+                      <div
+                        key={categoria.id}
+                        className={style.itemCategoria}
+                      >
+
+                        <div className={style.infoCategoria}>
+
+                          <span
+                            className={style.corCategoria}
+                            style={{
+                              background:
+                                CORES_CATEGORIAS[
+                                index % CORES_CATEGORIAS.length
+                                ]
+                            }}
+                          />
+
+                          <div>
+                            <p className={style.nomeCategoria}>
+                              {categoria.categoria}
+                            </p>
+
+                            <span className={style.valorCategoria}>
+                              {formatarMoeda(categoria.faturamento)}
+                            </span>
+                          </div>
+
+                        </div>
+
+                        <div className={style.dadosCategoria}>
+                          <span className={style.percentualCategoria}>
+                            {categoria.percentual}%
+                          </span>
+                        </div>
+
                       </div>
 
-                    </div>
+                    ))}
 
-                    <div className={style.dadosRecente}>
-                      <span className={style.estoqueRecente}>
-                        {colecao.produtosVendidos} un.
-                      </span>
-                    </div>
                   </div>
-                ))
-                ))}
+
+                </div>
+              </div>
+
             </div>
-          </div>
+            {/* fim linha: Pedidos por status + Faturamento por categoria */}
 
-          </div>
+            <div className={style.linhaDuasColunas}>
 
-        </section>
+              <div className={`${style.cardGrafico} ${style.cardProdutosMaisVendidos}`}>
+                <div className={style.cabecalhoGrafico}>
+                  <span>PRODUTOS MAIS VENDIDOS</span>
+                  <p>Ranking dos 5 produtos com maior volume de vendas</p>
+                </div>
+
+                <div className={style.graficoProdutos}>
+                  <ResponsiveContainer width="100%" height={340}>
+                    <BarChart
+                      data={vendas.produtosMaisVendidos || []}
+                      layout="vertical"
+                      margin={{
+                        top: 10,
+                        right: 20,
+                        left: 30,
+                        bottom: 10
+                      }}
+                    >
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="rgba(255,255,255,.05)"
+                      />
+
+                      <XAxis
+                        type="number"
+                        stroke="#888"
+                      />
+
+                      <YAxis
+                        type="category"
+                        dataKey="nome"
+                        width={170}
+                        stroke="#888"
+                        tick={<TickProdutoComImagem />}
+                      />
+
+                      <Tooltip
+                        formatter={(value) => [`${value} vendas`, "Quantidade"]}
+                        contentStyle={{
+                          background: "#111",
+                          border: "1px solid rgba(201,168,76,.4)",
+                          borderRadius: "10px",
+                          color: "#fff"
+                        }}
+                      />
+
+                      <Bar
+                        dataKey="totalVendas"
+                        radius={[0, 8, 8, 0]}
+                        animationDuration={1200}
+                        animationEasing="ease-out"
+                      >
+                        {(vendas.produtosMaisVendidos || []).map((_, index) => (
+                          <Cell
+                            key={index}
+                            fill={
+                              [
+                                "#D4AF37",
+                                "#14C8B8",
+                                "#FF6B6B",
+                                "#4F8EF7",
+                                "#9B5DE5"
+                              ][index]
+                            }
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className={style.cardRecentes}>
+                <div className={style.cabecalhoRecentes}>
+                  <div>
+                    <p className={style.tituloRecentes}>
+                      Coleções mais vendidas
+                    </p>
+
+                    <p className={style.subtituloRecentes}>
+                      Descubra qual coleção está faturando mais
+                    </p>
+                  </div>
+                </div>
+
+                <div className={style.listaRecentes}>
+                  {(metricas.colecoesMaisVendidas || []).length === 0 ? (
+                    <p className={style.semProdutos}>
+                      Não há nenhuma coleção cadastrada ou faturando no momento
+                    </p>
+                  ) : (
+                    (metricas.colecoesMaisVendidas.map((colecao) => (
+                      <div
+                        key={colecao.id}
+                        className={style.itemRecente}
+                      >
+                        <div className={style.blocoComImagem}>
+
+                          {colecao.imagem ? (
+                            <img
+                              src={`http://localhost:3000${colecao.imagem}`}
+                              alt={colecao.nome}
+                              className={style.miniImagem}
+                            />
+                          ) : (
+                            <div className={style.imagemPlaceholder}>💎</div>
+                          )}
+
+                          <div className={style.informacoesRecente}>
+                            <p className={style.nomeRecente}>
+                              {colecao.nome}
+                            </p>
+
+                            <span className={style.categoriaRecente}>
+                              {colecao.faturamento}
+                            </span>
+                          </div>
+
+                        </div>
+
+                        <div className={style.dadosRecente}>
+                          <span className={style.estoqueRecente}>
+                            {colecao.produtosVendidos} un.
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                    ))}
+                </div>
+              </div>
+
+            </div>
+
+          </section>
         )}
 
         {/* ==================== BLOCO: ESTOQUE ==================== */}
         {mostrarBloco("estoque") && (
-        <section className={style.blocoSecao}>
+          <section className={style.blocoSecao}>
 
-          <div className={style.cabecalhoBloco}>
-            <h2>Estoque</h2>
-            <p>Visão geral do estoque disponível, alertas de reposição e produtos recém-cadastrados</p>
-          </div>
-
-          <div className={style.linhaDuasColunas}>
-
-          <div className={style.cardGrafico}>
-            <div className={style.cabecalhoGrafico}>
-              <span>ESTOQUE POR CATEGORIA</span>
-              <p>Total de peças disponíveis em cada categoria</p>
+            <div className={style.cabecalhoBloco}>
+              <h2>Estoque</h2>
+              <p>Visão geral do estoque disponível, alertas de reposição e produtos recém-cadastrados</p>
             </div>
 
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={estoqueCategorias}
-                margin={{
-                  top: 10,
-                  right: 20,
-                  left: 0,
-                  bottom: 10
-                }}
-              >
-                <XAxis dataKey="categoria" />
-                <YAxis />
-                <Tooltip
-                  cursor={{ fill: "transparent" }}
-                  contentStyle={{
-                    backgroundColor: "#1b1b1b",
-                    border: "1px solid #C9A84C",
-                    borderRadius: "2px"
-                  }}
-                />
-                <Bar
-                  dataKey="estoque"
-                  fill="#C9A84C"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+            <div className={style.linhaDuasColunas}>
 
-          <div className={style.cardEstoque}>
-            <div className={style.cabecalho}>
-              <span className={style.icone}>⚠</span>
-              <span className={style.titulo}>ALERTAS DE ESTOQUE</span>
+              <div className={style.cardGrafico}>
+                <div className={style.cabecalhoGrafico}>
+                  <span>ESTOQUE POR CATEGORIA</span>
+                  <p>Total de peças disponíveis em cada categoria</p>
+                </div>
+
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={estoqueCategorias}
+                    margin={{
+                      top: 10,
+                      right: 20,
+                      left: 0,
+                      bottom: 10
+                    }}
+                  >
+                    <XAxis dataKey="categoria" />
+                    <YAxis />
+                    <Tooltip
+                      cursor={{ fill: "transparent" }}
+                      contentStyle={{
+                        backgroundColor: "#1b1b1b",
+                        border: "1px solid #C9A84C",
+                        borderRadius: "2px"
+                      }}
+                    />
+                    <Bar
+                      dataKey="estoque"
+                      fill="#C9A84C"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className={style.cardEstoque}>
+                <div className={style.cabecalho}>
+                  <span className={style.icone}>⚠</span>
+                  <span className={style.titulo}>ALERTAS DE ESTOQUE</span>
+                </div>
+
+                <div className={style.listaProdutos}>
+
+                  {alertasEstoque.length === 0 ? (
+                    <p>Nenhum alerta de estoque</p>
+                  ) : (
+                    alertasEstoque.map((produtoAlerta) => (
+                      <div className={style.itemProduto} key={produtoAlerta.id}>
+                        <div className={style.blocoComImagem}>
+
+                          {produtoAlerta.imagem ? (
+                            <img
+                              src={`http://localhost:3000${produtoAlerta.imagem}`}
+                              alt={produtoAlerta.nome}
+                              className={style.miniImagem}
+                            />
+                          ) : (
+                            <div className={style.imagemPlaceholder}>💎</div>
+                          )}
+
+                          <div className={style.informacoesProduto}>
+                            <p className={style.nomeProduto}>{produtoAlerta.nome}</p>
+                            <span className={style.categoriaProduto}>{produtoAlerta.categoria}</span>
+                          </div>
+
+                        </div>
+
+                        <span className={style.quantidadeProduto}>
+                          {produtoAlerta.estoque} uni.
+                        </span>
+                      </div>
+                    ))
+                  )}
+
+                </div>
+              </div>
+
             </div>
 
-            <div className={style.listaProdutos}>
+            <div className={style.cardRecentes}>
+              <div className={style.cabecalhoRecentes}>
+                <div>
+                  <p className={style.tituloRecentes}>
+                    Produtos Recentes
+                  </p>
 
-              {alertasEstoque.length === 0 ? (
-                <p>Nenhum alerta de estoque</p>
-              ) : (
-                alertasEstoque.map((produtoAlerta) => (
-                  <div className={style.itemProduto} key={produtoAlerta.id}>
-                    <div className={style.blocoComImagem}>
+                  <p className={style.subtituloRecentes}>
+                    Últimos produtos cadastrados
+                  </p>
+                </div>
+              </div>
 
-                      {produtoAlerta.imagem ? (
-                        <img
-                          src={`http://localhost:3000${produtoAlerta.imagem}`}
-                          alt={produtoAlerta.nome}
-                          className={style.miniImagem}
-                        />
-                      ) : (
-                        <div className={style.imagemPlaceholder}>💎</div>
-                      )}
+              <div className={style.listaRecentes}>
+                {produtosRecentes.length === 0 ? (
+                  <p className={style.semProdutos}>
+                    Nenhum produto cadastrado recentemente.
+                  </p>
+                ) : (
+                  produtosRecentes.map((produtoRecente) => (
+                    <div
+                      key={produtoRecente.id}
+                      className={style.itemRecente}
+                    >
+                      <div className={style.blocoComImagem}>
 
-                      <div className={style.informacoesProduto}>
-                        <p className={style.nomeProduto}>{produtoAlerta.nome}</p>
-                        <span className={style.categoriaProduto}>{produtoAlerta.categoria}</span>
+                        {produtoRecente.imagem ? (
+                          <img
+                            src={`http://localhost:3000${produtoRecente.imagem}`}
+                            alt={produtoRecente.nome}
+                            className={style.miniImagem}
+                          />
+                        ) : (
+                          <div className={style.imagemPlaceholder}>💎</div>
+                        )}
+
+                        <div className={style.informacoesRecente}>
+                          <p className={style.nomeRecente}>
+                            {produtoRecente.nome}
+                          </p>
+
+                          <span className={style.categoriaRecente}>
+                            {produtoRecente.categoria}
+                          </span>
+                        </div>
+
                       </div>
 
+                      <div className={style.dadosRecente}>
+                        <span className={style.estoqueRecente}>
+                          {produtoRecente.estoque} un.
+                        </span>
+                      </div>
                     </div>
-
-                    <span className={style.quantidadeProduto}>
-                      {produtoAlerta.estoque} uni.
-                    </span>
-                  </div>
-                ))
-              )}
-
-            </div>
-          </div>
-
-          </div>
-
-          <div className={style.cardRecentes}>
-            <div className={style.cabecalhoRecentes}>
-              <div>
-                <p className={style.tituloRecentes}>
-                  Produtos Recentes
-                </p>
-
-                <p className={style.subtituloRecentes}>
-                  Últimos produtos cadastrados
-                </p>
+                  ))
+                )}
               </div>
             </div>
 
-            <div className={style.listaRecentes}>
-              {produtosRecentes.length === 0 ? (
-                <p className={style.semProdutos}>
-                  Nenhum produto cadastrado recentemente.
-                </p>
-              ) : (
-                produtosRecentes.map((produtoRecente) => (
-                  <div
-                    key={produtoRecente.id}
-                    className={style.itemRecente}
-                  >
-                    <div className={style.blocoComImagem}>
-
-                      {produtoRecente.imagem ? (
-                        <img
-                          src={`http://localhost:3000${produtoRecente.imagem}`}
-                          alt={produtoRecente.nome}
-                          className={style.miniImagem}
-                        />
-                      ) : (
-                        <div className={style.imagemPlaceholder}>💎</div>
-                      )}
-
-                      <div className={style.informacoesRecente}>
-                        <p className={style.nomeRecente}>
-                          {produtoRecente.nome}
-                        </p>
-
-                        <span className={style.categoriaRecente}>
-                          {produtoRecente.categoria}
-                        </span>
-                      </div>
-
-                    </div>
-
-                    <div className={style.dadosRecente}>
-                      <span className={style.estoqueRecente}>
-                        {produtoRecente.estoque} un.
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-        </section>
+          </section>
         )}
 
         {/* ==================== BLOCO: METAS ==================== */}
         {mostrarBloco("metas") && (
-        <section className={style.blocoSecao}>
+          <section className={style.blocoSecao}>
 
-          <div className={style.cabecalhoBloco}>
-            <h2>Metas Financeiras</h2>
-            <p>Acompanhe a meta do mês atual e compare com os resultados anteriores</p>
-          </div>
-
-          <div className={style.linhaDuasColunas}>
-
-          <div className={style.cardMetaMensal}>
-
-            <div className={style.cabecalhoMeta}>
-
-              <div>
-                <span className={style.tituloMeta}>
-                  META DO MÊS DE {nomeMes.toUpperCase()}
-                </span>
-
-                <p className={style.descricaoMeta}>
-                  {metaMensal.descricao || "Meta mensal"}
-                </p>
-              </div>
-
-              {metaMensal.metaAtingida && (
-                <div className={style.badgeMeta}>
-                  ✓ Atingida
-                </div>
-              )}
-
-              <button onClick={() => setAbrirModalEditar(true)} className={style.btnEditarMeta}>
-                <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1" />
-              </button>
-
+            <div className={style.cabecalhoBloco}>
+              <h2>Metas Financeiras</h2>
+              <p>Acompanhe a meta do mês atual e compare com os resultados anteriores</p>
             </div>
 
-            <div className={style.valorMeta}>
+            <div className={style.linhaDuasColunas}>
 
-              {formatarMoeda(metaMensal.valorMeta || 0)}
+              <div className={style.cardMetaMensal}>
 
-            </div>
+                <div className={style.cabecalhoMeta}>
 
-            <div className={style.barraMeta}>
+                  <div>
+                    <span className={style.tituloMeta}>
+                      META DO MÊS DE {nomeMes.toUpperCase()}
+                    </span>
 
-              <div
-                className={style.progressoMeta}
-                style={{
-                  width: `${Math.min(metaMensal.percentual || 0, 100)}%`
-                }}
-              />
+                    <p className={style.descricaoMeta}>
+                      {metaMensal.descricao || "Meta mensal"}
+                    </p>
+                  </div>
 
-            </div>
-
-            <div className={style.infoMeta}>
-
-              <div>
-
-                <span className={style.labelMeta}>
-                  Faturado
-                </span>
-
-                <strong>
-                  {formatarMoeda(metaMensal.faturamentoAtual || 0)}
-                </strong>
-
-              </div>
-
-              <div>
-
-                <span className={style.labelMeta}>
-                  Progresso
-                </span>
-
-                <strong>
-                  {metaMensal.percentual || 0}%
-                </strong>
-
-              </div>
-
-            </div>
-
-            <div className={style.rodapeMeta}>
-
-              <span>
-                Faltam
-              </span>
-
-              <strong>
-                {formatarMoeda(metaMensal.faltam || 0)}
-              </strong>
-
-            </div>
-
-          </div>
-
-          {todasMetas.length > 0 && (
-            <div className={style.cardComparativoMetas}>
-
-              <div className={style.cabecalhoComparativo}>
-                <div>
-                  <span className={style.tituloMeta}>HISTÓRICO DE METAS</span>
-                  <p className={style.descricaoMeta}>Compare os resultados de cada mês</p>
-                </div>
-              </div>
-
-              <div className={style.listaMetasMini}>
-                {metasExibidas.map((meta) => (
-                  <div key={meta.id} className={style.metaMini}>
-
-                    <div className={style.cabecalhoMetaMini}>
-                      <span className={style.mesMetaMini}>
-                        {nomesMeses[meta.mes]} / {meta.ano}
-                      </span>
-
-                      {meta.metaAtingida && (
-                        <span className={style.badgeMetaMini}>✓</span>
-                      )}
+                  {metaMensal.metaAtingida && (
+                    <div className={style.badgeMeta}>
+                      ✓ Atingida
                     </div>
+                  )}
 
-                    <strong className={style.valorMetaMini}>
-                      {formatarMoeda(meta.valorMeta)}
+                  <button onClick={() => setAbrirModalEditar(true)} className={style.btnEditarMeta}>
+                    <img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="edit--v1" />
+                  </button>
+
+                </div>
+
+                <div className={style.valorMeta}>
+
+                  {formatarMoeda(metaMensal.valorMeta || 0)}
+
+                </div>
+
+                <div className={style.barraMeta}>
+
+                  <div
+                    className={style.progressoMeta}
+                    style={{
+                      width: `${Math.min(metaMensal.percentual || 0, 100)}%`
+                    }}
+                  />
+
+                </div>
+
+                <div className={style.infoMeta}>
+
+                  <div>
+
+                    <span className={style.labelMeta}>
+                      Faturado
+                    </span>
+
+                    <strong>
+                      {formatarMoeda(metaMensal.faturamentoAtual || 0)}
                     </strong>
 
-                    <div className={style.barraMetaMini}>
-                      <div
-                        className={style.progressoMetaMini}
-                        style={{ width: `${Math.min(meta.percentual || 0, 100)}%` }}
-                      />
-                    </div>
+                  </div>
 
-                    <div className={style.infoMetaMini}>
-                      <span>{formatarMoeda(meta.faturamentoAtual)} faturado</span>
-                      <span className={style.percentualMetaMini}>{meta.percentual}%</span>
-                    </div>
+                  <div>
+
+                    <span className={style.labelMeta}>
+                      Progresso
+                    </span>
+
+                    <strong>
+                      {metaMensal.percentual || 0}%
+                    </strong>
 
                   </div>
-                ))}
+
+                </div>
+
+                <div className={style.rodapeMeta}>
+
+                  <span>
+                    Faltam
+                  </span>
+
+                  <strong>
+                    {formatarMoeda(metaMensal.faltam || 0)}
+                  </strong>
+
+                </div>
+
               </div>
 
-              {todasMetas.length > 5 && (
-                <button
-                  className={style.btnVerTodasMetas}
-                  onClick={() => setVerTodasMetas(!verTodasMetas)}
-                >
-                  {verTodasMetas ? "Ver menos" : "Ver todas as metas"}
-                </button>
+              {todasMetas.length > 0 && (
+                <div className={style.cardComparativoMetas}>
+
+                  <div className={style.cabecalhoComparativo}>
+                    <div>
+                      <span className={style.tituloMeta}>HISTÓRICO DE METAS</span>
+                      <p className={style.descricaoMeta}>Compare os resultados de cada mês</p>
+                    </div>
+                  </div>
+
+                  <div className={style.listaMetasMini}>
+                    {metasExibidas.map((meta) => (
+                      <div key={meta.id} className={style.metaMini}>
+
+                        <div className={style.cabecalhoMetaMini}>
+                          <span className={style.mesMetaMini}>
+                            {nomesMeses[meta.mes]} / {meta.ano}
+                          </span>
+
+                          {meta.metaAtingida && (
+                            <span className={style.badgeMetaMini}>✓</span>
+                          )}
+                        </div>
+
+                        <strong className={style.valorMetaMini}>
+                          {formatarMoeda(meta.valorMeta)}
+                        </strong>
+
+                        <div className={style.barraMetaMini}>
+                          <div
+                            className={style.progressoMetaMini}
+                            style={{ width: `${Math.min(meta.percentual || 0, 100)}%` }}
+                          />
+                        </div>
+
+                        <div className={style.infoMetaMini}>
+                          <span>{formatarMoeda(meta.faturamentoAtual)} faturado</span>
+                          <span className={style.percentualMetaMini}>{meta.percentual}%</span>
+                        </div>
+
+                      </div>
+                    ))}
+                  </div>
+
+                  {todasMetas.length > 5 && (
+                    <button
+                      className={style.btnVerTodasMetas}
+                      onClick={() => setVerTodasMetas(!verTodasMetas)}
+                    >
+                      {verTodasMetas ? "Ver menos" : "Ver todas as metas"}
+                    </button>
+                  )}
+
+                </div>
               )}
 
             </div>
-          )}
 
-          </div>
-
-        </section>
+          </section>
         )}
 
 

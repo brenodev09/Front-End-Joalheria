@@ -15,6 +15,7 @@ import {
   normalizarDetalhePedido,
 } from './utilitariosPedidosAdmin.js';
 import { api } from '../../services/api';
+import useDashboard from '../../context/dataContext.jsx';
 
 const ITENS_POR_PAGINA = 5;
 
@@ -99,12 +100,10 @@ export default function GestaoPedidos() {
 
   const referenciaHoje = useMemo(() => new Date(), []);
 
+  const { vendas } = useDashboard();
+
   const metricas = useMemo(() => {
     const pedidosHoje = pedidos.filter((p) => estaNoPeriodo(p.dataPedido, 'hoje', referenciaHoje)).length;
-
-    const faturamento = pedidos
-      .filter((p) => p.status !== STATUS_PEDIDO.CANCELADO)
-      .reduce((acc, p) => acc + p.totalNumero, 0);
 
     const pendentes = pedidos.filter((p) => p.status === STATUS_PEDIDO.PENDENTE).length;
     const emEntrega = pedidos.filter((p) => p.status === STATUS_PEDIDO.ENVIADO).length;
@@ -112,7 +111,7 @@ export default function GestaoPedidos() {
 
     return {
       pedidosHoje,
-      faturamento: formatarMoeda(faturamento),
+      faturamento: formatarMoeda(vendas.faturamentoBruto || 0),
       pendentes,
       emEntrega,
       concluidos,
@@ -121,7 +120,7 @@ export default function GestaoPedidos() {
 
   const cartoes = [
     { chave: 'pedidosHoje', rotulo: 'Pedidos Hoje', valor: metricas.pedidosHoje, tom: 'ouro' },
-    { chave: 'faturamento', rotulo: 'Faturamento', valor: metricas.faturamento, tom: 'ivorio' },
+    { chave: 'faturamento', rotulo: 'Faturamento', valor: formatarMoeda(vendas?.faturamentoBruto ?? 0), tom: 'ivorio' },
     { chave: 'pendentes', rotulo: 'Pendentes', valor: metricas.pendentes, tom: 'neutro' },
     { chave: 'emEntrega', rotulo: 'Em Entrega', valor: metricas.emEntrega, tom: 'azul' },
     { chave: 'concluidos', rotulo: 'Concluídos', valor: metricas.concluidos, tom: 'sucesso' },
@@ -212,29 +211,29 @@ export default function GestaoPedidos() {
           </p>
         </motion.header>
 
-         <motion.div
-            className={styles.gradeMetricas}
-            variants={variantesLista}
-            initial="oculto"
-            animate="visivel"
-          >
-            {cartoes.map((cartao) => (
-              <motion.div
-                key={cartao.chave}
-                className={styles.cartaoMetrica}
-                variants={variantesCard}
-                whileHover={{ y: -4, transition: { duration: 0.25, ease: 'easeOut' } }}
-              >
-                <div className={`${styles.iconeMetrica} ${styles[`tom-${cartao.tom}`]}`}>
-                  {ICONES[cartao.chave]}
-                </div>
-                <div className={styles.textoMetrica}>
-                  <span className={styles.valorMetrica}>{cartao.valor}</span>
-                  <span className={styles.rotuloMetrica}>{cartao.rotulo}</span>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+        <motion.div
+          className={styles.gradeMetricas}
+          variants={variantesLista}
+          initial="oculto"
+          animate="visivel"
+        >
+          {cartoes.map((cartao) => (
+            <motion.div
+              key={cartao.chave}
+              className={styles.cartaoMetrica}
+              variants={variantesCard}
+              whileHover={{ y: -4, transition: { duration: 0.25, ease: 'easeOut' } }}
+            >
+              <div className={`${styles.iconeMetrica} ${styles[`tom-${cartao.tom}`]}`}>
+                {ICONES[cartao.chave]}
+              </div>
+              <div className={styles.textoMetrica}>
+                <span className={styles.valorMetrica}>{cartao.valor}</span>
+                <span className={styles.rotuloMetrica}>{cartao.rotulo}</span>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
         <BarraFiltros
           busca={busca}
