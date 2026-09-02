@@ -426,6 +426,69 @@
   color: #8f8f8f;
 }
 
+.cardProdutosDesejados {
+    background: #111111;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 4px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+
+.cabecalhoCard h3 {
+    color: var(--dourado);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.4rem;
+}
+
+.cabecalhoCard p {
+    color: #8b8b8b;
+    margin-top: .5rem;
+}
+
+.totalFavoritos {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+
+    padding: 1rem;
+
+    border-radius: 4px;
+
+    background: rgba(212, 175, 55, 0.08);
+
+    color: var(--dourado);
+    font-weight: 600;
+}
+
+.listaProdutosDesejados {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.itemProdutoDesejado {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+
+
+.itemProdutoDesejado strong {
+    color: #fff;
+    font-size: .95rem;
+}
+
+.itemProdutoDesejado span {
+    margin-left: auto;
+    color: var(--dourado);
+    font-weight: 600;
+}
+
 /* ── Imagens de produtos/coleções nos cards ── */
 
 .blocoComImagem {
@@ -436,8 +499,8 @@
 }
 
 .miniImagem {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid rgba(201, 168, 76, 0.25);

@@ -30,6 +30,7 @@ import {
   CartesianGrid,
   Text,
 } from "recharts";
+import {Heart} from "lucide-react"
 
 
 export default function Dashboard() {
@@ -835,6 +836,47 @@ export default function Dashboard() {
                       </div>
                     ))
                     ))}
+                </div>
+              </div>
+
+              <div className={style.cardProdutosDesejados}>
+                <div className={style.cabecalhoRecentes}>
+                  <h3  className={style.tituloRecentes}>Produtos Mais Desejados</h3>
+
+                  <p className={style.subtituloRecentes}>
+                    Descubra quais itens despertam mais interesse dos clientes
+                  </p>
+                </div>
+
+                <div className={style.totalFavoritos}>
+                  <Heart size={18} />
+
+                  <span>
+                    {metricas.totalFavoritos} favoritos
+                  </span>
+                </div>
+
+                <div className={style.listaProdutosDesejados}>
+                  {metricas.produtosFavoritados.map(produto => (
+                    <div
+                      key={produto.id}
+                      className={style.itemProdutoDesejado}
+                    >
+                      <img
+                              className={style.miniImagem}
+                       src={`http://localhost:3000${produto.imagem}`}
+                        alt={produto.nome}
+                      />
+
+                      <div>
+                        <strong>{produto.nome}</strong>
+                      </div>
+
+                      <span>
+                        {produto.totalFavoritos} fav.
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
 

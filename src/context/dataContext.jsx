@@ -3,7 +3,12 @@ import { api } from "../services/api"
 
 export default function useDashboard() {
 
-    const [metricas, setMetricas] = useState({})
+    const [metricas, setMetricas] = useState({
+        totalFavoritos: 0,
+        produtosFavoritados: [],
+        colecoesMaisVendidas: [],
+        faturamentoCategorias: []
+    })
     const [estoqueCategorias, setEstoqueCategorias] = useState([])
     const [alertasEstoque, setAlertasEstoque] = useState([])
     const [produtosRecentes, setProdutosRecentes] = useState([])
