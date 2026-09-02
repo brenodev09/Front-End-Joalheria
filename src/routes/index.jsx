@@ -26,6 +26,7 @@ import UserLayout from "../Layouts/UserLayout.jsx";
 import Carrinho from "../pages/User/carrinho.jsx";
 import MinhaConta from "../pages/User/minha-conta.jsx"
 import MeusPedidos from "../pages/User/meus-pedidos.jsx"
+import Favoritos from "../pages/User/MeusFavoritos.jsx"
 
 
 // Cadastro e Login
@@ -85,6 +86,7 @@ export default function Rotas() {
                     <Route path="/minha-conta" element={<UserLayout />}>
                         <Route path="conta" element={<MinhaConta />} />
                         <Route path="pedidos" element={<MeusPedidos />} />
+                        <Route path="favoritos" element={<Favoritos />} />
                     </Route>
                 </Route>
 

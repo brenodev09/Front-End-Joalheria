@@ -298,7 +298,7 @@ export default function SideBar({ isOpen, fecharSideBar }) {
                             <ItemMenu
                                 icone={<IcoFavoritos />}
                                 rotulo="Favoritos"
-                                onClick={() => navegar_e_fechar("/favoritos")}
+                                onClick={() => navegar_e_fechar("/minha-conta/favoritos")}
                             />
                             <ItemMenu
                                 icone={<IcoCarrinho />}

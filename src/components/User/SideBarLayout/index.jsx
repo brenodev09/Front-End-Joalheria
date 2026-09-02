@@ -12,9 +12,9 @@ export default function Sidebar() {
       <main className={styles.navegacao}>
         <NavLink to="/minha-conta/conta" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/fluency-systems-regular/27/ffffff/user--v1.png"
+            width="25"
+            height="25"
+            src="https://img.icons8.com/fluency-systems-regular/25/ffffff/user--v1.png"
             alt="user"
           />
           <span className={styles.textoNav}>Conta</span>
@@ -23,12 +23,17 @@ export default function Sidebar() {
 
         <NavLink to="/minha-conta/pedidos" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/ios/27/ffffff/box--v1.png"
+            width="25"
+            height="25"
+            src="https://img.icons8.com/ios/25/ffffff/box--v1.png"
             alt="box"
           />
           <span className={styles.textoNav}>Pedidos</span>
+        </NavLink>
+
+        <NavLink to="/minha-conta/favoritos" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
+          <img width="25" height="25" src="https://img.icons8.com/windows/32/ffffff/like--v1.png" alt="like--v1" />
+          <span className={styles.textoNav}>Favoritos</span>
         </NavLink>
 
         {/* <NavLink to="/admin/dashboard" end className={({isActive}) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>

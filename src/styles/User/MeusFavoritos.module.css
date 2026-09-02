@@ -1,0 +1,283 @@
+/*
+  MeusFavoritos.module.css
+  Usa os design tokens --azory-* já importados uma vez no entrypoint
+  (styles/azory-tokens.css). Não redeclara :root aqui.
+*/
+
+.pagina {
+    min-height: 100vh;
+    padding: 0px 32px 100px;
+}
+
+.container {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 8px;
+}
+
+.eyebrow {
+    font-family: var(--azory-font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--azory-gold);
+    margin: 0 0 10px;
+}
+
+.titulo {
+    font-family: var(--azory-font-display);
+    font-weight: 600;
+    font-size: 46px;
+    line-height: 1.05;
+    color: var(--azory-ivory);
+    margin: 0 0 10px;
+    letter-spacing: 0.01em;
+}
+
+.subtitulo {
+    font-family: var(--azory-font-body);
+    font-size: 14.5px;
+    color: var(--azory-text-muted);
+    margin: 0;
+}
+
+.contador {
+    flex-shrink: 0;
+    font-family: var(--azory-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--azory-gold-light);
+    background: var(--azory-gold-soft);
+    border: 1px solid var(--azory-hairline);
+    border-radius: var(--azory-radius-lg);
+    padding: 8px 16px;
+    white-space: nowrap;
+}
+
+.aviso {
+    font-family: var(--azory-font-body);
+    font-size: 13.5px;
+    border-radius: var(--azory-radius-md);
+    padding: 12px 18px;
+    border: 1px solid var(--azory-hairline);
+    animation: entrarAviso 0.3s var(--azory-ease);
+}
+
+.avisoSucesso {
+    background: var(--azory-success-soft);
+    color: var(--azory-success);
+    border-color: rgba(127, 176, 143, 0.3);
+}
+
+.avisoErro {
+    background: var(--azory-danger-soft);
+    color: var(--azory-danger);
+    border-color: rgba(181, 96, 90, 0.3);
+}
+
+@keyframes entrarAviso {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.campoBusca {
+    flex: 1 1 240px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--azory-surface);
+    border: 1px solid var(--azory-hairline);
+    border-radius: var(--azory-radius-md);
+    padding: 0 14px;
+    color: var(--azory-text-faint);
+    transition: border-color 0.25s var(--azory-ease);
+}
+
+.campoBusca:focus-within {
+    border-color: var(--azory-gold-dim);
+}
+
+.campoBusca input {
+    font-family: var(--azory-font-body);
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    font-size: 13.5px;
+    background: transparent;
+    width: 100%;
+    color: var(--azory-text);
+}
+
+.campoBusca input::placeholder {
+    color: var(--azory-text-faint);
+}
+
+.campoOrdenar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--azory-font-body);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--azory-text-faint);
+}
+
+.campoOrdenar select {
+    font-family: var(--azory-font-body);
+    border: 1px solid var(--azory-hairline);
+    border-radius: var(--azory-radius-md);
+    padding: 11px 14px;
+    font-size: 13px;
+    background: var(--azory-surface);
+    color: var(--azory-text);
+    cursor: pointer;
+}
+
+.campoOrdenar select:focus-visible,
+.campoBusca input:focus-visible,
+.botaoAdicionarTodos:focus-visible,
+.botaoPrimario:focus-visible {
+    outline: 1px solid var(--azory-gold);
+    outline-offset: 2px;
+}
+
+.botaoAdicionarTodos {
+     display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.18rem;
+  background: #C9A962;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  padding: 12px 10px;
+  font-size: 10.4px;
+  font-weight: 700;
+  text-transform: uppercase;
+    transition: all .3s ease;
+    color: black;
+}
+
+.botaoAdicionarTodos:hover:not(:disabled) {
+    background: #937432;
+  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+.botaoAdicionarTodos:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .pagina {
+        padding: 44px 18px 70px;
+    }
+    .titulo {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 560px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .botaoAdicionarTodos {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.estadoVazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    padding: 90px 20px;
+    border: 1px solid var(--azory-hairline);
+    border-radius: var(--azory-radius-md);
+    background: var(--azory-surface);
+}
+
+.estadoVazio h2 {
+    font-family: var(--azory-font-display);
+    font-size: 22px;
+    color: var(--azory-ivory);
+    margin: 0;
+}
+
+.estadoVazio p {
+    font-family: var(--azory-font-body);
+    color: var(--azory-text-muted);
+    margin: 0 0 8px;
+    font-size: 13px;
+}
+
+.botaoPrimario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--azory-font-body);
+    border: 1px solid var(--azory-gold-dim);
+    border-radius: var(--azory-radius-md);
+    padding: 12px 24px;
+    background: var(--azory-gold-soft);
+    color: var(--azory-gold-light);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.25s var(--azory-ease), background 0.25s var(--azory-ease);
+}
+
+.botaoPrimario:hover {
+    border-color: var(--azory-gold);
+    background: var(--azory-gold-soft-strong);
+}
