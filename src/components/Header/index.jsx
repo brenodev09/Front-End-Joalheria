@@ -68,7 +68,7 @@ export default function Header() {
 
                         
                         <NavLink
-                            to="/admin/categorias"
+                            to="/admin/pedidos"
                             className={({ isActive }) =>
                                 `${style.link} ${isActive ? style.active : ""}`
                             }
@@ -77,7 +77,7 @@ export default function Header() {
                         </NavLink>
 
                         <NavLink
-                            to="/admin/categorias"
+                            to="/admin/colecoes"
                             className={({ isActive }) =>
                                 `${style.link} ${isActive ? style.active : ""}`
                             }
@@ -87,7 +87,7 @@ export default function Header() {
 
 
                         <NavLink
-                            to="/admin/categorias"
+                            to="/admin/funcionarios"
                             className={({ isActive }) =>
                                 `${style.link} ${isActive ? style.active : ""}`
                             }
@@ -97,7 +97,7 @@ export default function Header() {
 
 
                         <NavLink
-                            to="/admin/categorias"
+                            to="/admin/cupons"
                             className={({ isActive }) =>
                                 `${style.link} ${isActive ? style.active : ""}`
                             }
