@@ -88,18 +88,28 @@ export default function ProdutoJoalheria() {
   const [produto, setProduto] = useState(null)
   const [relacionados, setRelacionados] = useState([])
   const { id } = useParams()
-  const {
-    adicionarAoCarrinho,
-    abrirSidebar
-  } = useCarrinho();
+  const { adicionarAoCarrinho, abrirSidebar } = useCarrinho();
 
   useEffect(() => {
     async function produtoSelecionado() {
       try {
         const resposta = await api.get(`/produtos/${id}`)
+
         setProduto(resposta.data)
+
+        const favoritoResposta = await api.get(
+          `/favoritos/verificar/${id}`
+        )
+
+        setFavorito(
+          favoritoResposta.data.favoritado
+        )
+
       } catch (error) {
-        console.error("Erro ao carregar produto:", error.response?.data || error)
+        console.error(
+          "Erro ao carregar produto:",
+          error.response?.data || error
+        )
       }
     }
 
@@ -144,6 +154,7 @@ export default function ProdutoJoalheria() {
   /* ---- refs: informações ---- */
   const infoRef = useRef(null)
   const botaoSacolaRef = useRef(null)
+  const botaoFavoritoRef = useRef(null)
 
   /* ---- refs: destaques ---- */
   const destaquesRef = useRef(null)
@@ -252,6 +263,50 @@ export default function ProdutoJoalheria() {
       setErroConfiguracao(error.response?.data?.message || error.response?.data?.erro || error.message || "Não foi possível adicionar esta configuração.")
     }
   }
+
+
+  function animarCoracaoFavorito() {
+    gsap.timeline()
+        .to(botaoFavoritoRef.current, {
+            scale: 1.4,
+            rotate: 12,
+            duration: 0.18,
+            ease: "back.out(4)"
+        })
+        .to(botaoFavoritoRef.current, {
+            scale: 1,
+            rotate: 0,
+            duration: 0.3,
+            ease: "power2.out"
+        })
+}
+
+  async function adicionarFavorito() {
+    try {
+      if (favorito) {
+        await api.delete(`/favoritos/${produto.id}`)
+
+        setFavorito(false)
+
+        return
+      }
+
+      await api.post(`/favoritos/${produto.id}`)
+
+      setFavorito(true)
+              animarFavorito()
+
+      
+
+    } catch (error) {
+      console.error(
+        "Erro ao favoritar produto:",
+        error.response?.data || error
+      )
+    }
+  }
+
+
 
   if (!produto) {
     return <div>Carregando...</div>
@@ -402,17 +457,14 @@ export default function ProdutoJoalheria() {
               </button>
 
               <button
+                ref={botaoFavoritoRef}
                 type="button"
-                className={`${style.botaoIcone} ${favorito ? style.botaoIconeAtivo : ''}`}
-                onClick={() => setFavorito((a) => !a)}
+                className={`${style.botaoIcone} ${favorito ? style.botaoIconeAtivo : "" }`}
+                onClick={adicionarFavorito}
                 aria-label="Favoritar produto"
               >
-                <Heart size={17} strokeWidth={1.5} fill={favorito ? 'currentColor' : 'none'} />
+                <Heart size={17} strokeWidth={1.5} fill={favorito ? "currentColor" : "none"}/>
               </button>
-              {/* 
-              <button type="button" className={style.botaoIcone} aria-label="Compartilhar produto">
-                <Share2 size={17} strokeWidth={1.5} />
-              </button> */}
             </div>
           </div>
         </div>

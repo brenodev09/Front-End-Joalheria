@@ -615,7 +615,7 @@ a {
   background: transparent;
   border: 1px solid rgba(245, 243, 239, 0.18);
   color: var(--branco-suave);
-  transition: border-color 0.35s ease, color 0.35s ease;
+  transition: border-color 0.35s ease, color 0.35s ease, background-color 0.3s ease;;
 }
 
 .botaoIcone:hover {
