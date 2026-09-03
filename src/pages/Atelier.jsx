@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Minus, Pause, Play, Plus, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Minus, Pause, Play, Plus, ShoppingBag } from "lucide-react";
 import { useCarrinho } from "../context/carrinhoContext";
 import {
   calculateConfiguration,
@@ -272,6 +272,8 @@ export default function Atelier() {
     })
     .filter(Boolean), [configuracao, grupos]);
 
+  const etapasConcluidas = grupos.filter((grupo) => getSelectionValues(configuracao[getGroupKey(grupo)]).length > 0).length;
+
   async function adicionar() {
     setSalvando(true);
     try {
@@ -311,18 +313,25 @@ export default function Atelier() {
       <div className={styles.layout}>
         <ImageViewer produto={dados.produto} visuais={visuais} />
         <section className={styles.panel}>
-          <p className={styles.eyebrow}>CRIE SUA PRÓPRIA VERSÃO</p>
-          <h1>{produto?.nome || "Sua joia"}</h1>
-          <p className={styles.subtitle}>Escolha cada detalhe da sua peça.</p>
+          <div className={styles.panelIntro}>
+            <p className={styles.eyebrow}>ATELIÊ · SOB MEDIDA</p>
+            <h1>{produto?.nome || "Sua joia"}</h1>
+            <p className={styles.subtitle}>Escolha os detalhes para revelar uma peça só sua.</p>
+          </div>
+          {grupos.length > 0 && <div className={styles.progress} aria-label={`${etapasConcluidas} de ${grupos.length} etapas concluídas`}>
+            <div className={styles.progressTop}><span>PERSONALIZAÇÃO</span><strong>{etapasConcluidas}/{grupos.length}</strong></div>
+            <div className={styles.progressTrack}><span style={{ width: `${(etapasConcluidas / grupos.length) * 100}%` }} /></div>
+            <div className={styles.progressSteps}><span className={etapasConcluidas > 0 ? styles.progressActive : ""}>Escolha os detalhes</span><ChevronRight size={13} /><span className={etapasConcluidas === grupos.length ? styles.progressActive : ""}>Revise sua criação</span></div>
+          </div>}
           {!grupos.length && <div className={styles.emptyState}>Esta joia ainda não possui personalizações cadastradas.</div>}
-          {grupos.map((grupo) => {
+          {grupos.map((grupo, index) => {
             const nome = getGroupKey(grupo);
             const valor = configuracao[nome] ?? "";
             const selecionados = getSelectionValues(valor);
 
             return <fieldset className={styles.group} key={grupo.id}>
-              <legend>{grupo.nome}{grupo.obrigatoria ? " *" : ""}</legend>
-              {grupo.tipo === "select" ? <select value={valor} onChange={(event) => alterar(grupo, event.target.value)}><option value="">Selecione</option>{grupo.opcoes?.map((opcao) => <option value={opcao.id} key={opcao.id}>{opcao.nome}</option>)}</select> : <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""}><input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />{opcao.visual?.cor && <i style={{ backgroundColor: opcao.visual.cor }} />}{opcao.nome}<small>+ R$ {Number(opcao.valorAdicional || 0).toFixed(2)}</small></label>)}</div>}
+              <legend><span><b>{String(index + 1).padStart(2, "0")}</b>{grupo.nome}<em>{grupo.obrigatoria ? "Obrigatório" : "Opcional"}</em></span>{selecionados.length > 0 && <Check size={15} />}</legend>
+              {grupo.tipo === "select" ? <select value={valor} onChange={(event) => alterar(grupo, event.target.value)}><option value="">Selecione</option>{grupo.opcoes?.map((opcao) => <option value={opcao.id} key={opcao.id}>{opcao.nome}</option>)}</select> : <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""}><input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />{opcao.visual?.cor && <i style={{ backgroundColor: opcao.visual.cor }} />}{opcao.nome}{Number(opcao.valorAdicional || 0) > 0 && <small>+ R$ {Number(opcao.valorAdicional).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</label>)}</div>}
               {grupo.permite_valor_livre && <input type="text" value={typeof valor === "string" && !grupo.opcoes?.some((opcao) => String(opcao.id) === valor) ? valor : ""} maxLength={grupo.valor_livre_maximo || undefined} onChange={(event) => alterar(grupo, event.target.value)} placeholder="Personalize sua gravação" />}
             </fieldset>;
           })}
