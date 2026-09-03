@@ -139,7 +139,8 @@
     margin: 0;
     max-width: 46ch;
     font-family: var(--fonte-corpo);
-    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+    /* font-size: clamp(0.95rem, 1.4vw, 1.1rem); */
+    font-size: .9rem;
     line-height: 1.7;
     font-weight: 300;
     color: rgba(247, 243, 236, 0.85);
@@ -148,12 +149,29 @@
     animation-delay: 0.45s;
 }
 
+.blocoContador {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
 .contador {
     display: flex;
     gap: 1.5rem;
     opacity: 0;
     animation: entrarSuave 0.9s ease forwards;
     animation-delay: 0.55s;
+}
+
+.dataLancamento {
+    font-family: var(--fonte-corpo);
+    font-size: 0.78rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: rgba(247, 243, 236, 0.65);
+    opacity: 0;
+    animation: entrarSuave 0.9s ease forwards;
+    animation-delay: 0.6s;
 }
 
 .contadorUnidade {
@@ -183,29 +201,36 @@
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
-    margin-top: 0.4rem;
-    padding: 0.95rem 2.1rem;
-    /* border: 1px solid var(--cor-dourado); */
-    background: transparent;
-    color: var(--cor-texto-claro);
-    font-family: var(--fonte-corpo);
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.4s ease, color 0.4s ease, transform 0.4s ease;
-    opacity: 0;
-    animation: entrarSuave 0.9s ease forwards;
-    animation-delay: 0.65s;
+      color: white; /* ← cor base necessária para a transição */
+      font-weight: bold;
+    text-decoration: none;          /* ← remove sublinhado nativo */
+    font-size: 1rem;
+    opacity: 0.8;                   /* ← era 80%, inválido */
+    position: relative;
+    transition: color 0.38s var ease;
+}
+
+.botao::after{
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--ouro), var(--ouro-claro), var(--ouro));
+    transition: width 0.4s  cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .botao:hover,
 .botao:focus-visible {
-    background: var(--cor-dourado);
-    color: #14110a;
-    transform: translateY(-1px);
+        color: var(--texto-primario);
+
 }
+
+.botao:hover::after {
+    width: 100%;
+}
+
 
 .botaoIcone {
     transition: transform 0.35s ease;

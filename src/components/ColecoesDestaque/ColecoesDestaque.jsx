@@ -9,18 +9,35 @@ import { buscarColecoesDestaque } from "./colecoesApi";
 import styles from "./ColecoesDestaque.module.css";
 
 const DURACAO_SLIDE_MS = 7000;
-const INTERVALO_PROGRESSO_MS = 50;
 const LIMIAR_SWIPE_PX = 50;
 
 // ============================================================
 // Hook: contagem regressiva para coleções agendadas.
 // Recalcula a cada segundo até a data de início zerar.
 // ============================================================
-function calcularTempoRestante(dataInicio) {
+
+/**
+ * O backend pode devolver data_inicio como "YYYY-MM-DD" ou como
+ * ISO completo ("YYYY-MM-DDTHH:mm:ss.000Z", comum quando a coluna
+ * é DATE/DATETIME e o driver já serializa em UTC). Concatenar
+ * "T00:00:00" direto num ISO que já tem "T" gera uma string
+ * inválida e o Date vira NaN — por isso extraímos só a parte da
+ * data antes de montar o alvo da contagem.
+ */
+function normalizarDataAlvo(dataInicio) {
     if (!dataInicio) return null;
 
-    const alvo = new Date(`${dataInicio}T00:00:00`).getTime();
-    const diferenca = Math.max(0, alvo - Date.now());
+    const somenteData = String(dataInicio).split("T")[0];
+    const data = new Date(`${somenteData}T00:00:00`);
+
+    return Number.isNaN(data.getTime()) ? null : data;
+}
+
+function calcularTempoRestante(dataInicio) {
+    const alvo = normalizarDataAlvo(dataInicio);
+    if (!alvo) return null;
+
+    const diferenca = Math.max(0, alvo.getTime() - Date.now());
 
     return {
         dias: Math.floor(diferenca / 86400000),
@@ -29,6 +46,21 @@ function calcularTempoRestante(dataInicio) {
         segundos: Math.floor((diferenca % 60000) / 1000),
         encerrado: diferenca <= 0
     };
+}
+
+/**
+ * Formata a data alvo por extenso em pt-BR (ex: "5 de setembro de 2026")
+ * para exibir junto ao contador, além dos números regressivos.
+ */
+function formatarDataLancamento(dataInicio) {
+    const alvo = normalizarDataAlvo(dataInicio);
+    if (!alvo) return null;
+
+    return new Intl.DateTimeFormat("pt-BR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    }).format(alvo);
 }
 
 function useContagemRegressiva(dataInicio) {
@@ -50,6 +82,7 @@ function useContagemRegressiva(dataInicio) {
 
 function ContadorLancamento({ dataInicio }) {
     const tempo = useContagemRegressiva(dataInicio);
+    const dataFormatada = formatarDataLancamento(dataInicio);
 
     if (!tempo || tempo.encerrado) return null;
 
@@ -61,15 +94,22 @@ function ContadorLancamento({ dataInicio }) {
     ];
 
     return (
-        <div className={styles.contador} aria-label="Tempo até o lançamento">
-            {unidades.map((unidade) => (
-                <div className={styles.contadorUnidade} key={unidade.rotulo}>
-                    <span className={styles.contadorValor}>
-                        {String(unidade.valor).padStart(2, "0")}
-                    </span>
-                    <span className={styles.contadorRotulo}>{unidade.rotulo}</span>
-                </div>
-            ))}
+        <div className={styles.blocoContador}>
+            <div className={styles.contador} aria-label="Tempo até o lançamento">
+                {unidades.map((unidade) => (
+                    <div className={styles.contadorUnidade} key={unidade.rotulo}>
+                        <span className={styles.contadorValor}>
+                            {String(unidade.valor).padStart(2, "0")}
+                        </span>
+                        <span className={styles.contadorRotulo}>{unidade.rotulo}</span>
+                    </div>
+                ))}
+            </div>
+            {dataFormatada && (
+                <span className={styles.dataLancamento}>
+                    Lançamento em {dataFormatada}
+                </span>
+            )}
         </div>
     );
 }
@@ -89,8 +129,14 @@ export default function ColecoesDestaque() {
     const [reduzirMovimento, setReduzirMovimento] = useState(false);
 
     const secaoRef = useRef(null);
-    const progressoRef = useRef(0);
     const toqueInicioX = useRef(null);
+
+    // Refs que sustentam o loop de autoplay via requestAnimationFrame.
+    // Ficam fora do useEffect de propósito: o loop não deve reiniciar
+    // a cada troca de slide, só quando pausa/retoma/visibilidade mudam.
+    const tempoAcumuladoRef = useRef(0); // ms já decorridos no slide atual
+    const ultimoTimestampRef = useRef(null); // timestamp do último frame
+    const quadroAnimacaoRef = useRef(null);
 
     // --------------------------------------------------------
     // Busca as coleções na API ao montar o componente.
@@ -164,9 +210,10 @@ export default function ColecoesDestaque() {
         (novoIndice) => {
             if (totalSlides === 0) return;
             const indiceCircular = (novoIndice + totalSlides) % totalSlides;
-            setIndiceAtual(indiceCircular);
-            progressoRef.current = 0;
+            tempoAcumuladoRef.current = 0;
+            ultimoTimestampRef.current = null;
             setProgresso(0);
+            setIndiceAtual(indiceCircular);
         },
         [totalSlides]
     );
@@ -182,29 +229,64 @@ export default function ColecoesDestaque() {
     );
 
     // --------------------------------------------------------
-    // Autoplay controlado por barra de progresso (permite pausar
-    // sem perder o ponto exato em que o slide estava).
+    // Autoplay controlado por barra de progresso.
+    //
+    // Importante: este efeito NÃO depende de `indiceAtual`. Antes,
+    // o loop usava setInterval e recriava o timer a cada troca de
+    // slide (porque `indiceAtual` estava nas dependências) — isso
+    // fazia o progresso avançar em passos fixos por tick, o que
+    // desalinha com o tempo real sempre que o navegador engasga
+    // (aba em segundo plano, imagem pesada carregando, etc.), e
+    // podia deixar a barra parada até o próximo re-render disparar
+    // o efeito de novo.
+    //
+    // Agora é um único loop de requestAnimationFrame que só é
+    // recriado quando pausa, visibilidade ou total de slides mudam.
+    // Ele mede o tempo real decorrido a cada frame (delta), então
+    // se um frame atrasar, o próximo simplesmente compensa a
+    // diferença — sem "engasgo" visível e sem depender de o React
+    // re-executar o efeito para continuar rodando.
     // --------------------------------------------------------
     useEffect(() => {
         if (totalSlides <= 1) return undefined;
-        if (pausado || !secaoVisivel) return undefined;
 
-        const passo = (INTERVALO_PROGRESSO_MS / DURACAO_SLIDE_MS) * 100;
+        if (pausado || !secaoVisivel) {
+            // Ao pausar, zera a referência de timestamp — na retomada,
+            // o primeiro frame vira o novo "ponto zero" do delta, sem
+            // saltar o tempo que ficou pausado.
+            ultimoTimestampRef.current = null;
+            return undefined;
+        }
 
-        const id = setInterval(() => {
-            progressoRef.current += passo;
-
-            if (progressoRef.current >= 100) {
-                progressoRef.current = 0;
-                setProgresso(0);
-                setIndiceAtual((atual) => (atual + 1) % totalSlides);
-            } else {
-                setProgresso(progressoRef.current);
+        function avancar(agora) {
+            if (ultimoTimestampRef.current === null) {
+                ultimoTimestampRef.current = agora;
             }
-        }, INTERVALO_PROGRESSO_MS);
 
-        return () => clearInterval(id);
-    }, [pausado, secaoVisivel, totalSlides, indiceAtual]);
+            const delta = agora - ultimoTimestampRef.current;
+            ultimoTimestampRef.current = agora;
+            tempoAcumuladoRef.current += delta;
+
+            let percentual = (tempoAcumuladoRef.current / DURACAO_SLIDE_MS) * 100;
+
+            if (percentual >= 100) {
+                tempoAcumuladoRef.current = 0;
+                percentual = 0;
+                setIndiceAtual((atual) => (atual + 1) % totalSlides);
+            }
+
+            setProgresso(percentual);
+            quadroAnimacaoRef.current = requestAnimationFrame(avancar);
+        }
+
+        quadroAnimacaoRef.current = requestAnimationFrame(avancar);
+
+        return () => {
+            if (quadroAnimacaoRef.current !== null) {
+                cancelAnimationFrame(quadroAnimacaoRef.current);
+            }
+        };
+    }, [pausado, secaoVisivel, totalSlides]);
 
     // --------------------------------------------------------
     // Navegação por teclado (setas) quando o mouse está sobre a seção.
@@ -408,8 +490,8 @@ export default function ColecoesDestaque() {
                                                     indice === indiceAtual
                                                         ? `${progresso}%`
                                                         : indice < indiceAtual
-                                                            ? "100%"
-                                                            : "0%"
+                                                        ? "100%"
+                                                        : "0%"
                                             }}
                                         />
                                     </button>
@@ -418,10 +500,10 @@ export default function ColecoesDestaque() {
                         </>
                     )}
 
-                    <div className={styles.scrollDica} aria-hidden="true">
+                    {/* <div className={styles.scrollDica} aria-hidden="true">
                         <span className={styles.scrollLinha} />
                         <span className={styles.scrollTexto}>Role para descobrir</span>
-                    </div>
+                    </div> */}
                 </>
             )}
         </section>
