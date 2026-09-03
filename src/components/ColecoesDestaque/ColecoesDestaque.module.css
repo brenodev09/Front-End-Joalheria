@@ -1,0 +1,447 @@
+/* ============================================================
+   ColecoesDestaque.module.css
+   ------------------------------------------------------------
+   ATENÇÃO — TOKENS DE DESIGN:
+   As variáveis abaixo são um ponto de partida (paleta joalheria
+   de luxo: preto profundo + dourado + marfim, tipografia serifada
+   para títulos). Como não recebi o arquivo de tema/variáveis do
+   projeto, centralizei tudo aqui para troca rápida.
+   Se o projeto já tem variáveis globais (ex: var(--gold-500)),
+   troque os valores abaixo pelas referências reais para herdar
+   a identidade visual exata.
+   ============================================================ */
+
+.heroSection {
+    --cor-fundo: #0b0b0c;
+    --cor-texto-claro: #f7f3ec;
+    --cor-dourado: #c9a24b;
+    --cor-dourado-claro: #e4c778;
+    --cor-overlay-inicio: rgba(6, 6, 7, 0.15);
+    --cor-overlay-fim: rgba(6, 6, 7, 0.82);
+
+    --fonte-titulo: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+    --fonte-corpo: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+
+    --duracao-transicao: 1.1s;
+    --duracao-zoom: 7s;
+
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 560px;
+    overflow: hidden;
+    background: var(--cor-fundo);
+    color: var(--cor-texto-claro);
+    isolation: isolate;
+}
+
+.heroSection:focus {
+    outline: none;
+}
+
+/* ------------------------------------------------------------
+   Slides
+   ------------------------------------------------------------ */
+.slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--duracao-transicao) ease, visibility 0s linear var(--duracao-transicao);
+    z-index: 0;
+}
+
+.slideAtivo {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--duracao-transicao) ease, visibility 0s linear 0s;
+    z-index: 1;
+}
+
+.fundoImagem {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1);
+    will-change: transform;
+}
+
+.efeitoZoom {
+    animation: kenBurns var(--duracao-zoom) ease-out forwards;
+}
+
+@keyframes kenBurns {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.08);
+    }
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        var(--cor-overlay-inicio) 0%,
+        rgba(6, 6, 7, 0.35) 45%,
+        var(--cor-overlay-fim) 100%
+    );
+}
+
+/* ------------------------------------------------------------
+   Conteúdo (nome, descrição, CTA)
+   ------------------------------------------------------------ */
+.conteudo {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    height: 100%;
+    max-width: 720px;
+    padding: 0 6vw 12vh;
+    gap: 1.1rem;
+}
+
+.selo {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--cor-dourado);
+    border-radius: 999px;
+    font-family: var(--fonte-corpo);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cor-dourado-claro);
+    opacity: 0;
+    animation: entrarSuave 0.9s ease forwards;
+    animation-delay: 0.15s;
+}
+
+.titulo {
+    margin: 0;
+    font-family: var(--fonte-titulo);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 5.2vw, 4.4rem);
+    line-height: 1.08;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    animation: entrarSuave 0.9s ease forwards;
+    animation-delay: 0.3s;
+}
+
+.descricao {
+    margin: 0;
+    max-width: 46ch;
+    font-family: var(--fonte-corpo);
+    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+    line-height: 1.7;
+    font-weight: 300;
+    color: rgba(247, 243, 236, 0.85);
+    opacity: 0;
+    animation: entrarSuave 0.9s ease forwards;
+    animation-delay: 0.45s;
+}
+
+.contador {
+    display: flex;
+    gap: 1.5rem;
+    opacity: 0;
+    animation: entrarSuave 0.9s ease forwards;
+    animation-delay: 0.55s;
+}
+
+.contadorUnidade {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 3rem;
+}
+
+.contadorValor {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.3rem, 2vw, 1.8rem);
+    color: var(--cor-dourado-claro);
+    font-variant-numeric: tabular-nums;
+}
+
+.contadorRotulo {
+    margin-top: 0.2rem;
+    font-family: var(--fonte-corpo);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(247, 243, 236, 0.6);
+}
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.4rem;
+    padding: 0.95rem 2.1rem;
+    /* border: 1px solid var(--cor-dourado); */
+    background: transparent;
+    color: var(--cor-texto-claro);
+    font-family: var(--fonte-corpo);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.4s ease, color 0.4s ease, transform 0.4s ease;
+    opacity: 0;
+    animation: entrarSuave 0.9s ease forwards;
+    animation-delay: 0.65s;
+}
+
+.botao:hover,
+.botao:focus-visible {
+    background: var(--cor-dourado);
+    color: #14110a;
+    transform: translateY(-1px);
+}
+
+.botaoIcone {
+    transition: transform 0.35s ease;
+}
+
+.botao:hover .botaoIcone {
+    transform: translateX(4px);
+}
+
+@keyframes entrarSuave {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ------------------------------------------------------------
+   Navegação (setas)
+   ------------------------------------------------------------ */
+.seta {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 1px solid rgba(247, 243, 236, 0.35);
+    background: rgba(11, 11, 12, 0.35);
+    color: var(--cor-texto-claro);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.seta:hover,
+.seta:focus-visible {
+    border-color: var(--cor-dourado);
+    background: rgba(11, 11, 12, 0.55);
+}
+
+.setaEsquerda {
+    left: 2.5vw;
+}
+
+.setaDireita {
+    right: 2.5vw;
+}
+
+/* ------------------------------------------------------------
+   Indicadores de progresso
+   ------------------------------------------------------------ */
+.indicadores {
+    position: absolute;
+    left: 6vw;
+    right: 6vw;
+    bottom: 4vh;
+    z-index: 3;
+    display: flex;
+    gap: 0.6rem;
+}
+
+.indicador {
+    flex: 1;
+    max-width: 5.5rem;
+    height: 2px;
+    background: rgba(247, 243, 236, 0.25);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.indicadorPreenchimento {
+    display: block;
+    height: 100%;
+    background: var(--cor-dourado-claro);
+    transition: width 0.1s linear;
+}
+
+/* ------------------------------------------------------------
+   Dica de rolagem
+   ------------------------------------------------------------ */
+.scrollDica {
+    position: absolute;
+    right: 6vw;
+    bottom: 4vh;
+    z-index: 3;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(247, 243, 236, 0.6);
+}
+
+.scrollLinha {
+    width: 1px;
+    height: 2.4rem;
+    background: linear-gradient(
+        180deg,
+        rgba(247, 243, 236, 0.7) 0%,
+        transparent 100%
+    );
+}
+
+.scrollTexto {
+    writing-mode: vertical-rl;
+    font-family: var(--fonte-corpo);
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   Skeleton (estado de carregamento)
+   ------------------------------------------------------------ */
+.skeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        100deg,
+        #101012 30%,
+        #17161a 45%,
+        #101012 60%
+    );
+    background-size: 200% 100%;
+    animation: brilharSkeleton 1.8s ease-in-out infinite;
+}
+
+@keyframes brilharSkeleton {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* ------------------------------------------------------------
+   Acessibilidade
+   ------------------------------------------------------------ */
+.somenteLeitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ------------------------------------------------------------
+   Responsivo
+   ------------------------------------------------------------ */
+@media (min-width: 1024px) {
+    .scrollDica {
+        display: flex;
+    }
+}
+
+@media (max-width: 1023px) {
+    .conteudo {
+        max-width: 92%;
+        padding: 0 6vw 18vh;
+    }
+
+    .seta {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .heroSection {
+        height: 100svh;
+        min-height: 480px;
+    }
+
+    .conteudo {
+        padding: 0 6vw 16vh;
+        gap: 0.85rem;
+    }
+
+    .seta {
+        display: none;
+    }
+
+    .indicadores {
+        left: 6vw;
+        right: 6vw;
+        bottom: 3vh;
+    }
+
+    .indicador {
+        max-width: none;
+    }
+
+    .contador {
+        gap: 1rem;
+    }
+
+    .contadorUnidade {
+        min-width: 2.4rem;
+    }
+}
+
+/* ------------------------------------------------------------
+   prefers-reduced-motion: desativa zoom, entrada e transições
+   longas para quem pediu menos movimento no sistema.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    .efeitoZoom {
+        animation: none;
+    }
+
+    .selo,
+    .titulo,
+    .descricao,
+    .contador,
+    .botao {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    .slide {
+        transition: opacity 0.4s ease;
+    }
+}

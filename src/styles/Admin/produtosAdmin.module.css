@@ -393,6 +393,9 @@
   display: flex;
   align-items: center;
   gap: 7px;
+  opacity: 1;
+  position: relative;
+  z-index: 1000;
 }
 
 .actions button {
@@ -402,6 +405,7 @@
   border-radius: 5px;
   background: transparent;
   color: #ffffff;
+  border:1px solid #937432;
   display: flex;
   align-items: center;
   justify-content: center;

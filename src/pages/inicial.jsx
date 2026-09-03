@@ -5,6 +5,7 @@ import styles from "../styles/User/inicial.module.css"
 import Particulas from "../components/particulas";
 import Header from "../components/Header";
 import Footer from "../components/Footer"
+import ColecoesDestaque from "../components/ColecoesDestaque/ColecoesDestaque";
 
 import modelo from "../img/Destaques/modelo.png"
 
@@ -378,6 +379,9 @@ console.log(typeof destaques);
 
         </div>
       </section>
+
+
+      <ColecoesDestaque/>
 
 
           <Footer/>
