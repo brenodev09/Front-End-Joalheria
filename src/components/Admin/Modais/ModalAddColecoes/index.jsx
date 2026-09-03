@@ -796,14 +796,28 @@ export default function ModalAdicionarColecao({
       /* REQUEST                                                          */
       /* --------------------------------------------------------------- */
 
+      const token =
+        localStorage.getItem('token');
+
       const resposta =
         await fetch(
           `${API_URL}/colecoes`,
           {
             method: 'POST',
+            headers: token
+              ? { Authorization: `Bearer ${token}` }
+              : undefined,
             body: formData
           }
         );
+
+      if (resposta.status === 401) {
+
+        throw new Error(
+          'Sua sessão expirou. Faça login novamente para criar coleções.'
+        );
+
+      }
 
 
       const resultado =
