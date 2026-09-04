@@ -67,6 +67,8 @@ p,a, button, span{
     padding: 14px 22px;
     position: relative;
     overflow: hidden;
+     flex-shrink: 0;
+    white-space: nowrap;
     transition: color 0.38s var(--ease-premium),
         border-color 0.38s var(--ease-premium),
         box-shadow 0.38s var(--ease-premium);

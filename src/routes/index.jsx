@@ -20,6 +20,7 @@ import Cupons from "../pages/Admin/Cupons.jsx"
 import Notificacoes from "../pages/Admin/Notificacoes.jsx"
 import Configuracoes from "../pages/Admin/Configuracoes.jsx"
 import Manutencao from "../pages/Manutencao.jsx"
+import Relatorios from "../pages/Admin/relatorios.jsx"
 
 // paginas do usuario
 import UserLayout from "../Layouts/UserLayout.jsx";
@@ -79,6 +80,7 @@ export default function Rotas() {
                         <Route path="funcionarios" element={<Funcionarios />} />
                         <Route path="cupons" element={<Cupons />} />
                         <Route path="configuracoes" element={<Configuracoes />} />
+                        <Route path="relatorios" element={<Relatorios />} />
                     </Route>
                 </Route>
 

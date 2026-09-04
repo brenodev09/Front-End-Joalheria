@@ -1,0 +1,825 @@
+/* ================================================================
+   RELATÓRIOS GERENCIAIS — TOKENS VISUAIS
+   Paleta escura + dourada, tipografia Cormorant Garamond / Montserrat.
+   ================================================================ */
+
+.pagina {
+    /* --cor-fundo: #0B0906; */
+    /* --cor-fundo-alt: #14100A; */
+    --cor-painel: #1a1a1a;
+    --cor-painel-alt: #101010;
+    --cor-borda: rgba(201, 168, 76, 0.21);
+    --cor-borda-forte: rgba(201, 162, 39, 0.34);
+    --cor-dourado: #ab8a1f;
+    --cor-dourado-claro: #E8CD73;
+    --cor-dourado-suave: rgba(201, 162, 39, 0.10);
+    --cor-texto: #EFE7D6;
+    --cor-texto-suave: #A99B7E;
+    --cor-texto-fraco: #7A6E56;
+    --cor-positivo: #93AF7E;
+    --cor-negativo: #C1786B;
+    --cor-alerta: #D1A24C;
+    --sombra-dourada: 0 24px 48px -30px rgba(201, 162, 39, 0.45);
+    --raio-suave: 3px;
+
+    min-height: 100vh;
+    padding: 48px 56px 96px;
+    
+    color: var(--cor-texto);
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.pagina h1,
+.pagina h2,
+.pagina h3 {
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-weight: 600;
+    color: var(--cor-texto);
+    letter-spacing: 0.015em;
+    margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pagina * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+
+/* ================================
+   ENTRADA SUAVE (uma só sequência)
+   ================================ */
+
+@keyframes surgir {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.secao {
+    animation: surgir 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--atraso, 0ms);
+}
+
+
+/* ================================
+   CABEÇALHO
+   ================================ */
+
+.cabecalho {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--cor-borda);
+    margin-bottom: 40px;
+}
+
+.cabecalhoTitulo h1 {
+    font-size: 40px;
+    line-height: 1.1;
+}
+
+.marcaOrnamento {
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    background: var(--cor-dourado);
+    margin-bottom: 14px;
+}
+
+.cabecalhoTitulo p {
+    margin-top: 10px;
+    font-size: 14px;
+    /* color: var(--cor-texto-suave); */
+    opacity: 70%;
+    /* max-width: 46ch; */
+    line-height: 1.6;
+}
+
+.acoesCabecalho {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.seletorTipo {
+    appearance: none;
+    background: var(--cor-painel);
+    border: 1px solid var(--cor-borda);
+    color: var(--cor-texto);
+    font-size: 12.5px;
+    padding: 12px 34px 12px 16px;
+    border-radius: var(--raio-suave);
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--cor-dourado) 50%), linear-gradient(135deg, var(--cor-dourado) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    transition: border-color 0.2s ease;
+}
+
+.seletorTipo:hover,
+.seletorTipo:focus-visible {
+    border-color: var(--cor-borda-forte);
+    outline: none;
+}
+
+/* .botao {
+    font-family: "Montserrat", sans-serif;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    padding: 12px 22px;
+    border-radius: var(--raio-suave);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    white-space: nowrap;
+}
+
+.botao:active {
+    transform: translateY(1px);
+}
+
+.botao:focus-visible {
+    outline: 2px solid var(--cor-dourado-claro);
+    outline-offset: 2px;
+} */
+
+.botaoSecundario {
+    /* composes: botao; */
+    background: transparent;
+    border: 1px solid var(--cor-borda-forte);
+    color: var(--cor-texto);
+}
+
+.botaoSecundario:hover:not(:disabled) {
+    border-color: var(--cor-dourado);
+    background: var(--cor-dourado-suave);
+}
+
+.botaoPrimario {
+   background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.18rem;
+  background: #C9A962;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  padding: .6rem;
+  position: relative;
+  overflow: hidden;
+  color: black;
+  font-size: 12px;
+  font-weight: 600;
+   flex-shrink: 0;
+    white-space: nowrap;
+  
+  transition: all .3s ease;
+
+ 
+}
+
+.botaoPrimario:hover:not(:disabled) {
+   background: #937432;
+  box-shadow: 0 0 22px rgba(201, 169, 110, 0.1);
+}
+
+.botao:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+
+/* ================================
+   MENSAGEM DE RETORNO (PDF)
+   ================================ */
+
+.mensagemRetorno {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    padding: 12px 16px;
+    border-radius: var(--raio-suave);
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-painel);
+    color: var(--cor-texto-suave);
+    margin-bottom: 28px;
+    animation: surgir 0.35s ease both;
+}
+
+.mensagemRetorno.sucesso {
+    border-color: rgba(147, 175, 126, 0.4);
+    color: var(--cor-positivo);
+}
+
+.mensagemRetorno.erro {
+    border-color: rgba(193, 120, 107, 0.4);
+    color: var(--cor-negativo);
+}
+
+
+/* ================================
+   FILTRO DE PERÍODO
+   ================================ */
+
+.filtros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 36px;
+}
+
+.grupoPeriodo {
+    display: inline-flex;
+    border: 1px solid var(--cor-borda);
+    /* border-radius: 0px; */
+    padding: 4px;
+    gap: 2px;
+    background: var(--cor-painel);
+}
+
+.opcaoPeriodo {
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: transparent;
+    border: none;
+    color: var(--cor-texto-suave);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.opcaoPeriodo:hover {
+    color: var(--cor-texto);
+}
+
+.opcaoPeriodoAtiva {
+    composes: opcaoPeriodo;
+    background: var(--cor-dourado);
+    color: #17130B;
+    font-weight: 600;
+}
+
+.intervaloCustom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+
+.intervaloCustom input {
+    background: var(--cor-painel);
+    border: 1px solid var(--cor-borda);
+    color: var(--cor-texto);
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    padding: 9px 12px;
+    border-radius: var(--raio-suave);
+    color-scheme: dark;
+}
+
+.intervaloCustom input:focus-visible {
+    outline: none;
+    border-color: var(--cor-dourado);
+}
+
+.rotuloPeriodo {
+    font-size: 12px;
+    color: var(--cor-texto-fraco);
+}
+
+.rotuloPeriodo strong {
+    color: var(--cor-texto-suave);
+    font-weight: 500;
+}
+
+
+/* ================================
+   GRADE DE INDICADORES (KPIs)
+   ================================ */
+
+.gradeIndicadores {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--cor-borda);
+    border: 1px solid var(--cor-borda);
+    margin-bottom: 44px;
+}
+
+.cartaoIndicador {
+    background: var(--cor-painel);
+    padding: 26px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s ease;
+}
+
+.cartaoIndicador::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cor-dourado), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+}
+
+.cartaoIndicador:hover {
+    background: var(--cor-painel-alt);
+}
+
+.cartaoIndicador:hover::before {
+    transform: scaleX(1);
+}
+
+.rotuloIndicador {
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+    margin-bottom: 14px;
+}
+
+.valorIndicador {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--cor-dourado-claro);
+    margin-bottom: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+.rodapeIndicador {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 18px;
+}
+
+.variacao {
+    font-size: 11.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.variacaoPositiva {
+    composes: variacao;
+    color: var(--cor-positivo);
+}
+
+.variacaoNegativa {
+    composes: variacao;
+    color: var(--cor-negativo);
+}
+
+.variacaoNeutra {
+    composes: variacao;
+    color: var(--cor-texto-fraco);
+}
+
+.notaIndicador {
+    font-size: 11px;
+    color: var(--cor-texto-fraco);
+}
+
+
+/* ================================
+   PAINÉIS GENÉRICOS (moldura fina)
+   ================================ */
+
+.painel {
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-painel);
+    padding: 32px;
+    margin-bottom: 36px;
+}
+
+.painelCabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.painelCabecalho h2 {
+    font-size: 24px;
+}
+
+.painelSubtitulo {
+    font-size: 12px;
+    color: var(--cor-texto-fraco);
+    margin-top: 6px;
+}
+
+
+/* ================================
+   GRÁFICO DE EVOLUÇÃO
+   ================================ */
+
+.areaGrafico {
+    position: relative;
+    width: 100%;
+}
+
+.svgGrafico {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+}
+
+.linhaGrade {
+    stroke: rgba(201, 162, 39, 0.10);
+    stroke-width: 1;
+}
+
+.rotuloEixo {
+    fill: var(--cor-texto-fraco);
+    font-size: 10.5px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.tracoArea {
+    stroke: var(--cor-dourado-claro);
+    stroke-width: 2;
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.preenchimentoArea {
+    fill: url(#gradienteDourado);
+    opacity: 0.9;
+}
+
+.linhaFoco {
+    stroke: rgba(232, 205, 115, 0.35);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+}
+
+.pontoFoco {
+    fill: var(--cor-dourado-claro);
+    stroke: #0B0906;
+    stroke-width: 2;
+}
+
+.dicaFlutuante {
+    position: absolute;
+    transform: translate(-50%, -115%);
+    background: #0F0C08;
+    border: 1px solid var(--cor-borda-forte);
+    padding: 9px 13px;
+    font-size: 11.5px;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 16px 32px -18px rgba(0, 0, 0, 0.6);
+}
+
+.dicaFlutuante strong {
+    display: block;
+    color: var(--cor-dourado-claro);
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.dicaFlutuante span {
+    color: var(--cor-texto-fraco);
+    font-size: 10.5px;
+}
+
+
+/* ================================
+   RANKINGS
+   ================================ */
+
+.gradeRankings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-bottom: 36px;
+}
+
+.listaRanking {
+    display: flex;
+    flex-direction: column;
+}
+
+.linhaRanking {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--cor-borda);
+    transition: padding-left 0.2s ease;
+}
+
+.listaRanking .linhaRanking:last-child {
+    border-bottom: none;
+}
+
+.linhaRanking:hover {
+    padding-left: 4px;
+}
+
+.posicaoRanking {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 18px;
+    color: var(--cor-texto-fraco);
+}
+
+.infoRanking {
+    min-width: 0;
+}
+
+.nomeRanking {
+    font-size: 13px;
+    color: var(--cor-texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.legendaRanking {
+    font-size: 11px;
+    color: var(--cor-texto-fraco);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.barraRanking {
+    width: 46px;
+    height: 3px;
+    background: var(--cor-borda);
+    position: relative;
+    overflow: hidden;
+}
+
+.barraRankingPreenchimento {
+    position: absolute;
+    inset: 0;
+    background: var(--cor-dourado);
+    transform-origin: left;
+}
+
+.valorRanking {
+    font-size: 13px;
+    color: var(--cor-dourado-claro);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+
+/* ================================
+   ALERTAS DE ESTOQUE
+   ================================ */
+
+.gradeAlertas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 36px;
+}
+
+.contadorAlerta {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 22px;
+    color: var(--cor-dourado-claro);
+}
+
+.linhaAlerta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0 12px 14px;
+    border-left: 2px solid var(--cor-alerta);
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.linhaAlerta.silenciosa {
+    border-left-color: var(--cor-texto-fraco);
+}
+
+.listaAlerta .linhaAlerta:last-child {
+    border-bottom: none;
+}
+
+.infoAlerta {
+    flex: 1;
+    min-width: 0;
+}
+
+.nomeAlerta {
+    font-size: 13px;
+    color: var(--cor-texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.legendaAlerta {
+    font-size: 11px;
+    color: var(--cor-texto-fraco);
+    margin-top: 3px;
+}
+
+.metricaAlerta {
+    font-size: 12px;
+    color: var(--cor-alerta);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.metricaAlerta.silenciosa {
+    color: var(--cor-texto-fraco);
+}
+
+
+/* ================================
+   RESUMO / INSIGHTS
+   ================================ */
+
+.painelInsights {
+    composes: painel;
+    background: linear-gradient(160deg, var(--cor-painel-alt), var(--cor-painel));
+}
+
+.listaInsights {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.itemInsight {
+    display: flex;
+    gap: 14px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--cor-texto-suave);
+}
+
+.itemInsight::before {
+    content: "◆";
+    color: var(--cor-dourado);
+    font-size: 9px;
+    line-height: 1.9;
+    flex-shrink: 0;
+}
+
+.itemInsight strong {
+    color: var(--cor-texto);
+    font-weight: 600;
+}
+
+
+/* ================================
+   ESTADOS: VAZIO / ERRO / CARREGANDO
+   ================================ */
+
+.estadoVazio {
+    padding: 28px 0;
+    font-size: 12.5px;
+    color: var(--cor-texto-fraco);
+    text-align: center;
+}
+
+.faixaErro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    border: 1px solid rgba(193, 120, 107, 0.35);
+    background: rgba(193, 120, 107, 0.06);
+    color: var(--cor-negativo);
+    font-size: 13px;
+    margin-bottom: 36px;
+}
+
+.linkRepetir {
+    background: none;
+    border: 1px solid rgba(193, 120, 107, 0.5);
+    color: var(--cor-negativo);
+    font-family: "Montserrat", sans-serif;
+    font-size: 11.5px;
+    padding: 8px 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.linkRepetir:hover {
+    background: rgba(193, 120, 107, 0.12);
+}
+
+@keyframes brilho {
+    0% { background-position: -300px 0; }
+    100% { background-position: 300px 0; }
+}
+
+.esqueleto {
+    background: linear-gradient(90deg, var(--cor-painel-alt) 25%, rgba(201, 162, 39, 0.09) 42%, var(--cor-painel-alt) 58%);
+    background-size: 600px 100%;
+    animation: brilho 1.7s ease-in-out infinite;
+}
+
+.esqueletoLinha {
+    composes: esqueleto;
+    height: 14px;
+    margin-bottom: 10px;
+}
+
+.esqueletoBloco {
+    composes: esqueleto;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+
+@media (max-width: 1180px) {
+    .gradeIndicadores {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .gradeRankings {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 860px) {
+    .pagina {
+        padding: 32px 22px 72px;
+    }
+
+    .cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .acoesCabecalho {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .gradeIndicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gradeRankings,
+    .gradeAlertas {
+        grid-template-columns: 1fr;
+    }
+
+    .painel {
+        padding: 24px 20px;
+    }
+}
+
+@media (max-width: 520px) {
+    .cabecalhoTitulo h1 {
+        font-size: 32px;
+    }
+
+    .gradeIndicadores {
+        grid-template-columns: 1fr;
+    }
+
+    .filtros {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .grupoPeriodo {
+        flex-wrap: wrap;
+    }
+}

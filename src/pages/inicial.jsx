@@ -257,42 +257,41 @@ console.log(typeof destaques);
 
               {/* Subtítulo */}
               <p className={styles.subtitulo} ref={subtituloRef}>
-                Peças únicas criadas com maestria artesanal, em ouro 18k
-                <br />e gemas selecionadas dos quatro cantos do mundo.
+                Peças únicas criadas com maestria artesanal, em diversos tipos de materiais e gemas selecionadas dos quatro cantos do mundo.
               </p>
 
               {/* CTAs */}
               <div className={styles.grupoBotoes} ref={ctasRef}>
                 <button className={styles.botaoPrimario}>
-                  <span className={styles.textoBotaoPrimario}>Explorar Coleção</span>
+                  <span className={styles.textoBotaoPrimario}>Explorar produtos</span>
                   <span className={styles.iconeBotao}>→</span>
                 </button>
-                <button className={styles.botaoSecundario}>
+                {/* <button className={styles.botaoSecundario}>
                   <span>Conheça a Marca</span>
-                </button>
+                </button> */}
               </div>
 
               {/* Linha separadora + estatísticas discretas */}
-              <div className={styles.estatisticasHero}>
-                <div className={styles.itemEstatistica}>
-                  <span className={styles.numeroEstatistica}>38</span>
-                  <span className={styles.labelEstatistica}>Anos de Tradição</span>
-                </div>
-                <div className={styles.divisorEstatistica} />
-                <div className={styles.itemEstatistica}>
-                  <span className={styles.numeroEstatistica}>2.400</span>
-                  <span className={styles.labelEstatistica}>Peças Únicas</span>
-                </div>
-                <div className={styles.divisorEstatistica} />
-                <div className={styles.itemEstatistica}>
-                  <span className={styles.numeroEstatistica}>18k</span>
-                  <span className={styles.labelEstatistica}>Ouro Puro</span>
-                </div>
-              </div>
+                {/* <div className={styles.estatisticasHero}>
+                  <div className={styles.itemEstatistica}>
+                    <span className={styles.numeroEstatistica}>38</span>
+                    <span className={styles.labelEstatistica}>Anos de Tradição</span>
+                  </div>
+                  <div className={styles.divisorEstatistica} />
+                  <div className={styles.itemEstatistica}>
+                    <span className={styles.numeroEstatistica}>2.400</span>
+                    <span className={styles.labelEstatistica}>Peças Únicas</span>
+                  </div>
+                  <div className={styles.divisorEstatistica} />
+                  <div className={styles.itemEstatistica}>
+                    <span className={styles.numeroEstatistica}>18k</span>
+                    <span className={styles.labelEstatistica}>Ouro Puro</span>
+                  </div>
+                </div> */}
             </div>
 
             {/* ── Card glassmorphism ── */}
-            <aside className={styles.cardJoia} ref={cardJoiaRef}>
+            {/* <aside className={styles.cardJoia} ref={cardJoiaRef}>
               <div className={styles.cardImagemContainer}>
                 <img
                   src={JOIA_DESTAQUE.imagem}
@@ -309,7 +308,7 @@ console.log(typeof destaques);
                   Ver peça <span>→</span>
                 </a>
               </div>
-            </aside>
+            </aside> */}
           </main>
 
           {/* ── Detalhe geométrico decorativo ── */}

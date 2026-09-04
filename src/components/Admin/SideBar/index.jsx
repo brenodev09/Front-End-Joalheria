@@ -10,7 +10,7 @@ import {
   Gem,
   User,
   Bell
-  ,Settings
+  , Settings
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -23,25 +23,37 @@ export default function Sidebar() {
       <main className={styles.navegacao}>
         <NavLink to="/admin/dashboard" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/parakeet-line/27/ffffff/dashboard-layout.png"
+            width="24"
+            height="24"
+            src="https://img.icons8.com/parakeet-line/24/ffffff/dashboard-layout.png"
             alt="dashboard-layout"
           />
           <span className={styles.textoNav}>Dashboard</span>
         </NavLink>
 
+        
+        <NavLink
+          to="/admin/relatorios"
+          end
+          className={({ isActive }) =>
+            `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
+          }
+        >
+          <img width="24" height="24" src="https://img.icons8.com/ios/50/ffffff/graph-report.png" alt="graph-report" />
+          <span className={styles.textoNav}>Relatórios</span>
+        </NavLink>
+
         <NavLink to="/admin/produtos" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/ios/27/ffffff/box--v1.png"
+            width="24"
+            height="24"
+            src="https://img.icons8.com/ios/24/ffffff/box--v1.png"
             alt="box"
           />
           <span className={styles.textoNav}>Produtos</span>
         </NavLink>
         <NavLink to="/admin/produtos/personalizacao" className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <Gem size={27} strokeWidth={1.7} />
+          <Gem size={24} strokeWidth={1.7} />
           <span className={styles.textoNav}>Ateliê visual</span>
         </NavLink>
 
@@ -54,7 +66,7 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink to="/admin/notificacoes" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <Bell className={styles.iconeNotificacao} size={27} strokeWidth={1.7} />
+          <Bell className={styles.iconeNotificacao} size={24} strokeWidth={1.7} />
           <span className={styles.textoNav}>Notificações</span>
         </NavLink>
 
@@ -66,16 +78,16 @@ export default function Sidebar() {
 
         <NavLink to="/admin/materiais" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/ios/27/ffffff/diamond--v1.png"
+            width="24"
+            height="24"
+            src="https://img.icons8.com/ios/24/ffffff/diamond--v1.png"
             alt="diamond"
           />
           <span className={styles.textoNav}>Materiais</span>
         </NavLink>
 
 
-          <NavLink
+        <NavLink
           to="/admin/colecoes"
           end
           className={({ isActive }) =>
@@ -83,8 +95,8 @@ export default function Sidebar() {
           }
         >
           <img
-            width="27"
-            height="27"
+            width="24"
+            height="24"
             src="https://img.icons8.com/ios/50/ffffff/stack-of-photos.png"
             alt="coleções"
           />
@@ -98,9 +110,11 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-        <img width="27" height="27" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff"/>
+          <img width="24" height="24" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff" />
           <span className={styles.textoNav}>Funcionários</span>
         </NavLink>
+
+
         <NavLink
           to="/admin/cupons"
           end
@@ -108,27 +122,27 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-        <img width="27" height="27" src="https://img.icons8.com/windows/32/ffffff/discount-ticket.png" alt="discount-ticket"/>
+          <img width="24" height="24" src="https://img.icons8.com/windows/32/ffffff/discount-ticket.png" alt="discount-ticket" />
           <span className={styles.textoNav}>Cupons</span>
         </NavLink>
 
 
         <NavLink to="/admin/conta" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <img
-            width="27"
-            height="27"
-            src="https://img.icons8.com/fluency-systems-regular/27/ffffff/user--v1.png"
+            width="24"
+            height="24"
+            src="https://img.icons8.com/fluency-systems-regular/24/ffffff/user--v1.png"
             alt="user"
           />
           <span className={styles.textoNav}>Conta</span>
         </NavLink>
 
         <NavLink to="/admin/configuracoes" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <Settings size={27} strokeWidth={1.7} />
+          <Settings size={24} strokeWidth={1.7} />
           <span className={styles.textoNav}>Configurações</span>
         </NavLink>
 
-      
+
 
       </main>
     </aside>

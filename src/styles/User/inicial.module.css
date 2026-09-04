@@ -463,12 +463,13 @@ height: 100vh;
   align-items: center;
   gap: 12px;
   padding: 15px 36px;
+  border-radius: 0px;
   background: linear-gradient(135deg, var(--cor-dourado) 0%, #B8934A 100%);
   border: none;
   cursor: pointer;
   font-family: var(--fonte-corpo);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #1a1206;
@@ -497,6 +498,7 @@ height: 100vh;
 .textoBotaoPrimario {
   position: relative;
   z-index: 1;
+  color: black;
 }
 
 .iconeBotao {
@@ -504,6 +506,7 @@ height: 100vh;
   z-index: 1;
   font-size: 14px;
   transition: transform var(--transicao-suave);
+  color: black;
 }
 
 .botaoPrimario:hover .iconeBotao {
