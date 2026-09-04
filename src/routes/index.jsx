@@ -59,7 +59,6 @@ export default function Rotas() {
                     <Route path="/produto/:id/personalizacao" element={<PagProduto />} />
                     <Route path="/produto/:id/personalização" element={<PagProduto />} />
                     <Route path="/atelier/:produtoId" element={<Atelier />} />
-                    <Route path="/carrinho" element={<Carrinho />} />
                     <Route path="/catalogo" element={<Catalogo />} />
                     <Route path="/colecoes" element={<ColecoesPublicas />} />
                     <Route path="/colecoes/:id" element={<ColecaoDetalhe />} />
@@ -85,6 +84,7 @@ export default function Rotas() {
                 </Route>
 
                 <Route element={<RotasPrivadas />}>
+                    <Route path="/carrinho" element={<Carrinho />} />
                     <Route path="/minha-conta" element={<UserLayout />}>
                         <Route path="conta" element={<MinhaConta />} />
                         <Route path="pedidos" element={<MeusPedidos />} />

@@ -340,7 +340,7 @@ export default function ProdutoJoalheria() {
       await api.post(`/favoritos/${produto.id}`)
 
       setFavorito(true)
-              animarFavorito()
+              animarCoracaoFavorito()
 
       
 

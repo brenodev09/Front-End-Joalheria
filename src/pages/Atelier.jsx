@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Check, ChevronRight, Minus, Pause, Play, Plus, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Check, Minus, Pause, Play, Plus, ShoppingBag } from "lucide-react";
 import { useCarrinho } from "../context/carrinhoContext";
 import {
   calculateConfiguration,
@@ -320,18 +320,24 @@ export default function Atelier() {
           </div>
           {grupos.length > 0 && <div className={styles.progress} aria-label={`${etapasConcluidas} de ${grupos.length} etapas concluídas`}>
             <div className={styles.progressTop}><span>PERSONALIZAÇÃO</span><strong>{etapasConcluidas}/{grupos.length}</strong></div>
-            <div className={styles.progressTrack}><span style={{ width: `${(etapasConcluidas / grupos.length) * 100}%` }} /></div>
-            <div className={styles.progressSteps}><span className={etapasConcluidas > 0 ? styles.progressActive : ""}>Escolha os detalhes</span><ChevronRight size={13} /><span className={etapasConcluidas === grupos.length ? styles.progressActive : ""}>Revise sua criação</span></div>
           </div>}
           {!grupos.length && <div className={styles.emptyState}>Esta joia ainda não possui personalizações cadastradas.</div>}
           {grupos.map((grupo, index) => {
             const nome = getGroupKey(grupo);
             const valor = configuracao[nome] ?? "";
             const selecionados = getSelectionValues(valor);
+            const chaveGrupo = nome.toLowerCase();
+            const eTamanho = chaveGrupo.includes("tamanho") || chaveGrupo.includes("size");
+            const eMetal = chaveGrupo.includes("metal") || chaveGrupo.includes("cor") || grupo.opcoes?.every((opcao) => opcao.visual?.cor);
 
-            return <fieldset className={styles.group} key={grupo.id}>
+            return <fieldset className={`${styles.group} ${eTamanho ? styles.sizeGroup : ""} ${eMetal ? styles.metalGroup : ""}`} key={grupo.id}>
               <legend><span><b>{String(index + 1).padStart(2, "0")}</b>{grupo.nome}<em>{grupo.obrigatoria ? "Obrigatório" : "Opcional"}</em></span>{selecionados.length > 0 && <Check size={15} />}</legend>
-              {grupo.tipo === "select" ? <select value={valor} onChange={(event) => alterar(grupo, event.target.value)}><option value="">Selecione</option>{grupo.opcoes?.map((opcao) => <option value={opcao.id} key={opcao.id}>{opcao.nome}</option>)}</select> : <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""}><input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />{opcao.visual?.cor && <i style={{ backgroundColor: opcao.visual.cor }} />}{opcao.nome}{Number(opcao.valorAdicional || 0) > 0 && <small>+ R$ {Number(opcao.valorAdicional).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</label>)}</div>}
+              <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={`${selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""} ${eMetal ? styles.swatchOption : ""} ${eTamanho ? styles.sizeOption : ""}`} title={eMetal ? opcao.nome : undefined}>
+                <input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />
+                {eMetal && <i style={{ backgroundColor: opcao.visual?.cor || "#c9a24b" }} />}
+                <span>{opcao.nome || opcao.label || opcao.valor || "Opção"}</span>
+                {Number(opcao.valorAdicional || 0) > 0 && <small>+ R$ {Number(opcao.valorAdicional).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}
+              </label>)}</div>
               {grupo.permite_valor_livre && <input type="text" value={typeof valor === "string" && !grupo.opcoes?.some((opcao) => String(opcao.id) === valor) ? valor : ""} maxLength={grupo.valor_livre_maximo || undefined} onChange={(event) => alterar(grupo, event.target.value)} placeholder="Personalize sua gravação" />}
             </fieldset>;
           })}
@@ -351,8 +357,10 @@ export default function Atelier() {
           )}
 
           {erro && <p className={styles.error} role="alert">{erro}</p>}
-          <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {Number(calculo?.precoFinal ?? produto?.precoBase ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {Number(calculo.precoBase).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {Number(calculo.adicionais).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
-          <button type="button" className={styles.add} onClick={adicionar} disabled={salvando || !calculo}><ShoppingBag size={17} /> {salvando ? "Validando..." : "Adicionar ao carrinho"}</button>
+          <div className={styles.panelFooter}>
+            <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {Number(calculo?.precoFinal ?? produto?.precoBase ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {Number(calculo.precoBase).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {Number(calculo.adicionais).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
+            <button type="button" className={styles.add} onClick={adicionar} disabled={salvando || !calculo}><ShoppingBag size={17} /> {salvando ? "Validando..." : "Adicionar ao carrinho"}</button>
+          </div>
         </section>
       </div>
     </main>

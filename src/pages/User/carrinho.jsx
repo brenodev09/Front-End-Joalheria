@@ -640,7 +640,7 @@ export default function Carrinho() {
   ========================================================= */
 
   function iniciarPollingPix(pedidoId) {
-    if (!pedidoId) return;
+    if (!pedidoId || formaPagamento !== "pix") return;
 
     const token = localStorage.getItem("token");
     pollingPixRef.current = setInterval(async () => {
@@ -726,26 +726,6 @@ export default function Carrinho() {
           },
         }
         : {};
-
-      /*
-       * Garante que os itens exibidos no frontend também existam
-       * no carrinho persistido antes de criar o pedido.
-       */
-      for (const item of produtos) {
-        const temConfiguracao =
-          item.configuracao && Object.keys(item.configuracao).length > 0;
-
-        await api.post(
-          "/carrinho",
-          {
-            produto_id: Number(item.produto_id || item.id),
-            quantidade: Number(item.quantidade) || 1,
-            variacao_id: item.variacao_id || null,
-            ...(temConfiguracao ? { configuracao: item.configuracao } : {}),
-          },
-          configuracao
-        );
-      }
 
       const resposta =
         await api.post(
