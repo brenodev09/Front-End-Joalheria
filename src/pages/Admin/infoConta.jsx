@@ -431,7 +431,7 @@ export default function ContaAdmin() {
 
               <div className={styles.infoCorpo}>
                 {/* Linha 1: 3 campos */}
-                <div className={styles.infoGrade}>
+                <div className={styles.formGrid}>
                   <div className={`${styles.campoGrupo} campoAnim`}>
                     <label className={styles.campoRotulo}>Nome de usuário</label>
                     <div className={styles.campoWrapper}>
@@ -496,8 +496,8 @@ export default function ContaAdmin() {
                 </div>
 
                 {/* Linha 2: senha full width */}
-                <div className={`${styles.infoGrade} ${styles.infoGradeCompleta}`}>
-                  <div className={`${styles.campoGrupo} campoAnim`}>
+                {/* <div className={`${styles.infoGrade} ${styles.infoGradeCompleta}`}> */}
+                  <div className={`${styles.field} ${styles.fieldFull} gsap-input`}>
                     <label className={styles.campoRotulo}>Senha</label>
                     <div className={styles.campoWrapper}>
                       <img
@@ -536,7 +536,7 @@ export default function ContaAdmin() {
                     </span>
                   </div>
                 </div>
-              </div>
+              {/* </div> */}
             </form>
 
           </section>

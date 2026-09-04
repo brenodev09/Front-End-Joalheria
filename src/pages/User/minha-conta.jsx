@@ -579,9 +579,9 @@ export default function MinhaConta() {
                                 {senhaVisivel ? Icon.eyeOff : Icon.eye}
                             </button>
                         </div>
-                        <span className={styles.fieldHint}>
+                        {/* <span className={styles.fieldHint}>
                             Última alteração há 3 meses · Use ao menos 8 caracteres com letras, números e símbolos
-                        </span>
+                        </span> */}
                     </div>
                 </div>
             </section>

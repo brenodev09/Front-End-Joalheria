@@ -450,7 +450,14 @@ export default function Colecoes() {
     [colecoes]
   );
 
-  const quantidadeAtivas = colecoes.filter((i) => i.status === "ativa").length;
+  // "Ativas agora" = disponível para o cliente neste momento.
+  // Isso inclui tanto o status "ativa" quanto "permanente" — uma
+  // coleção permanente também está no ar, só não tem prazo de fim.
+  // (A aba de filtro "Ativas" continua com o match exato, pra não
+  // se sobrepor à aba "Permanentes" que já existe separadamente.)
+  const quantidadeAtivas = colecoes.filter(
+    (i) => i.status === "ativa" || i.status === "permanente"
+  ).length;
   const quantidadeEncerradas = colecoes.filter((i) => i.status === "encerrada").length;
   const quantidadeDestaques = colecoes.filter((i) => i.destaque).length;
 
@@ -999,10 +1006,10 @@ export default function Colecoes() {
               </div>
             )}
 
-            <button className={styles.botaoPrimarioLateral}>
+            {/* <button className={styles.botaoPrimarioLateral}>
               <BarChart3 size={15} />
               Ver relatório completo
-            </button>
+            </button> */}
           </div>
         </aside>
       </div>
