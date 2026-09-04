@@ -26,6 +26,10 @@ import {
   Gift,
   Headset,
   ArrowUpRight,
+  Star,
+  MessageSquareText,
+  Camera,
+  X,
 } from 'lucide-react'
 import style from "../styles/ProdutoJoalheria.module.css"
 import Header from "../components/Header"
@@ -131,6 +135,32 @@ export default function ProdutoJoalheria() {
     buscarRelacionados()
   }, [id])
 
+  /* Avaliações do produto + verificação se o usuário logado já avaliou. */
+  async function carregarAvaliacoes() {
+    try {
+      const resposta = await api.get(`/avaliacoes/produto/${id}`)
+      setAvaliacoes(resposta.data.avaliacoes || [])
+      setMediaNotas(resposta.data.media_notas || 0)
+      setTotalAvaliacoes(resposta.data.total || 0)
+    } catch (error) {
+      console.error("Erro ao carregar avaliações:", error.response?.data || error)
+    }
+  }
+
+  async function carregarMinhaAvaliacao() {
+    try {
+      const resposta = await api.get(`/avaliacoes/minha/${id}`)
+      setMinhaAvaliacao(resposta.data.avaliacao)
+    } catch (error) {
+      setMinhaAvaliacao(null)
+    }
+  }
+
+  useEffect(() => {
+    carregarAvaliacoes()
+    carregarMinhaAvaliacao()
+  }, [id])
+
 
   /* ---- estado: galeria ---- */
   const [indiceAtivo, setIndiceAtivo] = useState(0)
@@ -165,6 +195,22 @@ export default function ProdutoJoalheria() {
   /* ---- refs: benefícios / relacionados ---- */
   const beneficiosRef = useRef(null)
   const relacionadosRef = useRef(null)
+
+  /* ---- estado: avaliações ---- */
+  const [avaliacoes, setAvaliacoes] = useState([])
+  const [mediaNotas, setMediaNotas] = useState(0)
+  const [totalAvaliacoes, setTotalAvaliacoes] = useState(0)
+  const [minhaAvaliacao, setMinhaAvaliacao] = useState(null)
+  const [modalAvaliacaoAberto, setModalAvaliacaoAberto] = useState(false)
+  const [notaSelecionada, setNotaSelecionada] = useState(0)
+  const [notaHover, setNotaHover] = useState(0)
+  const [comentarioAvaliacao, setComentarioAvaliacao] = useState('')
+  const [fotosSelecionadas, setFotosSelecionadas] = useState([])
+  const [enviandoAvaliacao, setEnviandoAvaliacao] = useState(false)
+  const [erroAvaliacao, setErroAvaliacao] = useState('')
+
+  /* ---- refs: avaliações ---- */
+  const avaliacoesRef = useRef(null)
 
 
 
@@ -303,6 +349,109 @@ export default function ProdutoJoalheria() {
         "Erro ao favoritar produto:",
         error.response?.data || error
       )
+    }
+  }
+
+  /* ---- animação: avaliações (fade up no scroll) ---- */
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        `.${style.cardAvaliacao}`,
+        { opacity: 0, y: 26 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          stagger: 0.1,
+          scrollTrigger: { trigger: avaliacoesRef.current, start: 'top 82%', once: true },
+        },
+      )
+    },
+    { scope: avaliacoesRef, dependencies: [avaliacoes] },
+  )
+
+  /* ---- ações: avaliações ---- */
+  function obterInicial(nome) {
+    return nome?.trim()?.charAt(0)?.toUpperCase() || "?"
+  }
+
+  function formatarDataAvaliacao(data) {
+    if (!data) return ""
+    return new Date(data).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+  }
+
+  function renderizarEstrelas(nota, tamanho = 14) {
+    return [1, 2, 3, 4, 5].map((valor) => (
+      <Star
+        key={valor}
+        size={tamanho}
+        strokeWidth={1.3}
+        fill={valor <= Math.round(nota) ? "currentColor" : "none"}
+      />
+    ))
+  }
+
+  function abrirModalAvaliacao() {
+    if (minhaAvaliacao) {
+      setNotaSelecionada(minhaAvaliacao.nota)
+      setComentarioAvaliacao(minhaAvaliacao.comentario || "")
+    } else {
+      setNotaSelecionada(0)
+      setComentarioAvaliacao("")
+    }
+
+    setFotosSelecionadas([])
+    setErroAvaliacao("")
+    setModalAvaliacaoAberto(true)
+  }
+
+  function fecharModalAvaliacao() {
+    setModalAvaliacaoAberto(false)
+  }
+
+  async function enviarAvaliacao(evento) {
+    evento.preventDefault()
+
+    if (!notaSelecionada) {
+      setErroAvaliacao("Selecione uma nota de 1 a 5 estrelas.")
+      return
+    }
+
+    setEnviandoAvaliacao(true)
+    setErroAvaliacao("")
+
+    try {
+      const formData = new FormData()
+      formData.append("produto_id", produto.id)
+      formData.append("nota", notaSelecionada)
+      formData.append("comentario", comentarioAvaliacao)
+      fotosSelecionadas.forEach((arquivo) => formData.append("fotos", arquivo))
+
+      if (minhaAvaliacao) {
+        await api.put(`/avaliacoes/${minhaAvaliacao.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      } else {
+        await api.post("/avaliacoes", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      }
+
+      await carregarAvaliacoes()
+      await carregarMinhaAvaliacao()
+
+      setModalAvaliacaoAberto(false)
+    } catch (error) {
+      setErroAvaliacao(
+        error.response?.data?.erro || "Não foi possível enviar sua avaliação. Tente novamente."
+      )
+    } finally {
+      setEnviandoAvaliacao(false)
     }
   }
 
@@ -471,8 +620,7 @@ export default function ProdutoJoalheria() {
       </section>
 
 
-
-      {/* ======================= RELACIONADOS =========================== */}
+        {/* ======================= RELACIONADOS =========================== */}
       {relacionados.length > 0 && (
         <section className={style.secaoRelacionados} ref={relacionadosRef}>
           <div className={style.cabecalho}>
@@ -512,6 +660,182 @@ export default function ProdutoJoalheria() {
         </section>
       )}
 
+
+
+
+      {/* ======================= AVALIAÇÕES =========================== */}
+      <section className={style.secaoAvaliacoes} ref={avaliacoesRef}>
+        <div className={style.cabecalhoAvaliacoes}>
+          <div>
+            <span className={style.eyebrow}>Depoimentos</span>
+            <h2 className={style.titulo}>Avaliações do produto</h2>
+
+            {totalAvaliacoes > 0 && (
+              <div className={style.resumoAvaliacoes}>
+                <div className={style.estrelasResumo}>
+                  {renderizarEstrelas(mediaNotas, 16)}
+                </div>
+                <span className={style.mediaNumero}>{mediaNotas.toFixed(1)}</span>
+                <span className={style.totalAvaliacoesTexto}>
+                  ({totalAvaliacoes} avaliaç{totalAvaliacoes === 1 ? "ão" : "ões"})
+                </span>
+              </div>
+            )}
+          </div>
+
+          <button type="button" className={style.botaoAvaliar} onClick={abrirModalAvaliacao}>
+            <Star size={15} strokeWidth={1.5} />
+            {minhaAvaliacao ? "Editar minha avaliação" : "Avaliar produto"}
+          </button>
+        </div>
+
+        {avaliacoes.length === 0 ? (
+          <div className={style.semAvaliacoes}>
+            <MessageSquareText size={28} strokeWidth={1.2} />
+            <p>Este produto ainda não possui avaliações.</p>
+            <span>Seja o primeiro a compartilhar sua experiência com esta peça.</span>
+          </div>
+        ) : (
+          <div className={style.listaAvaliacoes}>
+            {avaliacoes.map((avaliacao) => (
+              <article className={style.cardAvaliacao} key={avaliacao.id}>
+                <div className={style.topoAvaliacao}>
+                  <div className={style.perfilAvaliacao}>
+                    <span className={style.avatarAvaliacao}>
+                      {obterInicial(avaliacao.usuario_nome)}
+                    </span>
+                    <div>
+                      <p className={style.nomeCliente}>{avaliacao.usuario_nome}</p>
+                      <span className={style.dataAvaliacao}>
+                        {formatarDataAvaliacao(avaliacao.data_criacao)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={style.estrelasAvaliacao}>
+                    {renderizarEstrelas(avaliacao.nota)}
+                  </div>
+                </div>
+
+                {avaliacao.comentario && (
+                  <p className={style.comentarioAvaliacao}>{avaliacao.comentario}</p>
+                )}
+
+                {avaliacao.fotos?.length > 0 && (
+                  <div className={style.fotosAvaliacao}>
+                    {avaliacao.fotos.map((foto) => (
+                      <img
+                        key={foto.id}
+                        src={foto.foto?.startsWith("http") ? foto.foto : `http://localhost:3000${foto.foto}`}
+                        alt={`Foto enviada por ${avaliacao.usuario_nome}`}
+                        onError={(event) => {
+                          event.currentTarget.onerror = null
+                          event.currentTarget.src = semFoto
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+
+    
+
+      {/* ======================= MODAL DE AVALIAÇÃO =========================== */}
+      {modalAvaliacaoAberto && (
+        <div className={style.overlayModal} onClick={fecharModalAvaliacao}>
+          <div className={style.modalAvaliacao} onClick={(evento) => evento.stopPropagation()}>
+            <button
+              type="button"
+              className={style.fecharModal}
+              onClick={fecharModalAvaliacao}
+              aria-label="Fechar"
+            >
+              <X size={18} strokeWidth={1.5} />
+            </button>
+
+            <h3 className={style.tituloModal}>
+              {minhaAvaliacao ? "Editar avaliação" : "Avaliar produto"}
+            </h3>
+            <p className={style.subtituloModal}>
+              Conte como foi sua experiência com {produto.nome}
+            </p>
+
+            <form className={style.formAvaliacao} onSubmit={enviarAvaliacao}>
+              <div className={style.campoEstrelas}>
+                <span>Sua nota</span>
+                <div className={style.seletorEstrelas}>
+                  {[1, 2, 3, 4, 5].map((valor) => (
+                    <button
+                      type="button"
+                      key={valor}
+                      className={style.botaoEstrela}
+                      onMouseEnter={() => setNotaHover(valor)}
+                      onMouseLeave={() => setNotaHover(0)}
+                      onClick={() => setNotaSelecionada(valor)}
+                      aria-label={`${valor} estrelas`}
+                    >
+                      <Star
+                        size={26}
+                        strokeWidth={1.3}
+                        fill={(notaHover || notaSelecionada) >= valor ? "currentColor" : "none"}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={style.campoTexto}>
+                <label htmlFor="comentarioAvaliacao">Comentário</label>
+                <textarea
+                  id="comentarioAvaliacao"
+                  rows={4}
+                  placeholder="O que você achou da peça?"
+                  value={comentarioAvaliacao}
+                  onChange={(evento) => setComentarioAvaliacao(evento.target.value)}
+                />
+              </div>
+
+              <div className={style.campoFotos}>
+                <label htmlFor="fotosAvaliacao" className={style.labelFotos}>
+                  <Camera size={16} strokeWidth={1.5} />
+                  Adicionar fotos (opcional)
+                </label>
+                <input
+                  id="fotosAvaliacao"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(evento) => setFotosSelecionadas(Array.from(evento.target.files))}
+                />
+                {fotosSelecionadas.length > 0 && (
+                  <span className={style.contagemFotos}>
+                    {fotosSelecionadas.length} foto(s) selecionada(s)
+                  </span>
+                )}
+              </div>
+
+              {erroAvaliacao && <p className={style.erroConfiguracao}>{erroAvaliacao}</p>}
+
+              <button
+                type="submit"
+                className={style.botaoEnviarAvaliacao}
+                disabled={enviandoAvaliacao}
+              >
+                {enviandoAvaliacao
+                  ? "Enviando..."
+                  : minhaAvaliacao
+                  ? "Salvar alterações"
+                  : "Enviar avaliação"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </main>
