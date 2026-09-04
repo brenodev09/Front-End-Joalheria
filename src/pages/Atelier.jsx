@@ -28,13 +28,40 @@ function imagensDo(valor) {
   return valor.imagens || valor.images || valor.frames || valor.angulos || valor.galeria || [];
 }
 
+function visualDo(valor) {
+  if (!valor) return null;
+  if (typeof valor === "object") return valor;
+  if (typeof valor !== "string") return null;
+  try {
+    return JSON.parse(valor);
+  } catch {
+    return null;
+  }
+}
+
+function valorAdicional(opcao) {
+  return Number(opcao?.valorAdicional ?? opcao?.valor_adicional ?? opcao?.acrescimo ?? 0) || 0;
+}
+
+function valorCalculo(calculo, ...chaves) {
+  for (const chave of chaves) {
+    if (calculo?.[chave] !== undefined && calculo?.[chave] !== null) return Number(calculo[chave]) || 0;
+  }
+  return 0;
+}
+
+function nomeOpcao(opcao) {
+  const nome = opcao?.nome ?? opcao?.label ?? opcao?.valor;
+  return nome === 0 || String(nome).trim() === "0" ? "" : nome || "Opção";
+}
+
 function framesDoProduto(produto) {
   return imagensDo(produto?.imagens360 || produto?.imagens_360 || produto?.galeria360 || produto?.galeria || produto?.imagens || produto?.imagem)
     .map(assetUrl).filter(Boolean);
 }
 
 function visualDaOpcao(opcao, frame) {
-  const visual = opcao?.visual;
+  const visual = visualDo(opcao?.visual);
   if (!visual || typeof visual !== "object") return "";
   const frames = imagensDo(visual.frames || visual.imagens || visual.images || visual.angulos);
   return assetUrl(frames[frame] || visual.imagem || visual.image || visual.asset || visual.src);
@@ -212,6 +239,17 @@ export default function Atelier() {
     return (grupo.opcoes || []).filter((opcao) => selecionados.some((id) => String(id) === String(opcao.id))).map((opcao) => opcao.visual).filter(Boolean);
   }), [configuracao, grupos]);
 
+  const calculoLocal = useMemo(() => {
+    const base = Number(produto?.precoBase ?? produto?.preco_base ?? produto?.preco ?? 0) || 0;
+    const adicionais = grupos.reduce((total, grupo) => {
+      const selecionados = getSelectionValues(configuracao[getGroupKey(grupo)]);
+      return total + (grupo.opcoes || [])
+        .filter((opcao) => selecionados.some((id) => String(id) === String(opcao.id)))
+        .reduce((subtotal, opcao) => subtotal + valorAdicional(opcao), 0);
+    }, 0);
+    return { precoBase: base, adicionais, precoFinal: base + adicionais };
+  }, [configuracao, grupos, produto]);
+
   useEffect(() => {
     if (!dados || !grupos.length) return undefined;
 
@@ -239,15 +277,24 @@ export default function Atelier() {
     const timer = setTimeout(async () => {
       try {
         const resposta = await calculateConfiguration(produtoId, configuracao);
-        setCalculo(resposta || null);
+        const calculoResposta = resposta?.calculo || resposta?.resultado || resposta || {};
+        const adicionalResposta = valorCalculo(calculoResposta, "adicionais", "valor_adicional", "total_adicionais");
+        const finalResposta = valorCalculo(calculoResposta, "precoFinal", "preco_final", "total");
+        setCalculo({
+          ...calculoLocal,
+          ...calculoResposta,
+          adicionais: Math.max(adicionalResposta, calculoLocal.adicionais),
+          precoFinal: Math.max(finalResposta, calculoLocal.precoFinal),
+        });
         setErro("");
       } catch (error) {
-        setCalculo(null);
-        setErro(error.response?.data?.erro || error.response?.data?.message || "Essa combinação não está disponível.");
+        setCalculo(calculoLocal);
+        const mensagemErro = error.response?.data?.erro || error.response?.data?.message || "";
+        setErro(/configurador.*inativ|personaliza[cç][aã]o.*inativ/i.test(mensagemErro) ? "" : mensagemErro || "Essa combinação não está disponível.");
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [configuracao, dados, produtoId]);
+  }, [configuracao, dados, produtoId, calculoLocal]);
 
   function alterar(grupo, valor) {
     const nome = getGroupKey(grupo);
@@ -273,12 +320,40 @@ export default function Atelier() {
     .filter(Boolean), [configuracao, grupos]);
 
   const etapasConcluidas = grupos.filter((grupo) => getSelectionValues(configuracao[getGroupKey(grupo)]).length > 0).length;
+  const faltamObrigatorias = grupos.some((grupo) => grupo.obrigatoria && !getSelectionValues(configuracao[getGroupKey(grupo)]).length);
 
   async function adicionar() {
     setSalvando(true);
     try {
-      await validateConfiguration(produtoId, configuracao);
-      await adicionarAoCarrinho(produtoId, 1, null, produto, configuracao);
+      try {
+        await validateConfiguration(produtoId, configuracao);
+      } catch (error) {
+        const mensagemErro = error.response?.data?.erro || error.response?.data?.message || "";
+        if (!/configurador.*inativ|personaliza[cç][aã]o.*inativ/i.test(mensagemErro)) throw error;
+      }
+      const precoBase = calculo ? valorCalculo(calculo, "precoBase", "preco_base") : calculoLocal.precoBase;
+      const adicionais = calculo ? valorCalculo(calculo, "adicionais", "valor_adicional", "total_adicionais") : calculoLocal.adicionais;
+      const precoFinal = calculo ? valorCalculo(calculo, "precoFinal", "preco_final", "total") : calculoLocal.precoFinal;
+      const escolhas = grupos.map((grupo) => ({
+        grupo_id: grupo.id,
+        grupo: grupo.nome,
+        chave: getGroupKey(grupo),
+        valor: configuracao[getGroupKey(grupo)],
+        opcoes: getSelectionValues(configuracao[getGroupKey(grupo)])
+          .map((valor) => (grupo.opcoes || []).find((opcao) => String(opcao.id) === String(valor)))
+          .filter(Boolean)
+          .map((opcao) => ({ id: opcao.id, nome: nomeOpcao(opcao), valor_adicional: valorAdicional(opcao) })),
+      }));
+
+      await adicionarAoCarrinho(produtoId, 1, null, {
+        ...produto,
+        preco: precoFinal,
+        preco_personalizado: precoFinal,
+        preco_base: precoBase,
+        valor_adicional: adicionais,
+        configuracao,
+        personalizacoes: escolhas,
+      }, configuracao);
     } catch (error) {
       setErro(error.response?.data?.erro || error.response?.data?.message || error.message || "Configuração inválida.");
     } finally {
@@ -328,17 +403,17 @@ export default function Atelier() {
             const selecionados = getSelectionValues(valor);
             const chaveGrupo = nome.toLowerCase();
             const eTamanho = chaveGrupo.includes("tamanho") || chaveGrupo.includes("size");
-            const eMetal = chaveGrupo.includes("metal") || chaveGrupo.includes("cor") || grupo.opcoes?.every((opcao) => opcao.visual?.cor);
+            const eMetal = chaveGrupo.includes("metal") || chaveGrupo.includes("cor") || grupo.opcoes?.some((opcao) => visualDo(opcao.visual)?.cor);
 
             return <fieldset className={`${styles.group} ${eTamanho ? styles.sizeGroup : ""} ${eMetal ? styles.metalGroup : ""}`} key={grupo.id}>
               <legend><span><b>{String(index + 1).padStart(2, "0")}</b>{grupo.nome}<em>{grupo.obrigatoria ? "Obrigatório" : "Opcional"}</em></span>{selecionados.length > 0 && <Check size={15} />}</legend>
               <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={`${selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""} ${eMetal ? styles.swatchOption : ""} ${eTamanho ? styles.sizeOption : ""}`} title={eMetal ? opcao.nome : undefined}>
                 <input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />
-                {eMetal && <i style={{ backgroundColor: opcao.visual?.cor || "#c9a24b" }} />}
-                <span>{opcao.nome || opcao.label || opcao.valor || "Opção"}</span>
-                {Number(opcao.valorAdicional || 0) > 0 && <small>+ R$ {Number(opcao.valorAdicional).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}
+                {eMetal && <i style={{ backgroundColor: visualDo(opcao.visual)?.cor || "#c9a24b" }} />}
+                <span>{nomeOpcao(opcao)}</span>
+                {valorAdicional(opcao) > 0 && <small>+ R$ {valorAdicional(opcao).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}
               </label>)}</div>
-              {grupo.permite_valor_livre && <input type="text" value={typeof valor === "string" && !grupo.opcoes?.some((opcao) => String(opcao.id) === valor) ? valor : ""} maxLength={grupo.valor_livre_maximo || undefined} onChange={(event) => alterar(grupo, event.target.value)} placeholder="Personalize sua gravação" />}
+              {Boolean(grupo.permite_valor_livre) && <input type="text" value={typeof valor === "string" && !grupo.opcoes?.some((opcao) => String(opcao.id) === valor) ? valor : ""} maxLength={grupo.valor_livre_maximo || undefined} onChange={(event) => alterar(grupo, event.target.value)} placeholder="Personalize sua gravação" />}
             </fieldset>;
           })}
 
@@ -358,8 +433,8 @@ export default function Atelier() {
 
           {erro && <p className={styles.error} role="alert">{erro}</p>}
           <div className={styles.panelFooter}>
-            <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {Number(calculo?.precoFinal ?? produto?.precoBase ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {Number(calculo.precoBase).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {Number(calculo.adicionais).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
-            <button type="button" className={styles.add} onClick={adicionar} disabled={salvando || !calculo}><ShoppingBag size={17} /> {salvando ? "Validando..." : "Adicionar ao carrinho"}</button>
+            <div className={styles.total}><span>Preço da sua joia</span><strong>R$ {(calculo ? valorCalculo(calculo, "precoFinal", "preco_final", "total") : Number(produto?.precoBase ?? produto?.preco_base ?? 0)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>{calculo && <small>Base R$ {valorCalculo(calculo, "precoBase", "preco_base").toLocaleString("pt-BR", { minimumFractionDigits: 2 })} · Adicionais R$ {valorCalculo(calculo, "adicionais", "valor_adicional", "total_adicionais").toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}</div>
+            <button type="button" className={styles.add} onClick={adicionar} disabled={salvando || faltamObrigatorias}><ShoppingBag size={17} /> {salvando ? "Validando..." : "Adicionar ao carrinho"}</button>
           </div>
         </section>
       </div>

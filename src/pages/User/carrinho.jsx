@@ -388,6 +388,16 @@ export default function Carrinho() {
       }`;
   }
 
+  function precoDoItem(item) {
+    return Number(item.preco_personalizado ?? item.precoPersonalizado ?? item.preco ?? item.produto_preco ?? item.valor ?? 0) || 0;
+  }
+
+  function detalhesPersonalizacao(item) {
+    if (Array.isArray(item.personalizacoes)) return item.personalizacoes;
+    if (Array.isArray(item.personalizacao)) return item.personalizacao;
+    return [];
+  }
+
   /* =========================================================
      ENDEREÇO
   ========================================================= */
@@ -1400,6 +1410,12 @@ export default function Carrinho() {
                                     )}
                                   </p>
 
+                                  {detalhesPersonalizacao(produto).length > 0 && (
+                                    <p className={estilos.produtoAtributos}>
+                                      Personalização: {detalhesPersonalizacao(produto).map((item) => `${item.grupo || item.nome}: ${item.opcoes?.map((opcao) => opcao.nome).join(", ") || item.valor || "selecionado"}`).join(" | ")}
+                                    </p>
+                                  )}
+
                                   <div
                                     className={
                                       estilos.produtoRodape
@@ -1462,9 +1478,7 @@ export default function Carrinho() {
                                       }
                                     >
                                       {formatarPreco(
-                                        Number(
-                                          produto.preco
-                                        ) *
+                                          precoDoItem(produto) *
                                         Number(
                                           produto.quantidade
                                         )
@@ -2232,9 +2246,7 @@ export default function Carrinho() {
                                 }
                               >
                                 {formatarPreco(
-                                  Number(
-                                    produto.preco
-                                  ) *
+                                  precoDoItem(produto) *
                                   Number(
                                     produto.quantidade
                                   )

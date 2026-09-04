@@ -263,7 +263,7 @@ setTimeout(() => setMostrarNotificacao(false), 2000);
                                   src="https://img.icons8.com/fluency-systems-filled/48/downloading-updates.png"
                                   alt="downloading-updates"
                                 />
-                                SALVAR CATEGORIA
+                                SALVAR MATERIAL
                               </button>
                               
                 </div>

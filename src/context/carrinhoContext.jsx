@@ -92,6 +92,13 @@ export function CarrinhoProvider({ children }) {
         ...(variacaoId ? { variacao_id: variacaoId } : {}),
       };
 
+      if (produtoInfo && Object.keys(payload.configuracao || {}).length > 0) {
+        payload.preco_personalizado = Number(produtoInfo.preco_personalizado ?? produtoInfo.preco) || 0;
+        payload.preco_base = Number(produtoInfo.preco_base ?? produtoInfo.precoBase) || 0;
+        payload.valor_adicional = Number(produtoInfo.valor_adicional ?? produtoInfo.adicionais) || 0;
+        payload.personalizacoes = produtoInfo.personalizacoes || [];
+      }
+
       const resposta = await api.post("/carrinho", payload, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -218,6 +225,8 @@ export function CarrinhoProvider({ children }) {
 
   const subtotal = itens.reduce((total, item) => {
     const preco =
+      Number(item.preco_personalizado) ||
+      Number(item.precoPersonalizado) ||
       Number(item.preco) ||
       Number(item.produto_preco) ||
       Number(item.valor) ||

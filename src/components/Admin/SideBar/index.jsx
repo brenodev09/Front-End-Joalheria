@@ -54,7 +54,7 @@ export default function Sidebar() {
         </NavLink>
         <NavLink to="/admin/produtos/personalizacao" className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <Gem size={24} strokeWidth={1.7} />
-          <span className={styles.textoNav}>Ateliê visual</span>
+          <span className={styles.textoNav}>Personalização</span>
         </NavLink>
 
         <NavLink to="/admin/pedidos" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>

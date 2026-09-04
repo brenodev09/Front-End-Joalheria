@@ -3,7 +3,7 @@ import { api } from "../../services/api";
 import styles from "../../styles/Admin/personalizacaoProduto.module.css";
 
 const vazioGrupo = { nome: "", slug: "", tipo: "select", obrigatoria: false, permite_valor_livre: false, ordem: 0 };
-const vazioOpcao = { nome: "", descricao: "", valorAdicional: 0, aplicaAcrescimo: false, ordem: 0, visual: "" };
+const vazioOpcao = { nome: "", descricao: "", valorAdicional: 0, aplicaAcrescimo: false, ordem: 0, corHex: "#C9A24B" };
 const modelosGrupo = [
   { nome: "Tamanho", slug: "tamanho", tipo: "select", obrigatoria: true, opcoes: ["14", "15", "16", "17", "18", "19", "20", "21", "22"] },
   { nome: "Cor do metal", slug: "cor", tipo: "radio", obrigatoria: true, opcoes: ["Ouro 18k", "Prata 925", "Ouro rosé"] },
@@ -58,18 +58,17 @@ export default function PersonalizacaoProduto() {
     event.preventDefault();
     if (!grupoAtivo) return;
     try {
-      const visual = opcao.visual.trim() ? JSON.parse(opcao.visual) : null;
-      const { aplicaAcrescimo, valorAdicional, ...dadosOpcao } = opcao;
+      const { aplicaAcrescimo, valorAdicional, corHex, ...dadosOpcao } = opcao;
       await api.post(`/produtos/admin/personalizacoes/${grupoAtivo.id}/opcoes`, {
         ...dadosOpcao,
         valor_adicional: aplicaAcrescimo ? Number(valorAdicional || 0) : 0,
-        visual,
+        visual: corHex ? { tipo: "material", cor: corHex } : null,
       }, authConfig());
       setOpcao(vazioOpcao);
       await carregar();
       setMensagem("Opção criada.");
     } catch (error) {
-      setErro(error instanceof SyntaxError ? "O visual precisa ser um JSON válido." : error.response?.data?.erro || error.response?.data?.message || "Não foi possível criar a opção.");
+      setErro(error.response?.data?.erro || error.response?.data?.message || "Não foi possível criar a opção.");
     }
   }
 
@@ -150,7 +149,7 @@ export default function PersonalizacaoProduto() {
             <label>Nome da opção<input required placeholder="Ex.: Ouro 18k" value={opcao.nome} onChange={(e) => setOpcao({ ...opcao, nome: e.target.value })} /></label>
             <label className={styles.priceToggle}><input type="checkbox" checked={opcao.aplicaAcrescimo} onChange={(e) => setOpcao({ ...opcao, aplicaAcrescimo: e.target.checked })} /><span><strong>Esta opção aumenta o preço</strong><small>Marque apenas para materiais, pedras ou serviços mais caros.</small></span></label>
             <div className={styles.formRow}><label>Valor do acréscimo{opcao.aplicaAcrescimo ? <input required type="number" min="0.01" step="0.01" placeholder="Ex.: 800,00" value={opcao.valorAdicional} onChange={(e) => setOpcao({ ...opcao, valorAdicional: e.target.value })} /> : <span className={styles.noCharge}>Sem acréscimo</span>}</label><label>Descrição curta<input placeholder="Ex.: brilho quente" value={opcao.descricao} onChange={(e) => setOpcao({ ...opcao, descricao: e.target.value })} /></label></div>
-            <details><summary>Configurar imagem ou cor (opcional)</summary><textarea placeholder='JSON visual: {"tipo":"material","cor":"#D4AF37"}' value={opcao.visual} onChange={(e) => setOpcao({ ...opcao, visual: e.target.value })} /></details>
+            <label className={styles.colorField}>Cor hexadecimal<input type="color" value={opcao.corHex} onChange={(e) => setOpcao({ ...opcao, corHex: e.target.value })} /><input value={opcao.corHex} pattern="^#[0-9A-Fa-f]{6}$" onChange={(e) => setOpcao({ ...opcao, corHex: e.target.value })} placeholder="#D4AF37" /></label>
             <button className={styles.primary}>Adicionar opção extra</button>
           </form></>}
         </section>
