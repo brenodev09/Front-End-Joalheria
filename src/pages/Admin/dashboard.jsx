@@ -30,7 +30,7 @@ import {
   CartesianGrid,
   Text,
 } from "recharts";
-import {Heart} from "lucide-react"
+import {Heart, Star, MessageSquareText, TriangleAlert} from "lucide-react"
 
 
 export default function Dashboard() {
@@ -61,10 +61,12 @@ export default function Dashboard() {
   const [abrirModalAdicionar, setAbrirModalAdicionar] = useState(false)
   const [abrirModalEditar, setAbrirModalEditar] = useState(false)
   const [visaoAtiva, setVisaoAtiva] = useState("geral")
+  const [avaliacoesMetricas, setAvaliacoesMetricas] = useState({})
 
   const VISOES = [
     { id: "geral", label: "Visão Geral" },
     { id: "vendas", label: "Vendas" },
+    { id: "avaliacoes", label: "Avaliações" },
     { id: "estoque", label: "Estoque" },
     { id: "metas", label: "Metas" },
   ]
@@ -184,6 +186,32 @@ export default function Dashboard() {
     }
     carregarPedidos();
   }, []);
+
+  useEffect(() => {
+    async function carregarAvaliacoesMetricas() {
+      try {
+        const resposta = await api.get('/dashboard/avaliacoes-metricas');
+        setAvaliacoesMetricas(resposta.data);
+      } catch (error) {
+        console.error(error);
+        setAvaliacoesMetricas({});
+      }
+    }
+    carregarAvaliacoesMetricas();
+  }, []);
+
+  const renderizarEstrelas = (nota, tamanho = 14) => {
+    return [1, 2, 3, 4, 5].map((valor) => (
+      <Star
+        key={valor}
+        size={tamanho}
+        strokeWidth={1.3}
+        fill={valor <= Math.round(nota) ? "currentColor" : "none"}
+      />
+    ))
+  }
+
+  const formatarTickEstrela = (valor) => "★".repeat(valor)
 
 
 
@@ -877,6 +905,175 @@ export default function Dashboard() {
                       </span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* ==================== BLOCO: AVALIAÇÕES ==================== */}
+        {mostrarBloco("avaliacoes") && (
+          <section className={style.blocoSecao}>
+
+            <div className={style.cabecalhoBloco}>
+              <h2>Avaliações de Produtos</h2>
+              <p>Acompanhe a satisfação dos clientes e os produtos mais bem avaliados</p>
+            </div>
+
+            <section className={style.cardsMetricos}>
+
+              <div className={style.card}>
+                <div className={style.cardTopo}>
+                  <div className={style.iconeCard}>
+                    <Star size={22} strokeWidth={1.5} fill="currentColor" />
+                  </div>
+                  <span className={style.cardRotulo}>MÉDIA GERAL</span>
+                </div>
+
+                <div className={style.linhaValorAvaliacao}>
+                  <h1 className={style.cardValor}>
+                    {(avaliacoesMetricas.mediaGeral || 0).toFixed(1)}
+                  </h1>
+                  <div className={style.estrelasInlineCard}>
+                    {renderizarEstrelas(avaliacoesMetricas.mediaGeral || 0, 16)}
+                  </div>
+                </div>
+
+                <p className={style.cardDescricao}>
+                  {avaliacoesMetricas.totalAvaliacoes || 0} avaliações no total
+                </p>
+              </div>
+
+              <div className={`${style.card} ${style.cardAlerta}`}>
+                <div className={style.cardTopo}>
+                  <div className={style.iconeCard}>
+                    <TriangleAlert size={22} strokeWidth={1.5} />
+                  </div>
+                  <span className={style.cardRotulo}>AVALIAÇÕES NEGATIVAS</span>
+                </div>
+                <h1 className={style.cardValor}>{avaliacoesMetricas.avaliacoesNegativas || 0}</h1>
+                <p className={style.cardDescricao}>notas de 1 e 2 estrelas</p>
+              </div>
+
+            </section>
+
+            <div className={style.linhaDuasColunas}>
+
+              <div className={style.cardGrafico}>
+                <div className={style.cabecalhoGrafico}>
+                  <span>DISTRIBUIÇÃO DAS ESTRELAS</span>
+                  <p>Quantidade de avaliações recebidas por nota</p>
+                </div>
+
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={avaliacoesMetricas.distribuicaoEstrelas || []}
+                    margin={{
+                      top: 10,
+                      right: 20,
+                      left: 0,
+                      bottom: 10
+                    }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="rgba(255,255,255,.05)"
+                    />
+
+                    <XAxis
+                      dataKey="nota"
+                      tickFormatter={formatarTickEstrela}
+                      stroke="#888"
+                    />
+
+                    <YAxis allowDecimals={false} stroke="#888" />
+
+                    <Tooltip
+                      cursor={{ fill: "transparent" }}
+                      labelFormatter={(nota) => `${formatarTickEstrela(nota)} (${nota} estrela${nota > 1 ? "s" : ""})`}
+                      formatter={(valor) => [`${valor} avaliações`, "Quantidade"]}
+                      contentStyle={{
+                        backgroundColor: "#1b1b1b",
+                        border: "1px solid #C9A84C",
+                        borderRadius: "2px"
+                      }}
+                      labelStyle={{
+                        color: "#C9A84C"
+                      }}
+                    />
+
+                    <Bar
+                      dataKey="quantidade"
+                      fill="#C9A84C"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className={style.cardRecentes}>
+                <div className={style.cabecalhoRecentes}>
+                  <div>
+                    <p className={style.tituloRecentes}>
+                      Top 5 Produtos Mais Bem Avaliados
+                    </p>
+
+                    <p className={style.subtituloRecentes}>
+                      Ranking por média de estrelas
+                    </p>
+                  </div>
+                </div>
+
+                <div className={style.listaRecentes}>
+                  {(avaliacoesMetricas.topProdutosAvaliados || []).length === 0 ? (
+                    <p className={style.semProdutos}>
+                      Nenhum produto avaliado até o momento.
+                    </p>
+                  ) : (
+                    avaliacoesMetricas.topProdutosAvaliados.map((produtoAvaliado, index) => (
+                      <div
+                        key={produtoAvaliado.id}
+                        className={style.itemRecente}
+                      >
+                        <div className={style.blocoComImagem}>
+
+                          <span className={style.posicaoRanking}>{index + 1}º</span>
+
+                          {produtoAvaliado.imagem ? (
+                            <img
+                              src={`http://localhost:3000${produtoAvaliado.imagem}`}
+                              alt={produtoAvaliado.nome}
+                              className={style.miniImagem}
+                            />
+                          ) : (
+                            <div className={style.imagemPlaceholder}>💎</div>
+                          )}
+
+                          <div className={style.informacoesRecente}>
+                            <p className={style.nomeRecente}>
+                              {produtoAvaliado.nome}
+                            </p>
+
+                            <span className={style.categoriaRecente}>
+                              {produtoAvaliado.totalAvaliacoes} avaliaç{produtoAvaliado.totalAvaliacoes === 1 ? "ão" : "ões"}
+                            </span>
+                          </div>
+
+                        </div>
+
+                        <div className={style.dadosRecente}>
+                          <div className={style.notaTopAvaliado}>
+                            <Star size={13} strokeWidth={1.5} fill="currentColor" />
+                            <span className={style.estoqueRecente}>
+                              {produtoAvaliado.mediaNotas.toFixed(1)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
