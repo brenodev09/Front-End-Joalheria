@@ -330,30 +330,30 @@ export default function Produtos() {
                 </tr>
               </thead>
 
-              <tbody>
-                {paginatedProducts.map((product) => (
-                  <tr
-                    key={product.id}
-                    className={
-                      selectedProduct?.id === product.id ? styles.selectedRow : ""
-                    }
-                  >
-                    <td>
-                      <div className={styles.productCell}>
-                        <ProductThumb
-                          image={
-                            product.imagem
-                              ? `http://localhost:3000${product.imagem}`
-                              : null
-                          }
-                        />
+                <tbody>
+                  {paginatedProducts.map((product) => (
+                    <tr
+                      key={product.id}
+                      className={
+                        selectedProduct?.id === product.id ? styles.selectedRow : ""
+                      }
+                    >
+                      <td>
+                        <div className={styles.productCell}>
+                          <ProductThumb
+                            image={
+                              product.imagem
+                                ? `http://localhost:3000${product.imagem}`
+                                : null
+                            }
+                          />
 
-                        <div>
-                          <strong>{product.nome}</strong>
-                          <span>ID: PRD-{product.id}</span>
+                          <div>
+                            <strong>{product.nome}</strong>
+                            <span>ID: PRD-{product.id}</span>
+                          </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
                     <td>
                       <strong className={styles.collectionName}>

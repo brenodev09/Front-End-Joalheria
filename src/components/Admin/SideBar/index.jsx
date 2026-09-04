@@ -26,7 +26,7 @@ export default function Sidebar() {
           <span className={styles.textoNav}>Dashboard</span>
         </NavLink>
 
-        
+
         <NavLink
           to="/admin/relatorios"
           end
@@ -34,7 +34,7 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <FolderKanban size={24} strokeWidth={1.7} aria-hidden="true" />
+          <img width="24" height="24" src="https://img.icons8.com/ios/50/ffffff/graph-report.png" alt="graph-report" />
           <span className={styles.textoNav}>Relatórios</span>
         </NavLink>
 
@@ -42,6 +42,7 @@ export default function Sidebar() {
           <Package size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Produtos</span>
         </NavLink>
+
         <NavLink to="/admin/produtos/personalizacao" className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
           <Gem size={24} strokeWidth={1.7} />
           <span className={styles.textoNav}>Personalização</span>
@@ -58,8 +59,7 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink to="/admin/categorias" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <Tags size={24} strokeWidth={1.7} aria-hidden="true" />
-          <span className={styles.textoNav}>Categorias</span>
+          <img width="24" height="24" src="https://img.icons8.com/ios/50/ffffff/categorize.png" alt="categorize" />          <span className={styles.textoNav}>Categorias</span>
         </NavLink>
 
 
@@ -76,7 +76,7 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <FolderKanban size={24} strokeWidth={1.7} aria-hidden="true" />
+          <img width="24" height="24" src="https://img.icons8.com/external-smashingstocks-detailed-outline-smashing-stocks/66/ffffff/external-Photo-family-and-relations-smashingstocks-detailed-outline-smashing-stocks.png" alt="external-Photo-family-and-relations-smashingstocks-detailed-outline-smashing-stocks" />
           <span className={styles.textoNav}>Coleções</span>
         </NavLink>
 
@@ -87,13 +87,13 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <User size={24} strokeWidth={1.7} aria-hidden="true" />
+          <img width="50" height="50" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff" />
           <span className={styles.textoNav}>Funcionários</span>
         </NavLink>
 
 
         <NavLink
-          to="/admin/cupons"
+          to="/admin/cupons"  
           end
           className={({ isActive }) =>
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
