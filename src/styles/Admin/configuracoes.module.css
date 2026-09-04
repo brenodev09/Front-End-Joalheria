@@ -215,6 +215,8 @@
   top: 18px;
   width: 100%;
   max-width: 245px;
+  min-width: 0;
+  overflow: hidden;
   padding: 8px;
   background: rgba(20, 20, 20, 0.72);
   border: 1px solid var(--ouro-borda);
@@ -255,16 +257,21 @@
 }
 
 .navGrupo {
+  width: 100%;
+  margin-left: 0;
+  align-self: stretch;
   padding: 10px 0 3px;
 }
 
 .navGrupo + .navGrupo {
   border-top: 1px solid rgba(201, 169, 110, 0.1);
   margin-top: 5px;
+  margin-left: 0;
 }
 
 .navGrupoTitulo {
   display: block;
+  width: 100%;
   padding: 5px 12px 8px;
   color: var(--ouro);
   font-size: 9px;
@@ -277,8 +284,10 @@
 .navegacao button {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 11px;
+  width: 100%;
+  min-width: 0;
   min-height: 43px;
   padding: 10px;
   border: 1px solid transparent;
@@ -329,6 +338,7 @@
   min-width: 0;
   overflow-wrap: anywhere;
   line-height: 1.25;
+  font-size: .85rem;
 }
 
 .navegacao button span,
@@ -678,13 +688,12 @@
     justify-content: space-between;
   }
 
-  /* Navegação vira grade de 2 colunas em telas médias */
+  /* Mantém os grupos alinhados em uma única coluna em telas menores. */
 
   .navegacao {
     position: static;
     padding: 7px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: block;
     max-width: none;
   }
 
@@ -693,11 +702,12 @@
   }
 
   .navCabecalho {
-    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .navGrupo {
     min-width: 0;
+    width: 100%;
   }
 
   .navGrupo + .navGrupo {
