@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -14,9 +15,12 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const PRAZO_PAGAMENTO_MINUTOS = 30;
+const PIX_TITULAR = "Breno Nunes da Silva Borges";
+const PIX_CHAVE = import.meta.env.VITE_PIX_KEY || "";
 
 export default function Carrinho() {
   const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   const {
     itens,
@@ -100,6 +104,9 @@ export default function Carrinho() {
   const [pixQr, setPixQr] = useState(null)
   const [pixCopiaCola, setPixCopiaCola] = useState("")
   const [codigoPedido, setCodigoPedido] = useState(null);
+  const [pagamentoManualConfirmado, setPagamentoManualConfirmado] = useState(false);
+  const [mensagemPagamento, setMensagemPagamento] = useState("");
+  const [confirmandoPagamento, setConfirmandoPagamento] = useState(false);
 
   const [finalizando, setFinalizando] = useState(false);
 
@@ -769,7 +776,7 @@ export default function Carrinho() {
         );
       }
 
-      if (!pagamentoAprovado) {
+      if (!pagamentoAprovado && formaPagamento === "pix" && !PIX_CHAVE) {
         iniciarPollingPix(pedidoId);
       }
 
@@ -835,6 +842,53 @@ export default function Carrinho() {
       );
     } finally {
       setFinalizando(false);
+    }
+  }
+
+  async function confirmarPagamentoManual() {
+    if (!codigoPedido || confirmandoPagamento) return;
+
+    setConfirmandoPagamento(true);
+    setErroFinalizacao("");
+
+    try {
+      const token = localStorage.getItem("token");
+      const resposta = await fetch(
+        `${API_BASE_URL}/api/pedidos/${codigoPedido}/pix/solicitar-confirmacao`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        }
+      );
+
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        throw new Error(dados.erro || "Erro ao confirmar pagamento");
+      }
+
+      if (dados.sucesso === false) {
+        throw new Error(dados.erro || "Não foi possível confirmar o pagamento");
+      }
+
+      setPagamentoManualConfirmado(true);
+      setPedidoConfirmado(true);
+      setMensagemPagamento(dados.mensagem || "Pagamento informado e compra confirmada.");
+      setPagamentoExpirado(false);
+      setSegundosRestantes(0);
+      setPixQr(null);
+      setPixCopiaCola("");
+      clearInterval(expiracaoPagamentoRef.current);
+      expiracaoPagamentoRef.current = null;
+      clearInterval(pollingPixRef.current);
+      pollingPixRef.current = null;
+      navigate("/minha-conta/pedidos");
+    } catch (error) {
+      setErroFinalizacao(error.message || "Erro ao confirmar pagamento");
+    } finally {
+      setConfirmandoPagamento(false);
     }
   }
 
@@ -1025,7 +1079,7 @@ export default function Carrinho() {
                 estilos.confirmacaoIcone
               }
             >
-              {pagamentoExpirado ? "!" : pedidoConfirmado ? "✓" : "..."}
+              {pagamentoExpirado ? "!" : pedidoConfirmado ? "✓" : pagamentoManualConfirmado ? "✓" : "..."}
             </span>
 
             <h1
@@ -1037,6 +1091,8 @@ export default function Carrinho() {
                 ? "Pedido cancelado"
                 : pedidoConfirmado
                   ? "Pedido confirmado"
+                  : pagamentoManualConfirmado
+                    ? "Pagamento informado"
                   : "Aguardando pagamento"}
             </h1>
 
@@ -1045,16 +1101,15 @@ export default function Carrinho() {
                 estilos.confirmacaoTexto
               }
             >
-              {pagamentoExpirado
-                ? "O prazo para pagamento terminou. Seu pedido"
-                : pedidoConfirmado
-                  ? "Obrigado por escolher a Azory. Seu pedido"
-                  : "Seu pedido foi registrado. Efetue o pagamento em até"}{" "}
-              <strong>
-                #AZ-
-                {codigoPedido}
-              </strong>
-              {!pagamentoExpirado && !pedidoConfirmado && (
+              {pagamentoManualConfirmado
+                ? mensagemPagamento || "Pagamento informado e compra confirmada."
+                : pagamentoExpirado
+                  ? "O prazo para pagamento terminou. Seu pedido"
+                  : pedidoConfirmado
+                    ? "Obrigado por escolher a Azory. Seu pedido"
+                    : "Seu pedido foi registrado. Efetue o pagamento em até"} {" "}
+              {!pagamentoManualConfirmado && <strong>#AZ-{codigoPedido}</strong>}
+              {!pagamentoExpirado && !pedidoConfirmado && !pagamentoManualConfirmado && (
                 <> para evitar o cancelamento automático.</>
               )}
             </p>
@@ -1079,7 +1134,7 @@ export default function Carrinho() {
                 </p>
               )}
 
-            {!pagamentoExpirado && formaPagamento ===
+            {!pagamentoExpirado && !pedidoConfirmado && formaPagamento ===
               "pix" && (
                 <>
                   <p
@@ -1123,6 +1178,35 @@ export default function Carrinho() {
                         Copiar código PIX
                       </button>
                     </div>
+                  )}
+
+                  <div className={estilos.pixDadosManuais}>
+                    <strong>Titular da conta</strong>
+                    <span>{PIX_TITULAR}</span>
+                    {PIX_CHAVE && (
+                      <>
+                        <strong>Chave PIX</strong>
+                        <span>{PIX_CHAVE}</span>
+                        <button
+                          type="button"
+                          className={estilos.pixCopiar}
+                          onClick={() => navigator.clipboard.writeText(PIX_CHAVE)}
+                        >
+                          Copiar chave PIX
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {!pagamentoManualConfirmado && (
+                    <button
+                      type="button"
+                      className={estilos.pixConfirmar}
+                      onClick={confirmarPagamentoManual}
+                      disabled={confirmandoPagamento}
+                    >
+                      {confirmandoPagamento ? "Validando pagamento..." : "Já fiz o pagamento"}
+                    </button>
                   )}
                 </>
               )}
