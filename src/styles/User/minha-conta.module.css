@@ -703,6 +703,14 @@ background: linear-gradient(135deg, var(--dourado-claro), var(--dourado-escuro),
   margin-bottom: 14px;
 }
 
+.favThumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .favCategory {
   font-size: 10.5px;
   font-weight: 700;

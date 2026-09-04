@@ -52,7 +52,14 @@ function valorCalculo(calculo, ...chaves) {
 
 function nomeOpcao(opcao) {
   const nome = opcao?.nome ?? opcao?.label ?? opcao?.valor;
-  return nome === 0 || String(nome).trim() === "0" ? "" : nome || "Opção";
+  return nome === 0 || nome === undefined || nome === null || String(nome).trim() === "0" ? "" : String(nome).trim();
+}
+
+function prioridadeGrupo(grupo) {
+  const identificador = `${grupo?.slug || ""} ${grupo?.nome || ""}`.toLowerCase();
+  if (identificador.includes("tamanho") || identificador.includes("size")) return 0;
+  if (identificador.includes("cor") || identificador.includes("metal")) return 1;
+  return 2;
 }
 
 function framesDoProduto(produto) {
@@ -230,7 +237,12 @@ export default function Atelier() {
         ? produto.personalizacoes
         : [];
 
-    return [...lista].sort((a, b) => Number(a.ordem || 0) - Number(b.ordem || 0));
+    return lista
+      .map((grupo) => ({
+        ...grupo,
+        opcoes: (grupo.opcoes || []).filter((opcao) => nomeOpcao(opcao)),
+      }))
+      .sort((a, b) => prioridadeGrupo(a) - prioridadeGrupo(b) || Number(a.ordem || 0) - Number(b.ordem || 0));
   }, [dados, produto]);
 
   const visuais = useMemo(() => grupos.flatMap((grupo) => {
@@ -410,7 +422,7 @@ export default function Atelier() {
               <div className={styles.options}>{grupo.opcoes?.map((opcao) => <label key={opcao.id} className={`${selecionados.some((item) => String(item) === String(opcao.id)) ? styles.selected : ""} ${eMetal ? styles.swatchOption : ""} ${eTamanho ? styles.sizeOption : ""}`} title={eMetal ? opcao.nome : undefined}>
                 <input type={grupo.tipo === "checkbox" ? "checkbox" : "radio"} name={`grupo-${grupo.id}`} checked={selecionados.some((item) => String(item) === String(opcao.id))} onChange={() => alterar(grupo, opcao.id)} />
                 {eMetal && <i style={{ backgroundColor: visualDo(opcao.visual)?.cor || "#c9a24b" }} />}
-                <span>{nomeOpcao(opcao)}</span>
+                <span>{nomeOpcao(opcao) || "Opção"}</span>
                 {valorAdicional(opcao) > 0 && <small>+ R$ {valorAdicional(opcao).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</small>}
               </label>)}</div>
               {Boolean(grupo.permite_valor_livre) && <input type="text" value={typeof valor === "string" && !grupo.opcoes?.some((opcao) => String(opcao.id) === valor) ? valor : ""} maxLength={grupo.valor_livre_maximo || undefined} onChange={(event) => alterar(grupo, event.target.value)} placeholder="Personalize sua gravação" />}

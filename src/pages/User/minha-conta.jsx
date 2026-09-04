@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -8,7 +8,6 @@ import {
 
     resumoo,
     pedidosRecentes,
-    favoritosRecentes,
     timelineAtividades,
 } from "./mockData";
 import { api } from "../../services/api"
@@ -249,6 +248,26 @@ export default function MinhaConta() {
     const [mostrarNotificacao, setMostrarNotificacao] = useState(false)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [erro, setErro] = useState("")
+    const [favoritos, setFavoritos] = useState([])
+    const [carregandoFavoritos, setCarregandoFavoritos] = useState(true)
+
+    useEffect(() => {
+        async function carregarFavoritos() {
+            try {
+                const resposta = await api.get("/favoritos", {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                })
+                setFavoritos(Array.isArray(resposta.data) ? resposta.data : [])
+            } catch (error) {
+                console.error("Erro ao carregar favoritos:", error)
+                setFavoritos([])
+            } finally {
+                setCarregandoFavoritos(false)
+            }
+        }
+
+        carregarFavoritos()
+    }, [])
 
     const quantidadeCarrinho = itens.reduce(
         (total, item) => total + item.quantidade,
@@ -454,7 +473,7 @@ export default function MinhaConta() {
                 <div className={`${styles.statCard} gsap-stat`} >
                     <div className={styles.statIcon}>
                         <img width="24" height="24" src="https://img.icons8.com/ios-glyphs/30/ffffff/hearts.png" alt="hearts" />                        </div>
-                    <p className={styles.statValue}>10</p>
+                    <p className={styles.statValue}>{favoritos.length}</p>
                     <p className={styles.statLabel}>Favoritos</p>
                 </div>
 
@@ -627,12 +646,23 @@ export default function MinhaConta() {
                 </div>
 
                 <div className={styles.favGrid}>
-                    {favoritosRecentes.map((produto) => (
+                    {carregandoFavoritos ? (
+                        <p className={styles.favCategory}>Carregando favoritos...</p>
+                    ) : favoritos.length === 0 ? (
+                        <p className={styles.favCategory}>Você ainda não adicionou favoritos.</p>
+                    ) : favoritos.slice(0, 4).map((produto) => (
                         <div className={`${styles.favCard} gsap-fav-card`} key={produto.id}>
-                            <div className={styles.favThumb}>{Icon.gem}</div>
-                            <p className={styles.favCategory}>{produto.categoria}</p>
+                            <div className={styles.favThumb}>
+                                {produto.imagem ? (
+                                    <img
+                                        src={produto.imagem.startsWith("http") ? produto.imagem : `http://localhost:3000${produto.imagem.startsWith("/") ? produto.imagem : `/${produto.imagem}`}`}
+                                        alt={produto.nome}
+                                    />
+                                ) : Icon.gem}
+                            </div>
+                            <p className={styles.favCategory}>{produto.categoria || "Joia"}</p>
                             <h3 className={styles.favName}>{produto.nome}</h3>
-                            <span className={styles.favPrice}>{produto.preco}</span>
+                            <span className={styles.favPrice}>R$ {Number(produto.preco || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
                         </div>
                     ))}
                 </div>
