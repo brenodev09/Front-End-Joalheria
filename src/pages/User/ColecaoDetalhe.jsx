@@ -135,30 +135,21 @@ export default function ColecaoDetalhe() {
             : undefined
         }
       >
-        <button
-          type="button"
-          onClick={() => navegar("/colecoes")}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            background: "none",
-            border: "none",
-            color: "var(--azory-text-muted)",
-            cursor: "pointer",
-            marginBottom: 24,
-            fontFamily: "var(--azory-font-body)",
-            fontSize: 13,
-          }}
-        >
-          <ArrowLeft size={16} />
-          Todas as coleções
-        </button>
+        <div className={styles.heroTopBar}>
+          <button
+            type="button"
+            onClick={() => navegar("/colecoes")}
+            className={styles.voltarBotao}
+          >
+            <ArrowLeft size={16} />
+            Todas as coleções
+          </button>
 
-        <span className={styles.heroEyebrow}>
-          {colecao.permanente ? "Linha permanente" : "Coleção"}
-          {colecao.categoria ? ` · ${colecao.categoria}` : ""}
-        </span>
+          <span className={styles.heroEyebrowTopBar}>
+            {colecao.permanente ? "Linha permanente" : "Coleção"}
+            {colecao.categoria ? ` · ${colecao.categoria}` : ""}
+          </span>
+        </div>
 
         <h1 className={styles.heroTitulo}>{colecao.nome}</h1>
 

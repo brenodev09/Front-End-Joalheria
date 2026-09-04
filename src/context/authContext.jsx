@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 import { api } from "../services/api";
 
 const AuthContext = createContext();
+const LOGIN_MODAL_FLAG = "azory_login_modal_exibido";
 
 export default function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
@@ -41,6 +42,11 @@ export default function AuthProvider({ children }) {
                 token
             );
 
+            localStorage.setItem(
+                LOGIN_MODAL_FLAG,
+                "1"
+            );
+
             api.defaults.headers.common[
                 "Authorization"
             ] = `Bearer ${token}`;
@@ -66,6 +72,7 @@ export default function AuthProvider({ children }) {
     async function logout() {
         localStorage.removeItem("usuario");
         localStorage.removeItem("token");
+        localStorage.removeItem("azory_login_modal_exibido");
 
         delete api.defaults.headers.common[
             "Authorization"

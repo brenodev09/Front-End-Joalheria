@@ -21,6 +21,7 @@
 // ============================================================================
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Gem, ArrowRight } from "lucide-react";
 import styles from "./styles.module.css";
 import { api } from "../../../services/api";
@@ -40,13 +41,15 @@ const DURACAO_SAIDA_MS = 240;
 
 export default function AvisoLancamento({ onVerColecao }) {
     const { usuario } = useAuth();
+    const navigate = useNavigate();
 
     const [avisos, setAvisos] = useState([]);
+    const [colecaoDestaque, setColecaoDestaque] = useState(null);
     const [aberto, setAberto] = useState(false);
     const [saindo, setSaindo] = useState(false);
 
     async function marcarComoNotificado() {
-        if (!usuario?.id) {
+        if (!usuario?.id || !avisos.length) {
             return;
         }
 
@@ -56,6 +59,30 @@ export default function AvisoLancamento({ onVerColecao }) {
             });
         } catch (error) {
             console.error("Erro ao marcar avisos como notificados:", error);
+        }
+    }
+
+    async function buscarColecaoDestaque() {
+        try {
+            const { data } = await api.get("/colecoes/publicas/ativas");
+            const colecoes = Array.isArray(data) ? data : [];
+
+            const destaque =
+                colecoes.find((colecao) =>
+                    Number(colecao.destaque) === 1 ||
+                    colecao.destaque === true ||
+                    colecao.destaque === "1"
+                ) || colecoes[0];
+
+            if (!destaque) {
+                setColecaoDestaque(null);
+                return;
+            }
+
+            setColecaoDestaque(destaque);
+            setAberto(true);
+        } catch (error) {
+            console.error("Erro ao buscar coleção em destaque:", error);
         }
     }
 
@@ -70,26 +97,39 @@ export default function AvisoLancamento({ onVerColecao }) {
     }
 
     useEffect(() => {
-        // Sem usuário logado, não faz nada.
-        if (!usuario?.id) {
-            return;
-        }
-
         async function buscarAvisos() {
+            const deveMostrarAposLogin = localStorage.getItem("azory_login_modal_exibido") === "1";
+
+            if (!usuario?.id) {
+                if (deveMostrarAposLogin) {
+                    localStorage.removeItem("azory_login_modal_exibido");
+                }
+                return;
+            }
+
+            if (!deveMostrarAposLogin) {
+                return;
+            }
+
+            localStorage.removeItem("azory_login_modal_exibido");
+
             try {
                 const { data } = await api.get(`/colecoes/avisos/${usuario.id}`);
 
                 if (Array.isArray(data) && data.length > 0) {
                     setAvisos(data);
                     setAberto(true);
+                    return;
                 }
             } catch (error) {
                 console.error("Erro ao buscar avisos de lançamento:", error);
             }
+
+            await buscarColecaoDestaque();
         }
 
         buscarAvisos();
-    }, [usuario]);
+    }, [usuario?.id]);
 
     // Trava o scroll do fundo e permite fechar com ESC enquanto o estojo
     // estiver aberto.
@@ -122,16 +162,24 @@ export default function AvisoLancamento({ onVerColecao }) {
             await marcarComoNotificado();
             setAberto(false);
             setSaindo(false);
-            onVerColecao?.(colecao);
+
+            if (onVerColecao) {
+                onVerColecao(colecao);
+                return;
+            }
+
+            navigate(`/colecoes/${colecao.id}`);
         }, DURACAO_SAIDA_MS);
     }
 
-    if (!aberto || avisos.length === 0) {
+    const listaExibicao = avisos.length > 0 ? avisos : colecaoDestaque ? [colecaoDestaque] : [];
+
+    if (!aberto || listaExibicao.length === 0) {
         return null;
     }
 
     // Mostra a coleção mais recente em destaque; as demais como lista.
-    const [principal, ...outras] = avisos;
+    const [principal, ...outras] = listaExibicao;
 
     return (
         <div
