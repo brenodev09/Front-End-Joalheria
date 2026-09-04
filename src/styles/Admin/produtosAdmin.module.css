@@ -176,7 +176,7 @@
 
 .adminProductsFilters {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 0.9fr 95px 64px;
+  grid-template-columns: 1.4fr repeat(4, minmax(130px, 1fr)) 95px 64px;
   gap: 12px;
   align-items: center;
   padding: 12px;

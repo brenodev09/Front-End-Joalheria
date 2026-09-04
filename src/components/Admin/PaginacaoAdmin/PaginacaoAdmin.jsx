@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import styles from './PaginacaoAdmin.module.css';
 
-export default function PaginacaoAdmin({ paginaAtual, totalPaginas, totalRegistros, onPaginaChange }) {
+export default function PaginacaoAdmin({ paginaAtual, totalPaginas, totalRegistros, onPaginaChange, labelRegistros = 'registros' }) {
   if (totalPaginas <= 1) return null;
 
   const paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
@@ -14,7 +14,7 @@ export default function PaginacaoAdmin({ paginaAtual, totalPaginas, totalRegistr
       transition={{ duration: 0.4, delay: 0.2 }}
     >
       <span className={styles.contagem}>
-        Página {paginaAtual} de {totalPaginas} · {totalRegistros} pedidos
+        Página {paginaAtual} de {totalPaginas} · {totalRegistros} {labelRegistros}
       </span>
 
       <div className={styles.controles}>

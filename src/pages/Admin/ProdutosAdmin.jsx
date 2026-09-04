@@ -4,6 +4,7 @@ import { api } from "../../services/api";
 import ModalAddProduto from "../../components/Admin/Modais/ModalAddProduto";
 import ModalDeletarProduto from "../../components/Admin/Modais/ModalDeletarProduto";
 import ModalEditarProduto from "../../components/Admin/Modais/ModalEditarProduto";
+import PaginacaoAdmin from "../../components/Admin/PaginacaoAdmin/PaginacaoAdmin";
 
 import {
   Search,
@@ -23,11 +24,8 @@ import {
 export default function Produtos() {
 
 
-  useEffect(() => {
-    buscarProdutos()
-  }, [])
-
   const [products, setProducts] = useState([]);
+  const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalExcluirAberto, setModalExcluirAberto] =
     useState(false);
@@ -41,11 +39,16 @@ export default function Produtos() {
   const [category, setCategory] = useState("");
   const [material, setMaterial] = useState("");
   const [status, setStatus] = useState("");
+  const [featured, setFeatured] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState("table");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   useEffect(() => {
-    buscarProdutos();
+    async function carregarDados() {
+      await Promise.all([buscarProdutos(), buscarMateriais()]);
+    }
+    carregarDados();
   }, []);
 
   function abrirEditarProduto(produto) {
@@ -84,6 +87,26 @@ export default function Produtos() {
       setLoading(false);
     }
   }
+
+  async function buscarMateriais() {
+    try {
+      const response = await api.get("/materiais");
+      const dados = Array.isArray(response.data) ? response.data : response.data?.materiais || [];
+      setMaterials(dados);
+    } catch (error) {
+      console.error("Não foi possível carregar os materiais.", error);
+    }
+  }
+
+  function materialDoProduto(product) {
+    const materialId = product.material_id ?? product.materialId;
+    const materialEncontrado = materials.find((item) => String(item.id) === String(materialId));
+    return materialEncontrado?.nome || product.material?.nome || product.material || "";
+  }
+
+  function produtoEmDestaque(product) {
+    return product.destaque === true || product.destaque === 1 || product.destaque === "1" || product.featured === true || product.featured === 1;
+  }
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const searchMatch =
@@ -94,12 +117,13 @@ export default function Produtos() {
       return (
         searchMatch &&
         (!category || product.categoria === category) &&
-        (!material || product.material === material) &&
+        (!material || materialDoProduto(product) === material) &&
         (!status ||
           getStatusByStock(
             product.estoque,
             product.estoque_minimo
-          ) === status)
+          ) === status) &&
+        (!featured || (featured === "sim" ? produtoEmDestaque(product) : !produtoEmDestaque(product)))
       );
     });
   }, [
@@ -108,7 +132,20 @@ export default function Produtos() {
     category,
     material,
     status,
+    featured,
+    materials,
   ]);
+
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category, material, status, featured]);
 
   const summary = useMemo(() => {
     const totalProducts = products.length;
@@ -241,15 +278,20 @@ export default function Produtos() {
               onChange={setMaterial}
               placeholder="Material Principal"
             >
-              <option value="Ouro 18k">Ouro 18k</option>
-              <option value="Prata 925">Prata 925</option>
-              <option value="Ouro Rosé 18k">Ouro Rosé 18k</option>
+              {materials.map((item) => (
+                <option value={item.nome} key={item.id}>{item.nome}</option>
+              ))}
             </SelectBox>
 
             <SelectBox value={status} onChange={setStatus} placeholder="Status">
               <option value="Ativo">Ativo</option>
               <option value="Estoque baixo">Estoque baixo</option>
               <option value="Crítico">Crítico</option>
+            </SelectBox>
+
+            <SelectBox value={featured} onChange={setFeatured} placeholder="Destaque">
+              <option value="sim">Em destaque</option>
+              <option value="nao">Normais</option>
             </SelectBox>
 
             <button className={styles.moreFiltersBtn}>
@@ -264,6 +306,7 @@ export default function Produtos() {
                 setCategory("");
                 setMaterial("");
                 setStatus("");
+                setFeatured("");
               }}
             >
               Limpar
@@ -288,7 +331,7 @@ export default function Produtos() {
               </thead>
 
               <tbody>
-                {filteredProducts.map((product) => (
+                {paginatedProducts.map((product) => (
                   <tr
                     key={product.id}
                     className={
@@ -320,7 +363,7 @@ export default function Produtos() {
                     </td>
 
                     <td>{product.categoria}</td>
-                    <td>{product.material}</td>
+                    <td>{materialDoProduto(product) || "Não informado"}</td>
                     <td className={styles.price}>
                       {formatCurrency(product.preco)}
                     </td>
@@ -373,8 +416,15 @@ export default function Produtos() {
             </table>
 
             <footer className={styles.tableFooter}>
-              Mostrando 1-{filteredProducts.length} de {products.length} produtos
+              Mostrando {filteredProducts.length ? (currentPage - 1) * itemsPerPage + 1 : 0}-{Math.min(currentPage * itemsPerPage, filteredProducts.length)} de {filteredProducts.length} produtos
             </footer>
+            <PaginacaoAdmin
+              paginaAtual={currentPage}
+              totalPaginas={totalPages}
+              totalRegistros={filteredProducts.length}
+              onPaginaChange={setCurrentPage}
+              labelRegistros="produtos"
+            />
           </section>
         </section>
 
