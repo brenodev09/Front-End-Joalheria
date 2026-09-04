@@ -22,12 +22,7 @@ export default function Sidebar() {
 
       <main className={styles.navegacao}>
         <NavLink to="/admin/dashboard" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img
-            width="24"
-            height="24"
-            src="https://img.icons8.com/parakeet-line/24/ffffff/dashboard-layout.png"
-            alt="dashboard-layout"
-          />
+          <LayoutDashboard size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Dashboard</span>
         </NavLink>
 
@@ -39,17 +34,12 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <img width="24" height="24" src="https://img.icons8.com/ios/50/ffffff/graph-report.png" alt="graph-report" />
+          <FolderKanban size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Relatórios</span>
         </NavLink>
 
         <NavLink to="/admin/produtos" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img
-            width="24"
-            height="24"
-            src="https://img.icons8.com/ios/24/ffffff/box--v1.png"
-            alt="box"
-          />
+          <Package size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Produtos</span>
         </NavLink>
         <NavLink to="/admin/produtos/personalizacao" className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
@@ -58,10 +48,7 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink to="/admin/pedidos" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img
-            width="28"
-            height="28"
-            src="https://img.icons8.com/external-sbts2018-outline-sbts2018/58/ffffff/external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018.png" alt="external-order-history-ecommerce-basic-1-sbts2018-outline-sbts2018" />
+          <ShoppingBag size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Pedidos</span>
         </NavLink>
 
@@ -71,18 +58,13 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink to="/admin/categorias" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img width="30" height="30" src="https://img.icons8.com/ios/50/ffffff/categorize.png" alt="categorize" />
+          <Tags size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Categorias</span>
         </NavLink>
 
 
         <NavLink to="/admin/materiais" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img
-            width="24"
-            height="24"
-            src="https://img.icons8.com/ios/24/ffffff/diamond--v1.png"
-            alt="diamond"
-          />
+          <Gem size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Materiais</span>
         </NavLink>
 
@@ -94,12 +76,7 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <img
-            width="24"
-            height="24"
-            src="https://img.icons8.com/ios/50/ffffff/stack-of-photos.png"
-            alt="coleções"
-          />
+          <FolderKanban size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Coleções</span>
         </NavLink>
 
@@ -110,7 +87,7 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <img width="24" height="24" src="https://img.icons8.com/ios/50/ffffff/staff.png" alt="staff" />
+          <User size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Funcionários</span>
         </NavLink>
 
@@ -122,18 +99,13 @@ export default function Sidebar() {
             `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`
           }
         >
-          <img width="24" height="24" src="https://img.icons8.com/windows/32/ffffff/discount-ticket.png" alt="discount-ticket" />
+          <Tags size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Cupons</span>
         </NavLink>
 
 
         <NavLink to="/admin/conta" end className={({ isActive }) => `${styles.itemNav} ${isActive ? styles.pagAtiva : ""}`}>
-          <img
-            width="24"
-            height="24"
-            src="https://img.icons8.com/fluency-systems-regular/24/ffffff/user--v1.png"
-            alt="user"
-          />
+          <User size={24} strokeWidth={1.7} aria-hidden="true" />
           <span className={styles.textoNav}>Conta</span>
         </NavLink>
 

@@ -14,16 +14,19 @@
 
 
 .cabecalho {
-  padding: 20px 24px 14px;
+  padding: 24px 24px 40px;
   border-bottom: 1px solid rgba(209, 168, 75, 0.45);
+  overflow: hidden;
 }
 
 .logo {
   width: 100%;
-  max-width:6rem;
+  max-width: 6rem;
   height: auto;
   display: block;
   object-fit: contain;
+  transform: scale(5.2);
+  transform-origin: left center;
 }
 
 /* ── Navegação ── */
@@ -62,13 +65,26 @@
 
 .itemNav svg,
 .itemNav img {
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.62);
+  opacity: 0.72;
   filter: none;
-  flex-shrink: 0;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.itemNav:hover svg,
+.itemNav:hover img,
+.pagAtiva svg,
+.pagAtiva img {
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0.95;
 }
 
 .iconeNotificacao {
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.62);
+  opacity: 0.72;
   flex-shrink: 0;
 }
 

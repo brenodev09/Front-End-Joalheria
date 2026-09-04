@@ -1,6 +1,7 @@
 import style from "./styles.module.css";
 import { useState, useEffect } from "react";
 import { api } from "../../../../services/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function ModalEditarMaterial({
   isOpen,
@@ -37,9 +38,9 @@ const [nomeImagem, setNomeImagem] = useState("");
 
       setImagemPreview(
         material.imagem?.startsWith("http")
-          ? material.imagem
-          : material.imagem
-          ? `http://localhost:3000${material.imagem}`
+              ? material.imagem
+              : material.imagem
+              ? `${API_URL}${material.imagem}`
           : null
       );
 
@@ -75,6 +76,10 @@ const [nomeImagem, setNomeImagem] = useState("");
 
       formData.append("nome", nome);
       formData.append("descricao", descricao);
+      formData.append("estoque", estoque);
+      formData.append("unidade", unidade);
+      formData.append("valor_medio", valorMedio);
+      formData.append("fornecedor", fornecedor);
       formData.append("ativo", ativo);
 
       if (imagem) {
@@ -89,7 +94,11 @@ const [nomeImagem, setNomeImagem] = useState("");
       console.error(erro);
       console.error(erro.response?.data);
 
-      setErro("Erro ao salvar as alterações, tente novamente!");
+      setErro(
+        erro.response?.data?.erro ||
+        erro.response?.data?.message ||
+        "Erro ao salvar as alterações, tente novamente!"
+      );
     } finally {
       setSalvando(false);
     }
